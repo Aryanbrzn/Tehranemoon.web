@@ -1,0 +1,56 @@
+.map-wrap {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+}
+.map {
+  position: absolute;
+  inset: 0;
+}
+.legend {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 12px;
+  padding: 6px 10px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  backdrop-filter: blur(6px);
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-inline-end: 6px;
+}
+.dot.cafe {
+  background: #b24bff;
+}
+.dot.restaurant {
+  background: #ff7a3d;
+}
+/* custom pin (divIcon) */
+.pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25) inset, 0 2px 4px rgba(0, 0, 0, 0.25);
+  transform: translate(-17px, -17px);
+}
+.pin.cafe {
+  background: #b24bff;
+}
+.pin.restaurant {
+  background: #ff7a3d;
+}
+.pin img {
+  width: 18px;
+  height: 18px;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.3));
+}

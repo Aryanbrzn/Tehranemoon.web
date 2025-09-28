@@ -1,1 +1,129 @@
-/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: IRANSansX;
+  font-style: normal;
+  font-weight: 100;
+  src: url("/fonts/iranSans/woff/IRANSansX-Thin.woff") format("woff"),
+    url("/fonts/iranSans/woff2/IRANSansX-Thin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: IRANSansX;
+  font-style: normal;
+  font-weight: 200;
+  src: url("/fonts/iranSans/woff/IRANSansX-UltraLight.woff") format("woff"),
+    url("/fonts/iranSans/woff2/IRANSansX-UltraLight.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: IRANSansX;
+  font-style: normal;
+  font-weight: 300;
+  src: url("/fonts/iranSans/woff/IRANSansX-Light.woff") format("woff"),
+    url("/fonts/iranSans/woff2/IRANSansX-Light.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: IRANSansX;
+  font-style: normal;
+  font-weight: 500;
+  src: url("/fonts/iranSans/woff/IRANSansX-Medium.woff") format("woff"),
+    url("/fonts/iranSans/woff2/IRANSansX-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: IRANSansX;
+  font-style: normal;
+  font-weight: 600;
+  src: url("/fonts/iranSans/woff/IRANSansX-DemiBold.woff") format("woff"),
+    url("/fonts/iranSans/woff2/IRANSansX-DemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: IRANSansX;
+  font-style: normal;
+  font-weight: 800;
+  src: url("/fonts/iranSans/woff/IRANSansX-ExtraBold.woff") format("woff"),
+    url("/fonts/iranSans/woff2/IRANSansX-ExtraBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: IRANSansX;
+  font-style: normal;
+  font-weight: 900;
+  src: url("/fonts/iranSans/woff/IRANSansX-Black.woff") format("woff"),
+    url("/fonts/iranSans/woff2/IRANSansX-Black.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: IRANSansX;
+  font-style: normal;
+  font-weight: 950;
+  src: url("/fonts/iranSans/woff/IRANSansX-ExtraBlack.woff") format("woff"),
+    url("/fonts/iranSans/woff2/IRANSansX-ExtraBlack.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: IRANSansX;
+  font-style: normal;
+  font-weight: 1000;
+  src: url("/fonts/iranSans/woff/IRANSansX-Heavy.woff") format("woff"),
+    url("/fonts/iranSans/woff2/IRANSansX-Heavy.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: IRANSansX;
+  font-style: normal;
+  font-weight: bold;
+  src: url("/fonts/iranSans/woff/IRANSansX-Bold.woff") format("woff"),
+    url("/fonts/iranSans/woff2/IRANSansX-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: IRANSansX;
+  font-style: normal;
+  font-weight: normal;
+  src: url("/fonts/iranSans/woff/IRANSansX-Regular.woff") format("woff"),
+    url("/fonts/iranSans/woff2/IRANSansX-Regular.woff2") format("woff2");
+}
+
+/* ---- Reset (ملایم) + Typography ---- */
+* {
+  font-family: IRANSansX !important;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+::ng-deep app-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+:root {
+  --firstBrick: url("/images/brick.png");
+  --fwidth: 578px;
+  --brickHeight: 80px;
+  --secondBrick: url("/images/brick2.png");
+  --sHeight: 276px;
+}
+body {
+  inset: 0;
+  z-index: -1;
+  /* background: var(--firstBrick) 0 0 no-repeat,
+    var(--secondBrick) calc(var(--fwidth)) 0 repeat; */
+  background-image: url("/images/brick-wall.png");
+  background-size: 230px 180px;
+  background-color: rgb(122, 57, 0);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.18);
+}
