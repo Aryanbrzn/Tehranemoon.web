@@ -94,7 +94,7 @@
 
 html,
 body {
-  height: 100%;
+  height: 200vh;
 }
 body {
   margin: 0;
@@ -104,20 +104,12 @@ body {
   display: flex;
   flex-direction: column;
 }
-:root {
-  --firstBrick: url("/images/brick.png");
-  --fwidth: 578px;
-  --brickHeight: 80px;
-  --secondBrick: url("/images/brick2.png");
-  --sHeight: 276px;
-}
 body {
   inset: 0;
   z-index: -1;
-  /* background: var(--firstBrick) 0 0 no-repeat,
-    var(--secondBrick) calc(var(--fwidth)) 0 repeat; */
   background-image: url("/images/brick-wall.png");
-  background-size: 230px 180px;
+  background-size: 800px 150px;
+  background-position: right top;
   background-color: rgb(122, 57, 0);
 }
 body::after {

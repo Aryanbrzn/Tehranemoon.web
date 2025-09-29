@@ -1,1 +1,51 @@
-<app-map>
+<div class="map-page" [class.is-selected]="!!selected">
+    <!-- LEFT: MAP (75% → 50%) -->
+    <div class="panel map-panel">
+        <app-map></app-map>
+    </div>
+
+    @if (!selected) {
+    <aside class="panel cats-panel">
+        <div class="cats-list">
+            @for (c of categories; track $index) {
+            <button class="cat" (click)="select(c)">
+                <img [src]="c.image" alt="" />
+                <div class="meta">
+                    <span class="name">{{ c.name }}</span>
+                </div>
+            </button>
+            }
+        </div>
+    </aside>
+    }
+
+
+    <!-- RIGHT: LEADERBOARD (shows when selected) -->
+    @if (selected) {
+    <aside class="leaderboard-flyin">
+        <div class="lb-header">
+            <button class="btn-back btn " (click)="clearSelection()">بازگشت</button>
+            <div class="sel cat">
+                <img [src]="selected.image" alt="" />
+                <div class="meta">
+                    <span class="name">{{ selected.name }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="lb-list">
+            @for (i of [1,2,3,4,5]; track $index) {
+            <div class="lb-card">
+                <div class="rank">#{{ $index+1 }}</div>
+                <div class="stars" [attr.data-score]="[5,4,3,5,4][$index]">★★★★★</div>
+                <div class="photo">
+                    <img [src]="'assets/mock/p'+($index+1)+'.jpg'" alt="">
+                    <div class="caption">کافه نمونه {{ $index+1 }}</div>
+                </div>
+            </div>
+            }
+        </div>
+    </aside>
+
+    }
+
+</div>

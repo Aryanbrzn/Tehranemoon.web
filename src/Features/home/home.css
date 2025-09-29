@@ -1,0 +1,203 @@
+.map-page {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  padding: 12px;
+}
+.panel {
+  background: transparent;
+  min-width: 0;
+  transition: flex-basis 0.35s ease;
+}
+.map-panel {
+  flex: 0 1 75%;
+}
+.cats-panel {
+  margin-top: 25px;
+  flex: 0 0 25%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  overflow: hidden;
+  align-items: center;
+  justify-content: flex-start;
+  max-height: 100vh;
+}
+
+.cats-title {
+  margin: 0 0 8px 0;
+}
+.cats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+/* camera pan container */
+.map-page {
+  position: relative;
+  overflow: hidden; /* prevent horizontal scroll while panning */
+  transition: transform 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: transform;
+}
+
+/* how far the camera moves; tweak to taste */
+:root {
+  --camera-pan: 14vw;
+}
+
+/* when a category is selected… */
+.map-page.is-selected {
+  transform: translateX(calc(-1 * var(--camera-pan)));
+}
+
+/* map shrinks to half (your old rule kept) */
+.map-page.is-selected .map-panel {
+  flex-basis: 50%;
+}
+
+/* fade the categories away smoothly */
+.map-page.is-selected .cats-panel {
+  opacity: 0;
+  transform: translateX(16px);
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* leaderboard slides IN from the right edge like a new scene */
+.leaderboard-flyin {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: calc(
+    -50vw + var(--camera-pan)
+  ); /* starts offscreen; camera pan reveals it */
+  width: 50vw; /* target width */
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: transparent; /* keep your paper bg visible */
+  transition: right 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.map-page.is-selected .leaderboard-flyin {
+  right: 0; /* fully visible after pan */
+}
+
+/* (optional) small parallax: move paper bg slightly for depth */
+body::before {
+  transition: background-position 0.55s ease;
+}
+.map-page.is-selected ~ * body::before {
+  background-position: 6vw 0;
+} /* if you control global bg */
+
+.cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 12px;
+  background: transparent;
+  position: relative;
+  border: 0;
+  cursor: pointer;
+  text-align: right;
+  width: 100%;
+}
+.cat img {
+  width: 100%;
+  height: 20vh;
+  object-fit: contain;
+  border-radius: 10px;
+}
+.cat .meta {
+  display: flex;
+  position: absolute;
+  bottom: 2vh;
+  align-items: center;
+  gap: 8px;
+}
+.cat .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.leaderboard-panel {
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lb-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.btn-back {
+  border: 0;
+  border-radius: 10px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+.sel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sel .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.lb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-inline: 4px;
+  overflow: auto;
+}
+.lb-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(3px);
+}
+.lb-card .rank {
+  font-weight: 800;
+  opacity: 0.8;
+}
+.lb-card .stars {
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+.lb-card .photo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+.lb-card .photo img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 12px;
+  transform: rotate(-6deg);
+}
+.lb-card .caption {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* when a category is selected -> show leaderboard and shrink map to 50% */
+.map-page.is-selected .map-panel {
+  flex-basis: 50%;
+}
