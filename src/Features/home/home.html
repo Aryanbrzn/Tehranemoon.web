@@ -1,51 +1,40 @@
+<app-countdown [targetUtc]="'2027-04-10T00:00:00Z'" label="تا واگذاری سایت">
+</app-countdown>
+
 <div class="map-page" [class.is-selected]="!!selected">
-    <!-- LEFT: MAP (75% → 50%) -->
-    <div class="panel map-panel">
-        <app-map></app-map>
-    </div>
-
-    @if (!selected) {
-    <aside class="panel cats-panel">
-        <div class="cats-list">
-            @for (c of categories; track $index) {
-            <button class="cat" (click)="select(c)">
-                <img [src]="c.image" alt="" />
-                <div class="meta">
-                    <span class="name">{{ c.name }}</span>
-                </div>
-            </button>
-            }
-        </div>
-    </aside>
-    }
-
-
-    <!-- RIGHT: LEADERBOARD (shows when selected) -->
-    @if (selected) {
-    <aside class="leaderboard-flyin">
-        <div class="lb-header">
-            <button class="btn-back btn " (click)="clearSelection()">بازگشت</button>
-            <div class="sel cat">
-                <img [src]="selected.image" alt="" />
-                <div class="meta">
-                    <span class="name">{{ selected.name }}</span>
+    <div class="panel map-panel"> <app-map></app-map> </div> @if (!selected) { <aside class="panel cats-panel">
+        <div class="cats-list"> @for (c of categories; track $index) { <button class="cat" (click)="select(c)"> <img
+                    [src]="c.image" alt="" />
+                <div class="meta"><span class="name">{{ c.name }}</span></div>
+            </button> } </div>
+    </aside> } @if (selected) { <aside class="leaderboard-flyin"> <!-- Header: کاغذ مچاله -->
+        <div class="lb-paper-title"> <button class="btn-back ps-3 pe-3" (click)="clearSelection()">x</button>
+            <div class="art"> <img [src]="selected.image" alt="">
+                <div class="txt">
+                    <div class="title">{{ selected.name }}</div>
                 </div>
             </div>
         </div>
-        <div class="lb-list">
-            @for (i of [1,2,3,4,5]; track $index) {
-            <div class="lb-card">
-                <div class="rank">#{{ $index+1 }}</div>
-                <div class="stars" [attr.data-score]="[5,4,3,5,4][$index]">★★★★★</div>
-                <div class="photo">
-                    <img [src]="'assets/mock/p'+($index+1)+'.jpg'" alt="">
+
+        <div class="lb-search"> <input placeholder="جست وجو" style="direction: rtl;" /> <button class="icon"></button>
+        </div> <!-- لیست -->
+        <div class="lb-list"> @for (i of [1,2,3,4,5]; track $index) { <div class="lb-row"
+                [class.alt]="($index % 2)===1"> <!-- استریپ ستاره‌ها -->
+                <div class="paper-strip">
+                    <div class="stars" [style.--score]="([5,4,3,5,4][$index]*20)+'%'">
+                        <img src="images/fStar.png" width="20" alt="">
+                        <img src="images/fStar.png" width="20" alt="">
+                        <img src="images/fStar.png" width="20" alt="">
+                        <img src="images/eStar.png" width="20" alt="">
+                        <img src="images/eStar.png" width="20" alt="">
+
+                    </div>
+                </div> <!-- عکس پولاروید با نوارچسب -->
+                <div class="polaroid"> <img [src]="'images/restaurant.jpg'" alt="">
                     <div class="caption">کافه نمونه {{ $index+1 }}</div>
+                    <div class="idx">#{{ $index+1 }}</div>
                 </div>
-            </div>
-            }
-        </div>
-    </aside>
-
-    }
-
+            </div> } </div>
+    </aside> }
 </div>
+<app-user-panel></app-user-panel>

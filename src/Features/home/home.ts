@@ -1,12 +1,18 @@
 import { Component, ViewChild } from '@angular/core';
 import { MapComponent } from "../map/map";
+import { UserPanelComponent } from "../userpanel/userpanel";
+import { CountdownComponent } from "../countdown/countdown";
 
 type Cat = { id: number; name: string; slug: 'cafe' | 'restaurant' | 'park'; color: string; image: string };
 
 
 @Component({
   selector: 'app-home',
-  imports: [MapComponent],
+  imports: [
+    MapComponent,
+    UserPanelComponent,
+    CountdownComponent
+  ],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
@@ -23,16 +29,17 @@ export class Home {
   ];
 
   selected?: Cat;
-
   select(c: Cat) {
     this.selected = c;
-    // tell the map to filter+fit
     this.mapRef?.filterByCategory(c.slug);
     this.mapRef?.fitToCategory(c.slug);
+    setTimeout(() => this.mapRef?.invalidateSize(), 650); // بعد از انیمیشن
   }
+
   clearSelection() {
     this.selected = undefined;
     this.mapRef?.filterByCategory(undefined);
+    setTimeout(() => this.mapRef?.invalidateSize(), 350);
   }
 
 }

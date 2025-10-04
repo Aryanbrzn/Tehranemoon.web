@@ -11,6 +11,252 @@
 }
 .map-panel {
   flex: 0 1 75%;
+} /* قبلی‌هایت سر جایشان؛ فقط افزوده‌ها: */
+.map-page {
+  position: relative;
+  --gap: 12px; /* همان فاصله‌ای که در .map-page گذاشتی */
+  overflow-x: hidden; /* صفحه به چپ/راست اسکرول نکند */
+} /* مپ به صورت Overlay جابه‌جا می‌شود */
+.map-panel {
+  position: relative;
+  z-index: 2; /* روی cats */
+  left: 0;
+  transition: left 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  flex: 0 1 75%; /* همان مقدار قبلی */
+}
+.cats-panel {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 25%;
+  transition: opacity 0.3s;
+} /* وقتی انتخاب شد: مپ به اندازه عرض cats + فاصله، می‌رود روی cats */
+.map-page.is-selected .map-panel {
+  left: calc(49% + var(--gap));
+} /* cats زیر مپ غیرقابل‌کلیک و کمی محو شود */
+.map-page.is-selected .cats-panel {
+  opacity: 0.35;
+  pointer-events: none;
+} /* ========= صفحه/پنل‌ها از قبل ========= */
+.map-page {
+  position: relative;
+  --gap: 12px;
+  overflow-x: hidden;
+}
+.map-panel {
+  position: relative;
+  z-index: 2;
+  left: 0;
+  transition: left 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  flex: 0 1 75%;
+}
+.cats-panel {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 25%;
+  transition: opacity 0.3s;
+}
+.map-page.is-selected .map-panel {
+  left: calc(23% + var(--gap));
+}
+.map-page.is-selected .cats-panel {
+  opacity: 0.35;
+  pointer-events: none;
+} /* ========= لیدربورد کشویی از چپ ========= */
+.leaderboard-flyin {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: min(420px, 56vw);
+  background: rgba(245, 238, 229, 0.88);
+  transform: translateX(-100%);
+  transition: transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  gap: 12px;
+}
+.map-page.is-selected .leaderboard-flyin {
+  transform: translateX(0);
+}
+.lb-paper-title {
+  position: relative;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+.lb-paper-title .btn-back {
+  border: 0;
+  margin-top: 4vh;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.lb-paper-title .art {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column-reverse;
+}
+.lb-paper-title img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.lb-paper-title .hash {
+  font-weight: 800;
+  opacity: 0.85;
+}
+.lb-paper-title .title {
+  position: relative;
+  font-weight: 900;
+  font-size: 20px;
+  top: 5vh;
+} /* ========= Search کاغذی ========= */
+.lb-search {
+  position: relative;
+  display: flex;
+}
+.lb-search input {
+  flex: 1;
+  padding: 10px 40px 10px 12px;
+  border-radius: 999px;
+  border: 0;
+  background: url("/assets/ui/paper-fiber.png") center/200px 200px repeat,
+    #f6efe6;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+.lb-search .icon {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+  background: url("/assets/ui/icons/search.svg") center/16px 16px no-repeat,
+    rgba(0, 0, 0, 0.15);
+} /* ========= لیست ========= */
+.lb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow: auto;
+  padding: 6px 2px 20px;
+} /* هر ردیف: استریپ + پولاروید */
+.lb-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.lb-row.alt .polaroid {
+  transform: rotate(6deg);
+}
+.lb-row:not(.alt) .polaroid {
+  transform: rotate(-6deg);
+} /* استریپ کاغذی ستاره‌ها */
+.paper-strip {
+  flex: 1;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: url("/assets/ui/paper-strip.webp") center/auto 100% repeat-x,
+    linear-gradient(#efe6dc, #efe6dc);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+.paper-strip::after {
+  /* گوشه دندانه‌ای کوچک */
+  content: "";
+  position: absolute;
+  right: -10px;
+  top: 10px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid #c9b8a7;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+} /* ستاره‌ها با فیل پرشونده */
+.stars {
+  position: relative;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: #c9c4bb;
+  user-select: none;
+}
+.stars::after {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--score, 100%);
+  overflow: hidden;
+  color: #f8c23a;
+  pointer-events: none;
+} /* پولاروید با نوار چسب */
+.polaroid {
+  width: 110px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  padding: 6px 6px 10px;
+  position: relative;
+}
+.polaroid img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.polaroid .caption {
+  font-size: 12px;
+  text-align: center;
+}
+.polaroid .idx {
+  position: absolute;
+  left: 6px;
+  bottom: 4px;
+  font-size: 11px;
+  opacity: 0.7;
+}
+.polaroid::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: -10px;
+  width: 44px;
+  height: 16px;
+  background: url("/assets/ui/tape.png") center/cover no-repeat,
+    rgba(229, 220, 200, 0.9); /* fallback */
+  transform: rotate(-8deg);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+} /* لیدربرد: کشوی ثابت از سمت چپ */
+.leaderboard-flyin {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 300px;
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateX(-100%); /* پنهان */
+  transition: transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+} /* با انتخاب، لیدربرد ظاهر شود */
+.map-page.is-selected .leaderboard-flyin {
+  transform: translateX(0);
 }
 .cats-panel {
   margin-top: 25px;
@@ -24,7 +270,6 @@
   justify-content: flex-start;
   max-height: 100vh;
 }
-
 .cats-title {
   margin: 0 0 8px 0;
 }
@@ -33,47 +278,37 @@
   flex-direction: column;
   gap: 10px;
   width: 100%;
-}
-/* camera pan container */
+} /* camera pan container */
 .map-page {
   position: relative;
   overflow: hidden; /* prevent horizontal scroll while panning */
   transition: transform 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
   will-change: transform;
-}
-
-/* how far the camera moves; tweak to taste */
+} /* how far the camera moves; tweak to taste */
 :root {
   --camera-pan: 14vw;
-}
-
-/* when a category is selected… */
+} /* when a category is selected… */
 .map-page.is-selected {
   transform: translateX(calc(-1 * var(--camera-pan)));
-}
-
-/* map shrinks to half (your old rule kept) */
+} /* map shrinks to half (your old rule kept) */
 .map-page.is-selected .map-panel {
   flex-basis: 50%;
-}
-
-/* fade the categories away smoothly */
+} /* fade the categories away smoothly */
 .map-page.is-selected .cats-panel {
   opacity: 0;
   transform: translateX(16px);
   pointer-events: none;
   transition: opacity 0.35s ease, transform 0.35s ease;
-}
-
-/* leaderboard slides IN from the right edge like a new scene */
+} /* leaderboard slides IN from the right edge like a new scene */
 .leaderboard-flyin {
+  height: 100vh;
   position: absolute;
   top: 0;
   bottom: 0;
   right: calc(
     -50vw + var(--camera-pan)
   ); /* starts offscreen; camera pan reveals it */
-  width: 50vw; /* target width */
+  width: 400px; /* target width */
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -83,16 +318,13 @@
 }
 .map-page.is-selected .leaderboard-flyin {
   right: 0; /* fully visible after pan */
-}
-
-/* (optional) small parallax: move paper bg slightly for depth */
+} /* (optional) small parallax: move paper bg slightly for depth */
 body::before {
   transition: background-position 0.55s ease;
 }
 .map-page.is-selected ~ * body::before {
   background-position: 6vw 0;
 } /* if you control global bg */
-
 .cat {
   display: flex;
   flex-direction: column;
@@ -116,7 +348,7 @@ body::before {
 .cat .meta {
   display: flex;
   position: absolute;
-  bottom: 2vh;
+  top: 2vh;
   align-items: center;
   gap: 8px;
 }
@@ -125,7 +357,6 @@ body::before {
   height: 10px;
   border-radius: 50%;
 }
-
 .leaderboard-panel {
   flex: 0 0 50%;
   display: flex;
@@ -154,13 +385,12 @@ body::before {
   height: 10px;
   border-radius: 50%;
 }
-
 .lb-list {
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding-inline: 4px;
-  overflow: auto;
+  overflow-x: hidden;
 }
 .lb-card {
   display: flex;
@@ -169,7 +399,6 @@ body::before {
   padding: 8px 10px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(3px);
 }
 .lb-card .rank {
   font-weight: 800;
@@ -195,9 +424,7 @@ body::before {
 .lb-card .caption {
   font-size: 12px;
   opacity: 0.9;
-}
-
-/* when a category is selected -> show leaderboard and shrink map to 50% */
+} /* when a category is selected -> show leaderboard and shrink map to 50% */
 .map-page.is-selected .map-panel {
   flex-basis: 50%;
 }

@@ -53,7 +53,9 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.data.getPlaces(['cafe', 'restaurant']).subscribe(items => this.renderPins(items));
   }
-
+  public invalidateSize() {
+    // this.map?.invalidateSize();
+  }
   private renderPins(items: MapPlaceDto[]) {
     // clear old
     this.groups.forEach(g => g.removeFrom(this.map));

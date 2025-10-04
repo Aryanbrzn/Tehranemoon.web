@@ -1,0 +1,93 @@
+<section class="profile-page">
+    <!-- اگر لاگین نیست: کارت ورود/ثبت‌نام -->
+    @if (!isAuthed()) {
+    <section class="section">
+        <div class="section-head">
+            <h4 class="title">ورود / ثبت‌نام</h4>
+            <span class="more" style="cursor:default">برای استفاده از امکانات</span>
+        </div>
+
+        <!-- تب‌های ساده -->
+        <div class="d-flex" style="gap:8px; margin-bottom:10px">
+            <button class="btn-back" [class.active]="mode()==='login'" (click)="switchMode('login')">ورود</button>
+            <button class="btn-back" [class.active]="mode()==='register'"
+                (click)="switchMode('register')">ثبت‌نام</button>
+        </div>
+
+        <!-- فرم ورود -->
+        @if (mode()==='login') {
+        <form [formGroup]="loginForm" (ngSubmit)="doLogin()" class="auth-form" style="display:grid; gap:8px">
+            <input class="form-control" formControlName="userNameOrEmail" placeholder="ایمیل یا نام‌کاربری">
+            <input class="form-control" type="password" formControlName="password" placeholder="رمز عبور">
+            <div class="d-flex" style="gap:8px">
+                <button class="btn-back" type="submit">ورود</button>
+                <button class="btn-back" type="button" (click)="switchMode('register')">ثبت‌نام</button>
+            </div>
+        </form>
+        }
+
+        <!-- فرم ثبت‌نام -->
+        @if (mode()==='register') {
+        <form [formGroup]="registerForm" (ngSubmit)="doRegister()" class="auth-form" style="display:grid; gap:8px">
+            <input class="form-control" formControlName="userName" placeholder="نام‌کاربری *">
+            <input class="form-control" formControlName="email" placeholder="ایمیل (اختیاری)">
+            <input class="form-control" formControlName="phoneNumber" placeholder="شماره موبایل (اختیاری)">
+            <input class="form-control" type="password" formControlName="password" placeholder="رمز عبور *">
+            <input class="form-control" type="password" formControlName="confirmPassword"
+                placeholder="تکرار رمز عبور *">
+            <div class="d-flex" style="gap:8px">
+                <button class="btn-back" type="submit">ثبت‌نام</button>
+                <button class="btn-back" type="button" (click)="switchMode('login')">بازگشت به ورود</button>
+            </div>
+        </form>
+        }
+    </section>
+    }
+
+    <!-- اگر لاگین است: همون UI قبلی‌ات بدون تغییر -->
+    @if (isAuthed()) {
+    <!-- Header -->
+    <header class="profile-header p-3">
+        <div class="avatar">
+            <img [src]="avatar" alt="">
+        </div>
+        <div class="names">
+            <h2 class="username">{{ username }}</h2>
+        </div>
+    </header>
+
+    <div class="d-flex align-items-center justify-content-start w-100 gap-2">
+        <section class="section w-100" style="min-height: 265px;">
+            <div class="section-head">
+                <h4 class="title">مورد علاقه های من</h4>
+                <a href="javascript:void(0)" class="more">مشاهده همه</a>
+            </div>
+
+            <div class="filmstrip">
+                @for (f of favorites; track f.id) {
+                <div class="polaroid">
+                    <img src="images/location.jpg" alt="">
+                    <div class="caption">{{ f.title }}</div>
+                    <div class="idx">#{{ $index + 1 }}</div>
+                </div>
+                }
+            </div>
+        </section>
+
+        <section class="section w-100" style="min-height: 265px;">
+            <div class="section-head">
+                <h4 class="title">آخرین فعالیت های من </h4>
+            </div>
+
+            <div class="filmstrip">
+                @for (a of activities; track $index) {
+                <div class="polaroid" [class.alt]="($index % 2)===1">
+                    <img src="images/location.jpg" alt="">
+                    <div class="caption">{{ a.title }}</div>
+                </div>
+                }
+            </div>
+        </section>
+    </div>
+    }
+</section>

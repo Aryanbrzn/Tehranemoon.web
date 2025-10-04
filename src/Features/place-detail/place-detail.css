@@ -1,0 +1,438 @@
+/* صفحه جزئیات مکان - هم‌تم با بقیه صفحات */
+.place-page {
+  direction: rtl;
+  color: #111;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 12px;
+  background: rgb(255 255 255 / 53%);
+  border-radius: 14px;
+  backdrop-filter: blur(2px);
+}
+
+/* هدر با کاور کاغذی */
+.hero {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  background: rgba(28, 32, 38, 0.85);
+  border-radius: 12px;
+  padding: 10px;
+  color: #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+.cover {
+  position: relative;
+  flex: 0 0 280px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cover .paper-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url("/assets/ui/paper-frame.webp") center/cover no-repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+}
+.hero-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.title {
+  margin: 0;
+  font-weight: 900;
+}
+.sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.9;
+}
+.sub .stars {
+  position: relative;
+  color: #6b7683;
+  letter-spacing: 2px;
+}
+.sub .stars .fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: #ffd166;
+  width: 0%;
+  mix-blend-mode: multiply;
+}
+.sep {
+  opacity: 0.6;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+.btn {
+  border: 0;
+  background: #ffd166;
+  color: #222;
+  padding: 6px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.btn:hover {
+  filter: brightness(0.95);
+}
+
+/* سکشن‌ها (کارت‌های شفاف) */
+.section {
+  background: rgba(28, 32, 38, 0.85);
+  border-radius: 12px;
+  padding: 12px;
+  color: #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sec-title {
+  margin: 0;
+  font-weight: 800;
+}
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.badge {
+  background: #ffd166;
+  color: #222;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+/* فیلم‌استریپ مشترک با یوزرپنل/لیدربورد */
+.filmstrip {
+  display: flex;
+  gap: 14px;
+  overflow: auto;
+  padding-bottom: 6px;
+  scroll-snap-type: x proximity;
+}
+.filmstrip::-webkit-scrollbar {
+  height: 8px;
+}
+.filmstrip::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+/* پولاروید (همان استایل لیدربورد/یوزرپنل) */
+.polaroid {
+  width: 150px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  padding: 6px 6px 10px;
+  position: relative;
+  transform: rotate(-6deg);
+  flex: 0 0 auto;
+}
+.polaroid.alt {
+  transform: rotate(6deg);
+}
+.polaroid img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.polaroid .caption {
+  font-size: 12px;
+  text-align: center;
+  color: #222;
+}
+.polaroid .idx {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  font-size: 11px;
+  opacity: 0.65;
+  color: #333;
+}
+.polaroid::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: -10px;
+  width: 48px;
+  height: 18px;
+  background: url("/assets/ui/tape.png") center/cover no-repeat,
+    rgba(229, 220, 200, 0.9);
+  transform: rotate(-8deg);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+/* کارت ریویوی امیرعلی */
+.amir-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.amir-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.amir-head .avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.amir-head .meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-inline-end: auto;
+}
+.amir-head .name {
+  font-weight: 800;
+}
+.amir-head .stars {
+  position: relative;
+  color: #6b7683;
+  letter-spacing: 2px;
+}
+.amir-head .stars .fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: #ffd166;
+  width: 0%;
+}
+.text {
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+/* لیست نظرات کاربران */
+.reviews {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rev {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 10px;
+}
+.rev header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.rev .author {
+  font-weight: 800;
+}
+.rev .stars.small {
+  position: relative;
+  color: #6b7683;
+  letter-spacing: 2px;
+  font-size: 14px;
+}
+.rev .stars .fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: #ffd166;
+  width: 0%;
+}
+.rev .when {
+  margin-inline-start: auto;
+  opacity: 0.7;
+}
+
+/* مسیریابی */
+.nav-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.btn.nav.neshan {
+  background: #2bb673;
+  color: #fff;
+}
+.btn.nav.gmaps {
+  background: #4285f4;
+  color: #fff;
+}
+
+/* واکنش‌گرا */
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+  }
+  .cover {
+    flex: 0 0 auto;
+    height: 220px;
+  }
+}
+/* --- هایلایت برای نظر امیرعلی --- */
+.rev.amirali {
+  background: url("/assets/ui/paper-fiber.png") center/300px 300px repeat,
+    rgba(255, 209, 102, 0.15);
+  border: 1px dashed rgba(255, 209, 102, 0.6);
+  position: relative;
+}
+.rev .tag-amir {
+  display: inline-block;
+  margin-inline-end: 6px;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #ffd166;
+  color: #222;
+  font-weight: 800;
+}
+
+/* اکشن‌های هر آیتم */
+.rev-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+.btn-link {
+  border: 0;
+  background: transparent;
+  color: #9fb5ff;
+  cursor: pointer;
+  padding: 0;
+}
+.btn-link:hover {
+  text-decoration: underline;
+}
+.btn-link.danger {
+  color: #ff8b8b;
+}
+
+/* ریپلای‌ها (تو در تو) */
+.replies {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-inline-start: 3px dotted rgba(255, 255, 255, 0.25);
+  padding-inline-start: 10px;
+}
+.reply {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 8px;
+}
+.reply header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.reply .author {
+  font-weight: 700;
+}
+.reply .when {
+  margin-inline-start: auto;
+  opacity: 0.7;
+}
+
+/* فرم ریپلای */
+.reply-form {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.reply-form textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #e9ecef;
+  padding: 8px;
+  outline: none;
+}
+.reply-form .row-actions {
+  display: flex;
+  gap: 8px;
+}
+.btn.ghost {
+  background: transparent;
+  color: #e9ecef;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* فرم ثبت نظر */
+.add-review {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.add-review .form-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.add-review label {
+  min-width: 64px;
+  opacity: 0.9;
+}
+.add-review textarea,
+.add-review select,
+.add-review input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #e9ecef;
+  padding: 8px;
+  outline: none;
+}
+.add-review .captcha {
+  align-items: flex-start;
+}
+.add-review .cap-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.add-review .cap-box img {
+  height: 42px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #fff;
+}
+.add-review .form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.add-review .err {
+  color: #ff8b8b;
+  font-size: 13px;
+}

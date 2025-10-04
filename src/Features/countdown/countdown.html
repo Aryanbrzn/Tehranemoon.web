@@ -1,0 +1,12 @@
+<div class="countdown" aria-live="polite" [title]="targetIso">
+    @if (remainMs() > 0) {
+    <span class="num">{{ fa(days()) }}</span><span> روز</span>
+    <span class="sep">و</span>
+    <span class="num">{{ fa(hours()) }}</span><span> ساعت</span>
+    <span class="sep">و</span>
+    <span class="num">{{ fa(minutes()) }}</span><span> دقیقه</span>
+    <span class="tail"> {{ label }}</span>
+    } @else {
+    <span class="done">زمان به پایان رسید</span>
+    }
+</div>

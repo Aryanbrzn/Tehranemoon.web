@@ -1,0 +1,295 @@
+/* صفحه کلی */
+.profile-page {
+  direction: rtl;
+  color: #e9ecef;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 18px;
+  /* نیمه‌شفاف تا با بک‌گراند آجری هماهنگ باشد */
+  background: rgb(255 255 255 / 53%);
+  border-radius: 14px;
+  backdrop-filter: blur(2px);
+}
+
+/* هدر بالا */
+.profile-header {
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(28, 32, 38, 0.85);
+  padding: 10px 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+.names {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.header-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-inline-start: 6px;
+}
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: 0 0 56px;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.username {
+  font-weight: 900;
+  margin: 0;
+}
+.tagline {
+  opacity: 0.8;
+  font-size: 13px;
+  margin-top: 2px;
+}
+.btn-back,
+.btn-more {
+  border: 0;
+  background: transparent;
+  color: #cdd3da;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+.btn-back:hover,
+.btn-more:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* سکشن‌های اصلی */
+.section {
+  background: rgba(28, 32, 38, 0.85);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-head .title {
+  margin: 0;
+  font-weight: 800;
+}
+.section-head .more {
+  margin-inline-start: auto;
+  color: #9fb5ff;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+/* نوار افقی کارت‌ها (مثل فیلم‌استریپ) */
+.filmstrip {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 12px 0px;
+  scroll-snap-type: x proximity;
+}
+.filmstrip::-webkit-scrollbar {
+  height: 8px;
+}
+.filmstrip::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+/* کارت پوستر */
+.poster-card {
+  position: relative;
+  flex: 0 0 160px; /* عرض کارت ثابت؛ اسکرول افقی */
+  height: 240px;
+  background: #151a1f;
+  border-radius: 12px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+}
+.poster-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  flex: 1 1 auto;
+}
+.pc-overlay {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+  padding: 6px 8px;
+}
+.chip {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: #111;
+  background: #ffd166;
+  font-weight: 700;
+}
+
+/* عنوان زیر کارت */
+.pc-title {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.pc-sub {
+  position: absolute;
+  left: 8px;
+  bottom: 28px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* ستاره‌ها: متن “★★★★★” با عرض متغیر */
+.stars {
+  position: relative;
+  color: #54606d;
+  letter-spacing: 2px;
+  font-size: 16px;
+  user-select: none;
+}
+.stars::after {
+  content: "★★★★★";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--fill, 100%);
+  overflow: hidden;
+  color: #ffd166;
+}
+
+/* واکنش‌گرا */
+@media (max-width: 768px) {
+  .poster-card {
+    flex-basis: 140px;
+    height: 210px;
+  }
+  .avatar {
+    width: 48px;
+    height: 48px;
+  }
+}
+/* ========== Polaroid (هم‌شکل لیدربورد) ========== */
+.polaroid {
+  width: 150px; /* نزدیک به کارت قبلی؛ در صورت نیاز تغییر بده */
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  padding: 6px 6px 10px;
+  position: relative;
+  transform: rotate(-6deg);
+  flex: 0 0 auto;
+}
+.polaroid.alt {
+  transform: rotate(6deg);
+}
+
+.polaroid img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+.polaroid .caption {
+  font-size: 12px;
+  text-align: center;
+  color: #222;
+  line-height: 1.2;
+}
+.polaroid .idx {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  font-size: 11px;
+  opacity: 0.65;
+  color: #333;
+}
+
+/* نوارچسب بالای پولاروید */
+.polaroid::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: -10px;
+  width: 48px;
+  height: 18px;
+  background: url("/assets/ui/tape.png") center/cover no-repeat,
+    rgba(229, 220, 200, 0.9);
+  transform: rotate(-8deg);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+/* چیپ بالای پولاروید (برای نوع فعالیت/امتیاز) */
+.chip.chip-top {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  background: rgba(255, 209, 102, 0.95);
+  color: #222;
+  padding: 2px 6px;
+  font-size: 11px;
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  overflow: hidden; /* برای نوار پرشدن ستاره‌ها */
+  white-space: nowrap;
+}
+
+/* پرشدن ستاره‌های داخل چیپ (★★★★★) */
+.chip.chip-top {
+  position: relative;
+}
+.chip.chip-top::before {
+  content: "★★★★★";
+  letter-spacing: 1px;
+}
+.chip .stars-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(to right, #ffb703, #ffd166);
+  width: 0%;
+  mix-blend-mode: multiply; /* جلوه لطیف روی متن ستاره‌ها */
+  pointer-events: none;
+}
+
+/* فیلم‌استریپ همان قبلی؛ فقط فاصلهٔ طولی کمی بیشتر برای پولارویدها بهتره */
+.filmstrip {
+  gap: 14px;
+}
