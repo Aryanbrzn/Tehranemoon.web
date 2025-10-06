@@ -1,7 +1,5 @@
-<app-countdown [targetUtc]="'2027-04-10T00:00:00Z'" label="تا واگذاری سایت">
-</app-countdown>
-
-<div class="map-page" [class.is-selected]="!!selected">
+<app-countdown [targetUtc]="'2027-04-10T00:00:00Z'" label="تا واگذاری سایت"> </app-countdown>
+<div class="map-page container-fluid" [class.is-selected]="!!selected">
     <div class="panel map-panel"> <app-map></app-map> </div> @if (!selected) { <aside class="panel cats-panel">
         <div class="cats-list"> @for (c of categories; track $index) { <button class="cat" (click)="select(c)"> <img
                     [src]="c.image" alt="" />
@@ -15,19 +13,15 @@
                 </div>
             </div>
         </div>
-
         <div class="lb-search"> <input placeholder="جست وجو" style="direction: rtl;" /> <button class="icon"></button>
         </div> <!-- لیست -->
         <div class="lb-list"> @for (i of [1,2,3,4,5]; track $index) { <div class="lb-row"
                 [class.alt]="($index % 2)===1"> <!-- استریپ ستاره‌ها -->
                 <div class="paper-strip">
-                    <div class="stars" [style.--score]="([5,4,3,5,4][$index]*20)+'%'">
-                        <img src="images/fStar.png" width="20" alt="">
-                        <img src="images/fStar.png" width="20" alt="">
-                        <img src="images/fStar.png" width="20" alt="">
+                    <div class="stars" [style.--score]="([5,4,3,5,4][$index]*20)+'%'"> <img src="images/fStar.png"
+                            width="20" alt=""> <img src="images/fStar.png" width="20" alt=""> <img
+                            src="images/fStar.png" width="20" alt=""> <img src="images/eStar.png" width="20" alt="">
                         <img src="images/eStar.png" width="20" alt="">
-                        <img src="images/eStar.png" width="20" alt="">
-
                     </div>
                 </div> <!-- عکس پولاروید با نوارچسب -->
                 <div class="polaroid"> <img [src]="'images/restaurant.jpg'" alt="">
@@ -36,5 +30,4 @@
                 </div>
             </div> } </div>
     </aside> }
-</div>
-<app-user-panel></app-user-panel>
+</div> <app-user-panel></app-user-panel>

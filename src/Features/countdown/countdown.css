@@ -1,7 +1,16 @@
 .countdown {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-direction: row-reverse;
+  padding-top: 15px;
+  padding-bottom: 10px !important;
+  border-radius: 15px;
+  margin: 0px 250px;
+  background-color: #ffffff04;
+  backdrop-filter: blur(15px);
   gap: 0.35rem;
+  color: #c1b8d7;
   font-weight: 800;
 }
 .num {

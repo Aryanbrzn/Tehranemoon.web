@@ -1,23 +1,29 @@
-// src/Features/place-detail/place-detail.ts
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';            // ⬅️ درست
+import { FormsModule } from '@angular/forms';
 import { MiniMapComponent } from '../mini-map.component/mini-map.component';
-import { PlaceDetailService, PlaceDetailDto } from '../services/place-detail';
+
+import { PlaceDetailService, PlaceDetailDto, ReviewDto } from '../services/place-detail';
 import { CaptchaService, CaptchaChallenge } from '../../Core/services/captcha-service';
 import { ReviewsService } from '../services/reviews-service';
+
+// موک‌ها فقط برای تست UI
 import { MockCaptchaService } from './mock-captcha.service';
 import { MockPlaceDetailService } from './mock-place-detail.service';
 import { MockReviewsService } from './mock-reviews.service';
+
+type ReviewVM = ReviewDto & { replies?: ReviewDto[] };
+
 @Component({
   selector: 'app-place-detail',
   standalone: true,
-  imports: [MiniMapComponent, DatePipe, FormsModule],    // ⬅️ FormsModule اضافه شد
+  imports: [MiniMapComponent, DatePipe, FormsModule],
   templateUrl: './place-detail.html',
   styleUrl: './place-detail.css',
+  // ⬇️ در حالت واقعی این providers را حذف کن تا به سرویس‌های واقعی وصل شود.
   providers: [
     { provide: PlaceDetailService, useClass: MockPlaceDetailService },
     { provide: ReviewsService, useClass: MockReviewsService },
@@ -40,25 +46,44 @@ export class PlaceDetailComponent {
     { initialValue: null }
   );
 
-  // لیست واحد نظرات (AmirAli جلو + جدیدتر جلوتر)
-  readonly reviews = computed(() => {
-    const list = (this.place()?.reviews ?? []).slice();
-    list.sort((a: any, b: any) => {
+  /** ویومدل Threaded: ریشه‌ها + ریپلای‌ها */
+  readonly reviews = computed<ReviewVM[]>(() => {
+    const flat = (this.place()?.reviews ?? []).slice();
+
+    // گروه‌بندی بر اساس parentId
+    const byParent = new Map<number | null, ReviewDto[]>();
+    for (const r of flat) {
+      const k = (r.parentId ?? null);
+      const bucket = byParent.get(k) ?? [];
+      bucket.push(r);
+      byParent.set(k, bucket);
+    }
+
+    // ریشه‌ها
+    const roots = (byParent.get(null) ?? []);
+
+    // سورت: اول AmirAli، بعد جدیدتر جلوتر
+    roots.sort((a, b) => {
       const pa = a.authorType === 'AmirAli' ? 0 : 1;
       const pb = b.authorType === 'AmirAli' ? 0 : 1;
       if (pa !== pb) return pa - pb;
-      return new Date(b.createdAtUtc).getTime() - new Date(a.createdAtUtc).getTime();
+      return +new Date(b.createdAtUtc) - +new Date(a.createdAtUtc);
     });
-    return list;
+
+    // ریپلای‌ها (قدیمی‌تر جلوتر برای خوانایی)
+    return roots.map(r => ({
+      ...r,
+      replies: (byParent.get(r.id) ?? []).sort((a, b) => +new Date(a.createdAtUtc) - +new Date(b.createdAtUtc))
+    }));
   });
 
-  // --- فرم ثبت نظر (property ساده، نه signal) ---
+  // فرم ثبت نظر
   rvForm = { rating: 5, text: '', captchaAnswer: '' };
   rvBusy = false;
   rvError: string | null = null;
-  cap: CaptchaChallenge | null = null;   // ⬅️ قبلاً signal بود
+  cap: CaptchaChallenge | null = null;
 
-  // --- وضعیت ریپلای ---
+  // وضعیت ریپلای
   replyingFor: number | null = null;
   replyText = '';
   replyBusy = false;
@@ -89,14 +114,13 @@ export class PlaceDetailComponent {
     try {
       if ((navigator as any).share) await (navigator as any).share(data);
       else { await navigator.clipboard.writeText(data.url); alert('لینک کپی شد ✅'); }
-    } catch { }
+    } catch { /* بی‌صدا */ }
   }
 
   // CAPTCHA
   refreshCaptcha() {
     this.captcha.new().subscribe(c => {
       this.cap = c;
-      // token داخل cap نگه داشته می‌شود؛ ورودی فرم فقط answer است
       this.rvForm.captchaAnswer = '';
     });
   }
@@ -117,6 +141,7 @@ export class PlaceDetailComponent {
     }).subscribe({
       next: _ => {
         this.api.get(p.id).subscribe(np => {
+          // NOTE: چون place از toSignal ساخته شده، با هک زیر ریفرش می‌کنیم
           (this as any).place.set(np);
           this.rvForm = { rating: 5, text: '', captchaAnswer: '' };
           this.rvBusy = false; this.rvError = null;

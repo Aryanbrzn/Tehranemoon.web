@@ -1,5 +1,6 @@
-import { Injectable, computed, signal } from '@angular/core';
-import { Httpclient } from './httpclient'; // همونی که قبلاً ساختی (Core/services/httpclient.ts)
+// src/Core/services/auth.service.ts
+import { Injectable, computed, signal, inject } from '@angular/core';
+import { Httpclient } from './httpclient';
 
 export interface UserProfileDto {
     id: number;
@@ -14,20 +15,18 @@ export interface RegisterDto { userName: string; email?: string; phoneNumber?: s
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    private readonly http = new Httpclient(); // اگر با DI می‌خواهی: inject(Httpclient)
+    private http = inject(Httpclient);
 
     private _user = signal<UserProfileDto | null>(null);
-    user = computed(() => this._user());
-    isAuthenticated = computed(() => !!this._user());
+    readonly user = computed(() => this._user());
+    readonly isAuthenticated = computed(() => !!this._user());
 
     private _loading = signal(false);
-    loading = computed(() => this._loading());
+    readonly loading = computed(() => this._loading());
 
-    /** پروفایل را از سرور می‌گیرد (اگه 401 شد، null) */
     async loadMe(): Promise<void> {
         this._loading.set(true);
         try {
-            // مسیر API را با بک‌اند خودت هماهنگ کن
             const me = await this.http.get<UserProfileDto>('/api/auth/me').toPromise();
             this._user.set(me ?? null);
         } catch {
@@ -37,7 +36,6 @@ export class AuthService {
         }
     }
 
-    /** ورود: کوکی HttpOnly ست می‌شود، بعد دوباره /me */
     async login(payload: LoginDto): Promise<boolean> {
         this._loading.set(true);
         try {
@@ -51,7 +49,6 @@ export class AuthService {
         }
     }
 
-    /** ثبت‌نام: بعد از موفقیت، اتوماتیک لاگین شو (بسته به بک‌اند) یا دستی /me */
     async register(payload: RegisterDto): Promise<boolean> {
         this._loading.set(true);
         try {
@@ -60,6 +57,18 @@ export class AuthService {
             return this.isAuthenticated();
         } catch {
             return false;
+        } finally {
+            this._loading.set(false);
+        }
+    }
+
+    /** لاگین اجتماعی (مثلاً گوگل) */
+    async loginWithGoogle(credential: string) {
+        this._loading.set(true);
+        try {
+            const me = await this.http.postJson<UserProfileDto>('/api/auth/google', { credential }).toPromise();
+            this._user.set(me ?? null);
+            return !!me;
         } finally {
             this._loading.set(false);
         }

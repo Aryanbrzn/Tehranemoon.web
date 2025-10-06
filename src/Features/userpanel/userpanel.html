@@ -1,14 +1,13 @@
 <section class="profile-page">
     <!-- اگر لاگین نیست: کارت ورود/ثبت‌نام -->
     @if (!isAuthed()) {
-    <section class="section">
-        <div class="section-head">
+    <section class="section m-auto">
+        <div class="section-head d-flex justify-content-center">
             <h4 class="title">ورود / ثبت‌نام</h4>
-            <span class="more" style="cursor:default">برای استفاده از امکانات</span>
         </div>
 
         <!-- تب‌های ساده -->
-        <div class="d-flex" style="gap:8px; margin-bottom:10px">
+        <div class="d-flex justify-content-center" style="gap:8px; margin-bottom:10px">
             <button class="btn-back" [class.active]="mode()==='login'" (click)="switchMode('login')">ورود</button>
             <button class="btn-back" [class.active]="mode()==='register'"
                 (click)="switchMode('register')">ثبت‌نام</button>
@@ -20,8 +19,7 @@
             <input class="form-control" formControlName="userNameOrEmail" placeholder="ایمیل یا نام‌کاربری">
             <input class="form-control" type="password" formControlName="password" placeholder="رمز عبور">
             <div class="d-flex" style="gap:8px">
-                <button class="btn-back" type="submit">ورود</button>
-                <button class="btn-back" type="button" (click)="switchMode('register')">ثبت‌نام</button>
+                <button class="btn-back btn-success m-auto" type="submit">ورود</button>
             </div>
         </form>
         }
@@ -36,8 +34,7 @@
             <input class="form-control" type="password" formControlName="confirmPassword"
                 placeholder="تکرار رمز عبور *">
             <div class="d-flex" style="gap:8px">
-                <button class="btn-back" type="submit">ثبت‌نام</button>
-                <button class="btn-back" type="button" (click)="switchMode('login')">بازگشت به ورود</button>
+                <button class="btn-back btn-success m-auto" type="submit">ثبت‌نام</button>
             </div>
         </form>
         }
