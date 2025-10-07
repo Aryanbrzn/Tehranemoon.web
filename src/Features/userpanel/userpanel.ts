@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal, computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit, inject, signal, computed
+} from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../Core/services/auth.service';
@@ -8,6 +10,8 @@ type Activity =
   | { kind: 'rated'; title: string; poster: string; rating: number; when: string }
   | { kind: 'review'; title: string; poster: string; when: string }
   | { kind: 'photo'; title: string; poster: string; count: number; when: string };
+
+type Tile = { title: string; poster: string };
 
 @Component({
   selector: 'app-user-panel',
@@ -21,16 +25,19 @@ export class UserPanelComponent implements OnInit {
   private fb = inject(FormBuilder);
   auth = inject(AuthService);
 
-  // UI state: login | register
+  // تب فعلی فرم
   mode = signal<'login' | 'register'>('login');
-  isAuthed = computed(() => this.auth.isAuthenticated());
+  isAuthed = () => this.auth.isAuthenticated();
 
-  // Forms
+  // پروفایل نمایشی
+  username = 'ALI';
+  avatar = 'images/avatar.png';
+
+  // فرم‌ها
   loginForm = this.fb.group({
     userNameOrEmail: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
-
   registerForm = this.fb.group({
     userName: ['', [Validators.required, Validators.maxLength(250)]],
     email: ['', [Validators.email]],
@@ -39,40 +46,38 @@ export class UserPanelComponent implements OnInit {
     confirmPassword: ['', [Validators.required]]
   });
 
-  // نمایش فعلی‌ات (وقتی لاگین باشد)
-  username = 'امیرعلی';
-  tagline = 'امیرعلی';
-  avatar = 'images/avatar.png';
-
+  // داده‌ی نمونه (می‌تونی از API خودت پرش کنی)
   favorites: Favorite[] = [
-    { id: 1, title: 'لمیز', poster: 'assets/mock/posters/whiplash.jpg', rating: 5 },
-    { id: 2, title: 'کای', poster: 'assets/mock/posters/spiderverse.jpg', rating: 5 },
-    { id: 3, title: 'کافه اتوبوسی ', poster: 'assets/mock/posters/hp.jpg', rating: 4.5 },
-    { id: 4, title: 'کافه سرکوچه', poster: 'assets/mock/posters/lalaland.jpg', rating: 5 },
-    { id: 5, title: 'کافه ته کوچه', poster: 'assets/mock/posters/inception.jpg', rating: 4.5 },
+    { id: 1, title: 'لمیز', poster: 'images/restaurant.jpg', rating: 5 },
+    { id: 2, title: 'کای', poster: 'images/coffee.jpg', rating: 5 },
+    { id: 3, title: 'پارک نیاوران', poster: 'images/location.jpg', rating: 4.5 },
+    { id: 4, title: 'کافه اتوبوسی', poster: 'images/restaurant.jpg', rating: 5 },
+  ];
+  activities: Activity[] = [
+    { kind: 'rated', title: 'پارک آب‌و‌آتش', poster: 'images/location.jpg', rating: 4.5, when: '۲ ساعت پیش' },
+    { kind: 'review', title: 'کای', poster: 'images/restaurant.jpg', when: 'دیروز' },
+    { kind: 'photo', title: 'پل طبیعت', poster: 'images/location.jpg', count: 3, when: '۱ هفته پیش' },
   ];
 
-  activities: Activity[] = [
-    { kind: 'rated', title: 'لمیز', poster: 'assets/mock/posters/intouchables.jpg', rating: 4.5, when: '۲ ساعت پیش' },
-    { kind: 'review', title: 'کای', poster: 'assets/mock/posters/dps.jpg', when: 'دیروز' },
-    { kind: 'rated', title: 'کافه اتوبوسی', poster: 'assets/mock/posters/incredibles.jpg', rating: 5, when: '۳ روز پیش' },
-    { kind: 'photo', title: 'پارک نیاوران', poster: 'assets/mock/posters/lifeofchuck.jpg', count: 3, when: '۱ هفته پیش' },
-  ];
+  /** ۱۲ اسلات: ابتدا علاقه‌مندی‌ها، بعد فعالیت‌ها، بقیه خالی */
+  grid = computed<Tile[] | (Tile | null)[]>(() => {
+    const favs: Tile[] = this.favorites.map(f => ({ title: f.title, poster: f.poster }));
+    const acts: Tile[] = this.activities.map(a => ({ title: a.title, poster: a.poster }));
+    const merged = [...favs, ...acts].slice(0, 12);
+    while (merged.length < 9) merged.push(null as any);
+    return merged;
+  });
 
   ngOnInit() {
-    // تلاش برای لود پروفایل (اگه لاگین نباشه، null میاد)
     this.auth.loadMe();
   }
 
-  /** درصد پرشدن ستاره‌ها برای CSS */
-  pct(n: number) { return `${Math.max(0, Math.min(5, n)) / 5 * 100}%`; }
+  switchMode(to: 'login' | 'register') { this.mode.set(to); }
 
-  // Actions
   async doLogin() {
     if (this.loginForm.invalid) { this.loginForm.markAllAsTouched(); return; }
     const ok = await this.auth.login(this.loginForm.value as any);
     if (!ok) alert('ورود ناموفق بود.');
-    // اگر موفق شد، UI اتوماتیک بخش پروفایل را نشان می‌دهد
   }
 
   async doRegister() {
@@ -83,5 +88,10 @@ export class UserPanelComponent implements OnInit {
     if (!ok) alert('ثبت‌نام ناموفق بود.');
   }
 
-  switchMode(to: 'login' | 'register') { this.mode.set(to); }
+  openTile(tile?: Tile | null) {
+    if (!tile) return; // اسلات خالی
+    // TODO: می‌تونی اینجا ناوبری به صفحه‌ی مکان/کافه را انجام بدهی
+    // this.router.navigate(['/place', someId]);
+    console.log('open', tile.title);
+  }
 }

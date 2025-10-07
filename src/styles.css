@@ -99,16 +99,17 @@ body {
 body {
   margin: 0;
 }
-::ng-deep app-root {
+.root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 body {
   inset: 0;
   z-index: -1;
   background-image: url("/images/brick-wall.png");
-  background-size: 800px 150px;
+  background-size: 750px 500px;
   background-position: right top;
   background-color: rgb(122, 57, 0);
 }
@@ -117,5 +118,5 @@ body::after {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: rgba(0, 0, 0, 0.18);
+  background: rgb(196 0 0 / 7%);
 }

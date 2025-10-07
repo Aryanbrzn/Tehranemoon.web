@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MapPlaceDto, MapService } from '../services/map-service';
 import * as L from 'leaflet';
 
@@ -14,7 +14,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private el = inject(ElementRef<HTMLElement>);
   private data = inject(MapService);
-
   private map!: L.Map;
   private bounds!: L.LatLngBounds;
   private W = 0; private H = 0;
@@ -29,22 +28,23 @@ export class MapComponent implements OnInit, OnDestroy {
     const mapEl = this.el.nativeElement.querySelector('.map') as HTMLElement;
     L.DomEvent.disableScrollPropagation(mapEl);
     L.DomEvent.disableClickPropagation(mapEl);
-    const src = 'images/tehranMap.jpg';           // your image
+    const src = 'images/tehranMap.png';           // your image
     const { width, height } = await this.loadImage(src);
-    this.W = width; this.H = height;
+    this.W = width;
+    this.H = height;
 
     this.bounds = L.latLngBounds([0, 0], [this.H, this.W]);
     this.map = L.map(mapEl, {
-      crs: L.CRS.Simple,
-      minZoom: -2.18,
+      crs: L.CRS.EPSG4326,
+      minZoom: -2.7,
       maxZoom: 1,
       zoomSnap: 0.25,
       zoomDelta: 0.5,
       zoomAnimation: false,
-      maxBoundsViscosity: 1.0,
-      inertia: true,
+      maxBoundsViscosity: 100,
+      inertia: false,
       wheelPxPerZoomLevel: 60,
-      preferCanvas: true,
+      preferCanvas: false,
       maxBounds: this.bounds,
     });
     L.imageOverlay(src, this.bounds).addTo(this.map);
@@ -99,6 +99,15 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private loadImage(url: string): Promise<{ width: number; height: number }> {
-    return new Promise((res, rej) => { const img = new Image(); img.onload = () => res({ width: img.naturalWidth, height: img.naturalHeight }); img.onerror = rej; img.src = url; });
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () =>
+        res({
+          width: img.naturalWidth,
+          height: img.naturalHeight
+        });
+      img.onerror = rej;
+      img.src = url;
+    });
   }
 }

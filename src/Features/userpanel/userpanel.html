@@ -1,90 +1,70 @@
-<section class="profile-page">
-    <!-- اگر لاگین نیست: کارت ورود/ثبت‌نام -->
-    @if (!isAuthed()) {
-    <section class="section m-auto">
+<section class="polaroid-profile container-fluid">
+
+    <!-- @if (!isAuthed()) {
+    <section class="paper auth-card">
         <div class="section-head d-flex justify-content-center">
             <h4 class="title">ورود / ثبت‌نام</h4>
         </div>
 
-        <!-- تب‌های ساده -->
-        <div class="d-flex justify-content-center" style="gap:8px; margin-bottom:10px">
-            <button class="btn-back" [class.active]="mode()==='login'" (click)="switchMode('login')">ورود</button>
-            <button class="btn-back" [class.active]="mode()==='register'"
-                (click)="switchMode('register')">ثبت‌نام</button>
+        <div class="tabs">
+            <button class="tab" [class.active]="mode()==='login'" (click)="switchMode('login')">ورود</button>
+            <button class="tab" [class.active]="mode()==='register'" (click)="switchMode('register')">ثبت‌نام</button>
         </div>
 
-        <!-- فرم ورود -->
         @if (mode()==='login') {
-        <form [formGroup]="loginForm" (ngSubmit)="doLogin()" class="auth-form" style="display:grid; gap:8px">
+        <form [formGroup]="loginForm" (ngSubmit)="doLogin()" class="auth-form">
             <input class="form-control" formControlName="userNameOrEmail" placeholder="ایمیل یا نام‌کاربری">
             <input class="form-control" type="password" formControlName="password" placeholder="رمز عبور">
-            <div class="d-flex" style="gap:8px">
-                <button class="btn-back btn-success m-auto" type="submit">ورود</button>
-            </div>
+            <button class="btn-primary" type="submit">ورود</button>
         </form>
         }
 
-        <!-- فرم ثبت‌نام -->
         @if (mode()==='register') {
-        <form [formGroup]="registerForm" (ngSubmit)="doRegister()" class="auth-form" style="display:grid; gap:8px">
+        <form [formGroup]="registerForm" (ngSubmit)="doRegister()" class="auth-form">
             <input class="form-control" formControlName="userName" placeholder="نام‌کاربری *">
             <input class="form-control" formControlName="email" placeholder="ایمیل (اختیاری)">
             <input class="form-control" formControlName="phoneNumber" placeholder="شماره موبایل (اختیاری)">
             <input class="form-control" type="password" formControlName="password" placeholder="رمز عبور *">
             <input class="form-control" type="password" formControlName="confirmPassword"
                 placeholder="تکرار رمز عبور *">
-            <div class="d-flex" style="gap:8px">
-                <button class="btn-back btn-success m-auto" type="submit">ثبت‌نام</button>
-            </div>
+            <button class="btn-primary" type="submit">ثبت‌نام</button>
         </form>
         }
     </section>
-    }
+    } -->
 
-    <!-- اگر لاگین است: همون UI قبلی‌ات بدون تغییر -->
-    @if (isAuthed()) {
-    <!-- Header -->
-    <header class="profile-header p-3">
-        <div class="avatar">
-            <img [src]="avatar" alt="">
-        </div>
-        <div class="names">
-            <h2 class="username">{{ username }}</h2>
-        </div>
-    </header>
+    <!-- @if (isAuthed()) { -->
+    <section class="paper board-wrap">
 
-    <div class="d-flex align-items-center justify-content-start w-100 gap-2">
-        <section class="section w-100" style="min-height: 265px;">
-            <div class="section-head">
-                <h4 class="title">مورد علاقه های من</h4>
-                <a href="javascript:void(0)" class="more">مشاهده همه</a>
-            </div>
+        <div class="board">
 
-            <div class="filmstrip">
-                @for (f of favorites; track f.id) {
-                <div class="polaroid">
-                    <img src="images/location.jpg" alt="">
-                    <div class="caption">{{ f.title }}</div>
-                    <div class="idx">#{{ $index + 1 }}</div>
-                </div>
+            <ul class="rail-icons">
+                <li><img src="images/business.jpg" alt="ایده"></li>
+                <li><img src="images/business.jpg" alt="کافه"></li>
+                <li><img src="images/business.jpg" alt="شهر"></li>
+                <li><img src="images/business.jpg" alt="غذا"></li>
+            </ul>
+
+            <div class="slot-grid">
+                @for (s of grid(); track $index) {
+                <button class="slot" [class.filled]="!!s" (click)="openTile(s)">
+                    @if (!!s) {
+                    <img class="thumb" [src]="s.poster" [alt]="s.title">
+                    <span class="caption">{{ s.title }}</span>
+                    }
+                </button>
                 }
             </div>
-        </section>
+        </div>
 
-        <section class="section w-100" style="min-height: 265px;">
-            <div class="section-head">
-                <h4 class="title">آخرین فعالیت های من </h4>
+        <div class="paper-footer justify-content-center">
+            <div class="nameplate">
+                <i class="user-ico"></i>
+                <span class="uname">{{ username || 'کاربر' }}</span>
             </div>
+            <img class="sticker" src="images/tehran.png" alt="تهران">
+        </div>
+    </section>
+    <!-- } -->
 
-            <div class="filmstrip">
-                @for (a of activities; track $index) {
-                <div class="polaroid" [class.alt]="($index % 2)===1">
-                    <img src="images/location.jpg" alt="">
-                    <div class="caption">{{ a.title }}</div>
-                </div>
-                }
-            </div>
-        </section>
-    </div>
-    }
 </section>

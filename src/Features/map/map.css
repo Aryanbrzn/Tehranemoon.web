@@ -8,24 +8,21 @@
 .leaflet-container {
   background: transparent;
   direction: ltr !important;
+  z-index: 5;
+  position: relative;
 }
 .map-wrap {
   position: relative;
   height: 100vh;
+  overflow: hidden;
   width: 160vh;
   min-height: 100vh;
-}
-.map-frame {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 5;
-  background: url("/images/tehranMapBorder.png") center / 100% 100% no-repeat;
 }
 .map {
   position: absolute;
   inset: 0;
-  z-index: 5;
+  background: url("/images/frame.png") center / 106% 96% no-repeat;
+  overflow: hidden;
 }
 .legend {
   position: absolute;
