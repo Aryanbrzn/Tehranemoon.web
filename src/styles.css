@@ -120,3 +120,12 @@ body::after {
   z-index: -1;
   background: rgb(196 0 0 / 7%);
 }
+.app-modal-backdrop {
+  background: rgba(0, 0, 0, 0.35);
+}
+.app-modal-panel {
+  border-radius: 14px;
+  overflow: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  background: transparent; /* کامپوننت داخلی خودش استایل دارد */
+}

@@ -27,9 +27,9 @@
             <div class="lb-paper-title">
                 <button class="btn-back ps-3 pe-3" (click)="clearSelection()">x</button>
                 <div class="art">
-                    <img [src]="selected?.image" alt="">
+                    <img [src]="selected.image" alt="">
                     <div class="txt">
-                        <div class="title">{{ selected?.name }}</div>
+                        <div class="title">{{ selected.name }}</div>
                     </div>
                 </div>
             </div>
@@ -41,36 +41,10 @@
 
             <div class="lb-list">
                 @for (p of places; track $index) {
-                <div class="lb-row" [class.alt]="($index % 2)===1">
+                <div class="lb-row" [class.alt]="($index % 2)===1" (click)="openPlaceDetail(p.id)">
                     <!-- نوار کاغذی امتیاز -->
                     <div class="paper-strip" [attr.title]="!isAuthed() ? 'برای ثبت نظر وارد حساب خود شوید' : null">
-
-                        <!-- حالت ثبت نظر: ستاره‌ها قابل انتخاب -->
-                        @if (reviewingIndex === $index) {
-                        <div class="stars rateable" (mouseleave)="hoverRating=0">
-                            <button class="star-btn" *ngFor="let s of starRange; let i = index" type="button"
-                                [class.on]="(hoverRating || tempRating) > i" (mouseenter)="hoverRating = i+1"
-                                (click)="pickRating($index, i+1, p)">
-                            </button>
-                        </div>
-                        }
-                        <!-- حالت معمول: نمایش امتیاز ثابت -->
-                        @if (reviewingIndex !== $index) {
-                        <div class="stars" [style.--score]="(p.score*20)+'%'">
-                            <img src="images/fStar.png" width="20" alt="">
-                            <img src="images/fStar.png" width="20" alt="">
-                            <img src="images/fStar.png" width="20" alt="">
-                            <img src="images/eStar.png" width="20" alt="">
-                            <img src="images/eStar.png" width="20" alt="">
-                        </div>
-                        }
-
-                        <!-- دکمهٔ ثبت نظر (فقط وقتی لاگین است) -->
-                        @if (isAuthed()) {
-                        <button class="btn-review" type="button" (click)="startReview($index, p)">
-                            ثبت نظر
-                        </button>
-                        }
+                        <div class="stars" [style.--score]="(p.score*20)+'%'"></div>
                     </div>
 
                     <!-- پولاروید -->

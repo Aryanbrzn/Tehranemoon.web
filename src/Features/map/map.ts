@@ -2,6 +2,25 @@ import { ChangeDetectionStrategy, Component, ElementRef, inject, OnDestroy, OnIn
 import { MapPlaceDto, MapService } from '../services/map-service';
 import * as L from 'leaflet';
 
+// گوشه‌های تصویرِ نقشه (مختصات جغرافیایی تهران روی گوگل)
+// مقادیر را یک بار بر اساس تصویر خودت تنظیم کن:
+const CALIB_BBOX = {
+  // شمال‌غرب (lat بالا، lng چپ)
+  maxLat: 35.8331,   // نمونه: حوالی شمال تهران
+  minLat: 35.5727,   // نمونه: حوالی جنوب تهران
+  minLng: 51.1188,   // غرب
+  maxLng: 51.62388    // شرق
+};
+// تبدیل lat/lng به مختصات نرمال تصویر (0..1)
+function latLngTo01(lat: number, lng: number) {
+  const x01 = (lng - CALIB_BBOX.minLng) / (CALIB_BBOX.maxLng - CALIB_BBOX.minLng);
+  const y01 = (lat - CALIB_BBOX.minLat) / (CALIB_BBOX.maxLat - CALIB_BBOX.minLat);
+  // کلمپ
+  return {
+    x01: x01,
+    y01: y01
+  };
+}
 @Component({
   selector: 'app-map',
   imports: [],
@@ -35,16 +54,16 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.bounds = L.latLngBounds([0, 0], [this.H, this.W]);
     this.map = L.map(mapEl, {
-      crs: L.CRS.EPSG4326,
-      minZoom: -2.7,
-      maxZoom: 1,
+      crs: L.CRS.Simple,
+      minZoom: -2,
+      maxZoom: 3,
       zoomSnap: 0.25,
       zoomDelta: 0.5,
       zoomAnimation: false,
-      maxBoundsViscosity: 100,
+      maxBoundsViscosity: 0,
       inertia: false,
       wheelPxPerZoomLevel: 60,
-      preferCanvas: false,
+      preferCanvas: true,
       maxBounds: this.bounds,
     });
     L.imageOverlay(src, this.bounds).addTo(this.map);
@@ -57,28 +76,28 @@ export class MapComponent implements OnInit, OnDestroy {
     // this.map?.invalidateSize();
   }
   private renderPins(items: MapPlaceDto[]) {
-    // clear old
     this.groups.forEach(g => g.removeFrom(this.map));
     this.groups.clear();
 
     for (const p of items) {
-      if (p.x01 == null || p.y01 == null) continue;
-      const x = p.x01 * this.W, y = p.y01 * this.H;
-      const kind = p.categorySlug.toLowerCase();
+      if (p.lat == null || p.lng == null) continue;
+      const { x01, y01 } = latLngTo01(p.lat, p.lng);
+      const x = this.W * x01, y = y01 * this.H;
 
+      const kind = p.categorySlug.toLowerCase();
       let grp = this.groups.get(kind);
       if (!grp) { grp = L.layerGroup().addTo(this.map); this.groups.set(kind, grp); }
 
-      const iconUrl = kind === 'cafe' ? 'assets/map/icons/cafe.svg' : 'assets/map/icons/restaurant.svg';
-      const cls = kind;
+      const iconUrl = 'images/avatar.png';
       const icon = L.divIcon({
-        className: `pin ${cls}`,
+        className: `pin ${kind}`,
         html: `<img src="${iconUrl}" alt="">`,
         iconSize: [34, 34], iconAnchor: [17, 17]
       });
 
-      const m = L.marker([y, x], { icon }).bindTooltip(p.title, { direction: 'top', opacity: .9 });
-      m.addTo(grp);
+      L.marker([y, x], { icon })
+        .bindTooltip(p.title, { direction: 'top', opacity: .9 })
+        .addTo(grp);
     }
   }
 

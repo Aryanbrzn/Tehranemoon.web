@@ -5,10 +5,11 @@ import { UserPanelComponent } from '../userpanel/userpanel';
 import { CountdownComponent } from '../countdown/countdown';
 import { CategoriesService, CategoryDto } from '../services/categories.service';
 import { AuthService } from '../../Core/services/auth.service';  // ← چک لاگین
-import { tr } from 'motion/react-client';
+import { ModalService } from '../../Shared/modal/modal.service';
+import { PlaceDetailComponent } from '../place-detail/place-detail';
 
 type Cat = { id: number; name: string; slug: string; color: string; image: string };
-type PlaceRow = { title: string; image: string; score: number };
+type PlaceRow = { id: number, title: string; image: string; score: number };
 
 @Component({
   selector: 'app-home',
@@ -20,17 +21,18 @@ export class Home {
   @ViewChild(MapComponent) mapRef?: MapComponent;
   private catsApi = inject(CategoriesService);
   private auth = inject(AuthService);
+  private modal = inject(ModalService);
 
   categories: Cat[] = [];
   loading = true;
 
   // دادهٔ نمونه برای لیست لیدربورد (می‌تونی بعداً از API پرش کنی)
   places: PlaceRow[] = [
-    { title: 'کافه نمونه ۱', image: 'images/restaurant.jpg', score: 5 },
-    { title: 'کافه نمونه ۲', image: 'images/restaurant.jpg', score: 4 },
-    { title: 'کافه نمونه ۳', image: 'images/restaurant.jpg', score: 3 },
-    { title: 'کافه نمونه ۴', image: 'images/restaurant.jpg', score: 5 },
-    { title: 'کافه نمونه ۵', image: 'images/restaurant.jpg', score: 4 },
+    { id: 101, title: 'کافه نمونه ۱', image: 'images/restaurant.jpg', score: 5 },
+    { id: 101, title: 'کافه نمونه ۲', image: 'images/restaurant.jpg', score: 4 },
+    { id: 101, title: 'کافه نمونه ۳', image: 'images/restaurant.jpg', score: 3 },
+    { id: 101, title: 'کافه نمونه ۴', image: 'images/restaurant.jpg', score: 5 },
+    { id: 101, title: 'کافه نمونه ۵', image: 'images/restaurant.jpg', score: 4 },
   ];
 
   // --- وضعیت ثبت نظر/ستاره ---
@@ -50,7 +52,14 @@ export class Home {
     // return this.auth.isAuthenticated();
     return true;
   }
-
+  openPlaceDetail(placeId: number) {
+    this.modal.open(PlaceDetailComponent, {
+      data: { id: placeId },
+      width: 'min(920px, 92vw)',
+      maxHeight: '90vh',
+      panelClass: ['app-modal-panel', 'paper-modal'] // اختیاری برای تم بیشتر
+    });
+  }
   startReview(idx: number, row: PlaceRow) {
     if (!this.isAuthed()) return;
     this.reviewingIndex = idx;

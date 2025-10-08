@@ -444,3 +444,29 @@
   border-radius: 10px;
   font-weight: 800;
 }
+.paper-strip .stars {
+  position: relative;
+  display: inline-block;
+  font-size: 20px; /* اندازه ستاره‌ها */
+  line-height: 1;
+  letter-spacing: 6px; /* فاصله بین ستاره‌ها */
+}
+.paper-strip .stars::before {
+  content: "★★★★★";
+  color: #e6e1d7; /* رنگ ستاره خالی */
+  /* حاشیهٔ تیره (Outline) */
+  text-shadow: -1px 0 #111, 1px 0 #111, 0 -1px #111, 0 1px #111, 1px 1px #111,
+    -1px 1px #111, 1px -1px #111, -1px -1px #111;
+  opacity: 0.9;
+}
+.paper-strip .stars::after {
+  content: "★★★★★";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--score, 0%); /* پرشدن از چپ به راست */
+  overflow: hidden;
+  color: #ffd23f; /* زرد پر */
+  text-shadow: -1px 0 #111, 1px 0 #111, 0 -1px #111, 0 1px #111, 1px 1px #111,
+    -1px 1px #111, 1px -1px #111, -1px -1px #111;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.25));
+}

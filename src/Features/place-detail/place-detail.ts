@@ -5,7 +5,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MiniMapComponent } from '../mini-map.component/mini-map.component';
-
 import { PlaceDetailService, PlaceDetailDto, ReviewDto } from '../services/place-detail';
 import { CaptchaService, CaptchaChallenge } from '../../Core/services/captcha-service';
 import { ReviewsService } from '../services/reviews-service';
@@ -14,6 +13,7 @@ import { ReviewsService } from '../services/reviews-service';
 import { MockCaptchaService } from './mock-captcha.service';
 import { MockPlaceDetailService } from './mock-place-detail.service';
 import { MockReviewsService } from './mock-reviews.service';
+import { MODAL_DATA } from '../../Shared/modal/modal.tokens';
 
 type ReviewVM = ReviewDto & { replies?: ReviewDto[] };
 
@@ -37,11 +37,15 @@ export class PlaceDetailComponent {
   private reviewsApi = inject(ReviewsService);
   private captcha = inject(CaptchaService);
 
-  // place از API
+  private modalData = inject(MODAL_DATA, { optional: true }) as { id?: number } | null;
+
   readonly place = toSignal<PlaceDetailDto | null>(
-    this.route.paramMap.pipe(
-      map(pm => Number(pm.get('id'))),
-      switchMap(id => this.api.get(id))
+    (this.modalData?.id
+      ? this.api.get(this.modalData.id)
+      : this.route.paramMap.pipe(
+        map(pm => Number(pm.get('id'))),
+        switchMap(id => this.api.get(id))
+      )
     ),
     { initialValue: null }
   );
