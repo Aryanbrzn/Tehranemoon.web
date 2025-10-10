@@ -84,6 +84,23 @@
   mix-blend-mode: multiply;
   opacity: 0.9;
 }
+.rev.amirali {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 209, 102, 0.2),
+    rgba(255, 255, 255, 0.08)
+  );
+  border: 1px solid rgba(255, 209, 102, 0.6);
+  box-shadow: 0 6px 18px rgba(255, 209, 102, 0.15);
+}
+.rev.amirali .tag-amir {
+  background: #ffd166;
+  color: #222;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
 .hero-meta {
   display: flex;
   flex-direction: column;
@@ -221,8 +238,6 @@
   top: -10px;
   width: 48px;
   height: 18px;
-  background: url("/assets/ui/tape.png") center/cover no-repeat,
-    rgba(229, 220, 200, 0.9);
   transform: rotate(-8deg);
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
   border-radius: 2px;

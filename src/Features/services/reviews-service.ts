@@ -2,7 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { Httpclient } from '../../Core/services/httpclient';
 
 export type ReviewAuthorType = 'AmirAli' | 'User';
-
+export interface Paged<T> { items: T[]; total: number; page: number; pageSize: number; }
+export interface AddReviewBody { rating: number; text?: string; captchaToken: string; captchaAnswer: string; }
+export interface AddReplyBody { text: string; }
 export interface ReviewDto {
   id: number;
   author: string;
@@ -34,7 +36,9 @@ export class ReviewsService {
   }) {
     return this.http.postJson<{ id: number }>(`api/places/${placeId}/reviews`, dto);
   }
-
+  list(placeId: number, page = 1, pageSize = 10) {
+    return this.http.get<Paged<any>>('/api/reviews', { placeId, page, pageSize });
+  }
   /** ریپلای به یک نظر */
   addReply(reviewId: number, dto: {
     text: string;

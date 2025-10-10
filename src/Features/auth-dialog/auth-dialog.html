@@ -1,0 +1,71 @@
+<div class="auth-wrap">
+    <div class="tabs">
+        <button class="tab" [class.active]="mode()==='login'" (click)="switchMode('login')">ورود</button>
+        <button class="tab" [class.active]="mode()==='register'" (click)="switchMode('register')">ثبت‌نام</button>
+    </div>
+
+    <div class="error" *ngIf="err()">{{ err() }}</div>
+
+    <form *ngIf="mode()==='login'" [formGroup]="loginForm" (ngSubmit)="doLogin()" class="auth-form">
+        <input class="form-control" formControlName="userNameOrEmail" placeholder="ایمیل یا نام‌کاربری"
+            autocomplete="username">
+
+        <div class="pw-field">
+            <input class="form-control" [type]="showLoginPw() ? 'text' : 'password'" formControlName="password"
+                placeholder="رمز عبور" autocomplete="current-password">
+            <button type="button" class="pw-toggle" (click)="showLoginPw.set(!showLoginPw())"
+                [attr.aria-pressed]="showLoginPw()" [attr.aria-label]="showLoginPw() ? 'مخفی کردن رمز' : 'نمایش رمز'">
+                <svg *ngIf="!showLoginPw()" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                    <path d="M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
+                </svg>
+                <svg *ngIf="showLoginPw()" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                    <path
+                        d="M2 2l20 20-1.5 1.5-3.3-3.3A13.7 13.7 0 0 1 12 19C5 19 1 12 1 12a21.6 21.6 0 0 1 6.4-6.3L.5 3.5 2 2zm7.2 7.2a5 5 0 0 0 6.6 6.6l-1.6-1.6a3.5 3.5 0 0 1-3.4-3.4L9.2 9.2zM12 5c7 0 11 7 11 7a21.4 21.4 0 0 1-4.2 4.8l-1.1-1.1A13.2 13.2 0 0 0 22.2 12S18 5 12 5c-1.1 0-2.2.2-3.2.5l-1-1A13.8 13.8 0 0 1 12 5z" />
+                </svg>
+            </button>
+        </div>
+
+        <button class="btn-primary" type="submit" [disabled]="busy()">ورود</button>
+    </form>
+
+    <form *ngIf="mode()==='register'" [formGroup]="registerForm" (ngSubmit)="doRegister()" class="auth-form">
+        <input class="form-control" formControlName="userName" placeholder="نام‌کاربری *" autocomplete="username">
+        <input class="form-control" formControlName="email" placeholder="ایمیل (اختیاری)" autocomplete="email">
+        <input class="form-control" formControlName="phoneNumber" placeholder="شماره موبایل (اختیاری)" inputmode="tel">
+
+        <div class="pw-field">
+            <input class="form-control" [type]="showRegPw() ? 'text' : 'password'" formControlName="password"
+                placeholder="رمز عبور *" autocomplete="new-password">
+            <button type="button" class="pw-toggle" (click)="showRegPw.set(!showRegPw())"
+                [attr.aria-pressed]="showRegPw()" [attr.aria-label]="showRegPw() ? 'مخفی کردن رمز' : 'نمایش رمز'">
+                <!-- همان آیکون‌ها -->
+                <svg *ngIf="!showRegPw()" viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
+                </svg>
+                <svg *ngIf="showRegPw()" viewBox="0 0 24 24" width="20" height="20">
+                    <path
+                        d="M2 2l20 20-1.5 1.5-3.3-3.3A13.7 13.7 0 0 1 12 19C5 19 1 12 1 12a21.6 21.6 0 0 1 6.4-6.3L.5 3.5 2 2zm7.2 7.2a5 5 0 0 0 6.6 6.6l-1.6-1.6a3.5 3.5 0 0 1-3.4-3.4L9.2 9.2zM12 5c7 0 11 7 11 7a21.4 21.4 0 0 1-4.2 4.8l-1.1-1.1A13.2 13.2 0 0 0 22.2 12S18 5 12 5c-1.1 0-2.2.2-3.2.5l-1-1A13.8 13.8 0 0 1 12 5z" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="pw-field">
+            <input class="form-control" [type]="showRegPw2() ? 'text' : 'password'" formControlName="confirmPassword"
+                placeholder="تکرار رمز عبور *" autocomplete="new-password">
+            <button type="button" class="pw-toggle" (click)="showRegPw2.set(!showRegPw2())"
+                [attr.aria-pressed]="showRegPw2()" [attr.aria-label]="showRegPw2() ? 'مخفی کردن رمز' : 'نمایش رمز'">
+                <svg *ngIf="!showRegPw2()" viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
+                </svg>
+                <svg *ngIf="showRegPw2()" viewBox="0 0 24 24" width="20" height="20">
+                    <path
+                        d="M2 2l20 20-1.5 1.5-3.3-3.3A13.7 13.7 0 0 1 12 19C5 19 1 12 1 12a21.6 21.6 0 0 1 6.4-6.3L.5 3.5 2 2zm7.2 7.2a5 5 0 0 0 6.6 6.6l-1.6-1.6a3.5 3.5 0 0 1-3.4-3.4L9.2 9.2zM12 5c7 0 11 7 11 7a21.4 21.4 0 0 1-4.2 4.8l-1.1-1.1A13.2 13.2 0 0 0 22.2 12S18 5 12 5c-1.1 0-2.2.2-3.2.5l-1-1A13.8 13.8 0 0 1 12 5z" />
+                </svg>
+            </button>
+        </div>
+
+        <button class="btn-primary" type="submit" [disabled]="busy()">ثبت‌نام</button>
+    </form>
+
+    <button class="btn-ghost close-btn" type="button" (click)="close()">بستن</button>
+</div>

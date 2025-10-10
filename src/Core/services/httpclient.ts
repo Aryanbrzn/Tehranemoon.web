@@ -18,7 +18,7 @@ export class Httpclient {
     const url = this.url(path);
     const httpParams = this.buildHttpParams(params);
     return this.http.get<T>(url, { params: httpParams })
-      .pipe(this.deepEscapeOperator<T>());
+    // .pipe(this.deepEscapeOperator<T>());
   }
 
   delete<T>(path: string, params?: QueryParams) {
@@ -28,10 +28,10 @@ export class Httpclient {
       .pipe(this.deepEscapeOperator<T>());
   }
 
-  postJson<T>(path: string, body: any) {
+  postJson<T>(path: string, body: any, opts?: { withCredentials?: boolean }) {
     const url = this.url(path);
     const clean = this.sanitizeOutbound(body);
-    return this.http.post<T>(url, clean)
+    return this.http.post<T>(url, clean, { withCredentials: !!opts?.withCredentials })
       .pipe(this.deepEscapeOperator<T>());
   }
 

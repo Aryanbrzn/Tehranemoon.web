@@ -3,7 +3,9 @@
   direction: rtl;
   padding: 16px;
   display: grid;
+  position: relative;
   place-items: center;
+  padding-bottom: 150px;
 }
 .paper {
   background: radial-gradient(#f7f5ed, #efe9dc);
@@ -288,4 +290,134 @@
 .stars-css.small {
   font-size: 14px;
   letter-spacing: 2px;
+}
+/* وقتی لاگین نیستیم، بک‌گراند پنل را بلور و محو کن */
+.blurred {
+  filter: blur(8px) saturate(80%) brightness(0.9);
+  pointer-events: none; /* تا کلیک‌ها روی اورلی برود */
+}
+
+/* اورلی روی کل پنل */
+.auth-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  backdrop-filter: blur(4px);
+  background: rgba(15, 30, 44, 0.35);
+}
+
+.auth-overlay-card {
+  max-width: 520px;
+  width: min(92vw, 520px);
+  background: radial-gradient(#f7f5ed, #efe9dc);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  padding: 18px;
+  text-align: center;
+}
+
+.auth-overlay-card .title {
+  margin: 0 0 8px 0;
+  font-weight: 900;
+  color: #183049;
+}
+
+.auth-overlay-card .msg {
+  margin: 0 0 14px 0;
+  color: #183049;
+  opacity: 0.9;
+  line-height: 1.7;
+}
+
+/* مودال لاگین/ثبت‌نام */
+.auth-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 90;
+}
+
+.auth-modal {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 560px);
+  z-index: 99;
+}
+/* بلور نرم روی کل کارت */
+.blur-mask {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(8px) saturate(60%);
+  background: rgba(24, 48, 73, 0.35);
+  border-radius: 10px;
+  z-index: 10;
+}
+
+/* کارت دعوت به ورود */
+.auth-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  z-index: 11;
+  color: #eaeef4;
+  padding: 24px;
+}
+.auth-overlay h3 {
+  margin: 0 0 8px;
+}
+.auth-overlay p {
+  margin: 0 0 14px;
+  opacity: 0.9;
+}
+
+/* مودال */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+}
+.modal.auth-modal {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  color: #183049;
+  z-index: 1001;
+  width: min(92vw, 520px);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  padding: 16px;
+}
+.auth-modal .tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  justify-content: center;
+}
+.auth-modal .tab {
+  border: 2px solid #183049;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.auth-modal .tab.active,
+.auth-modal .tab:hover {
+  background: #183049;
+  color: #fff;
+}
+.auth-modal .auth-form {
+  display: grid;
+  gap: 10px;
+}
+.auth-modal .close-btn {
+  margin-top: 8px;
 }

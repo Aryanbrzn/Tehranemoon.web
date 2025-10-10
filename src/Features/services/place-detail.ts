@@ -2,7 +2,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Httpclient } from '../../Core/services/httpclient';
 
-export type AuthorType = 'AmirAli' | 'User';
+export type AuthorType = 1 | 2;
 
 export interface ReviewImageDto {
   id: number;
@@ -23,6 +23,7 @@ export interface ReviewDto {
   dislikes: number;
   reported?: boolean;
   images?: ReviewImageDto[];
+  createdAtJalali?: string;
 }
 
 export interface PlaceDetailDto {

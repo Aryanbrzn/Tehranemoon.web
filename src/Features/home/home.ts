@@ -12,7 +12,17 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { Footer } from "../../Shared/footer/footer";
 type Cat = { id: number; name: string; slug: string; color: string; image: string };
-type PlaceRow = { id: number, title: string; image: string; score: number, reviewCount: number, avgRating?: number, category: string };
+type PlaceRow = {
+  id: number,
+  title: string;
+  image: string;
+  score: number,
+  reviewCount: number,
+  avgRating?: number,
+  category: string
+  roundedAvg: number;
+  fiveStarCount: number;
+};
 
 @Component({
   selector: 'app-home',
@@ -64,11 +74,14 @@ export class Home {
     setTimeout(() => this.mapRef?.invalidateSize(), 650);
     this.refreshPlaces();
   }
+
   clearSelection() {
     this.selected = undefined;
     this.mapRef?.filterByCategory(undefined);
     setTimeout(() => this.mapRef?.invalidateSize(), 350);
-    this.places = [];
+    // اگر کاربر در حال جست‌وجوست و >=3 حرف دارد، نتایج سراسری را نشان بده
+    if (this.searchText.trim().length >= 3) this.refreshPlaces();
+    else this.places = [];
   }
 
   // --- Search ---
@@ -76,20 +89,34 @@ export class Home {
 
   private refreshPlaces() {
     const q = this.searchText.trim();
-    const cat = q ? undefined : this.selected?.slug;
-    if (!cat && !q) { this.places = []; return; }
+
+    // اگر کمتر از ۳ حرف است: هیچ درخواستی نفرست و لیست را خالی کن
+    if (q && q.length < 3) { this.places = []; return; }
+
+    // اگر عبارت جست‌وجو داریم، بین همهٔ دسته‌ها بگردیم (categoryId را نفرستیم)
+    // اگر جست‌وجو نداریم، فقط دستهٔ انتخاب‌شده را بفرستیم
+    const categoryId = q ? undefined : this.selected?.id;
+    if (!categoryId && !q) { this.places = []; return; }
 
     this.loadingPlaces = true;
-    this.lbApi.get(this.selected?.id ?? 0).subscribe({
+    this.lbApi.get(categoryId, q).subscribe({
       next: list => {
-        this.places = list.map(x => ({
-          id: x.id,
-          title: x.title,
-          category: x.categorySlug,
-          image: x.coverImageUrl || 'images/restaurant.png',
-          score: x.avgRating ?? 0,
-          reviewCount: x.reviewCount
-        }));
+        this.places = list.map(x => {
+          const avg = x.avgRating ?? 0;
+          const rounded = Math.round(avg); // 2.6→3 ، 2.4→2
+          return {
+            id: x.id,
+            title: x.title,
+            category: x.categorySlug,
+            image: x.coverImageUrl
+              ? x.coverImageUrl
+              : 'images/restaurant.png',
+            reviewCount: x.reviewCount,
+            avgRating: avg,
+            roundedAvg: rounded,
+            fiveStarCount: x.fiveStarCount
+          } as PlaceRow;
+        });
         this.loadingPlaces = false;
       },
       error: _ => { this.places = []; this.loadingPlaces = false; }
@@ -122,7 +149,7 @@ export class Home {
 
   private toCat = (x: CategoryDto & Record<string, any>): Cat => {
     const img = x.thumbUrl ?? x.thumbUrl ?? x.imageUrl ?? x.imageUrl ?? 'images/location.png';
-    return { id: x.id, name: x.name, slug: x.slug, image: img, color: this.pickColor(x.slug) };
+    return { id: x.id, name: x.name, slug: x.slug, image: 'http://localhost:5057/' + img, color: this.pickColor(x.slug) };
   };
   private pickColor(slug: string): string {
     const map: Record<string, string> = { cafe: '#b24bff', restaurant: '#ff7a3d', park: '#4caf50' };

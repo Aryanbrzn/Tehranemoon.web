@@ -1,9 +1,10 @@
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { OverlayRef } from '@angular/cdk/overlay';
 
 export class ModalRef<R = unknown> {
     private readonly _afterClosed = new Subject<R | undefined>();
-    afterClosed$ = this._afterClosed.asObservable();
+    readonly afterClosed$ = this._afterClosed.asObservable();
+    afterClosed(): Observable<R | undefined> { return this.afterClosed$; }
 
     constructor(private overlayRef: OverlayRef) { }
 

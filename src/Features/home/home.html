@@ -2,10 +2,7 @@
 
 <div class="map-page container-fluid w-100" [class.is-selected]="!!selected">
     <div class="panel map-panel">
-        <app-map (placeClick)="openPlaceDetail($event)" [iconMap]=" {cafe: 'images/images/location.png',
-    restaurant: 'images/images/location.png',
-    park: 'images/images/location.png',
-    default: 'images/images/location.png'}"></app-map>
+        <app-map (placeClick)="openPlaceDetail($event)"></app-map>
     </div>
     @if (!selected) {
     <aside class="panel cats-panel">
@@ -38,7 +35,8 @@
         </div>
 
         <div class="lb-search">
-            <input placeholder="جست وجو" style="direction: rtl;" [(ngModel)]="searchText" (keyup.enter)="doSearch()" />
+            <input placeholder="لطفاً حداقل سه حرف را وارد کنید" style="direction: rtl;" [(ngModel)]="searchText"
+                (keyup)="doSearch()" />
             <button class="icon d-flex justify-content-center align-items-center pt-1" (click)="doSearch()">
                 <fa-icon [icon]="faMagnify" style="color: #fff;"></fa-icon>
             </button>
@@ -51,9 +49,12 @@
             @for (p of places; track p.id) {
             <div class="lb-row" [class.alt]="($index % 2)===1" (click)="openPlaceDetail(p.id)">
                 <div class="paper-strip">
-                    <span class="stars" [style.--score]="(((p.avgRating ?? 0) / 5) * 100) + '%'"></span>
-                    <small style="margin-inline-start:8px;opacity:.75">
+                    <span class="stars" [style.--score]="((p.roundedAvg / 5) * 100) + '%'"></span>
+                    <small class="five-count" [title]="'تعداد 5 ستاره ها'"
+                        style="margin-inline-start:8px;opacity:.85;cursor:help;">
+                        ({{ p.fiveStarCount }})
                     </small>
+
 
                 </div>
 

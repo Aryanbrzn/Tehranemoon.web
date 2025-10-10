@@ -1,39 +1,15 @@
-<section class="polaroid-profile container-fluid">
+<section class="polaroid-profile container-fluid" #captureEl>
 
-    <!-- @if (!isAuthed()) {
-    <section class="paper auth-card">
-        <div class="section-head d-flex justify-content-center">
-            <h4 class="title">ورود / ثبت‌نام</h4>
-        </div>
+    @if (!isAuthed()) {
+    <div class="blur-mask"></div>
+    <div class="auth-overlay">
+        <h3>ورود/ثبت‌نام</h3>
+        <p>با نداشتن حساب کاربری ,نمیتونی از تمام قابلیت های تهرانمون استفاده کنی !</p>
+        <button class="btn-primary" (click)="openAuth('login')">ورود یا ثبت‌نام</button>
+    </div>
+    }
 
-        <div class="tabs">
-            <button class="tab" [class.active]="mode()==='login'" (click)="switchMode('login')">ورود</button>
-            <button class="tab" [class.active]="mode()==='register'" (click)="switchMode('register')">ثبت‌نام</button>
-        </div>
-
-        @if (mode()==='login') {
-        <form [formGroup]="loginForm" (ngSubmit)="doLogin()" class="auth-form">
-            <input class="form-control" formControlName="userNameOrEmail" placeholder="ایمیل یا نام‌کاربری">
-            <input class="form-control" type="password" formControlName="password" placeholder="رمز عبور">
-            <button class="btn-primary" type="submit">ورود</button>
-        </form>
-        }
-
-        @if (mode()==='register') {
-        <form [formGroup]="registerForm" (ngSubmit)="doRegister()" class="auth-form">
-            <input class="form-control" formControlName="userName" placeholder="نام‌کاربری *">
-            <input class="form-control" formControlName="email" placeholder="ایمیل (اختیاری)">
-            <input class="form-control" formControlName="phoneNumber" placeholder="شماره موبایل (اختیاری)">
-            <input class="form-control" type="password" formControlName="password" placeholder="رمز عبور *">
-            <input class="form-control" type="password" formControlName="confirmPassword"
-                placeholder="تکرار رمز عبور *">
-            <button class="btn-primary" type="submit">ثبت‌نام</button>
-        </form>
-        }
-    </section>
-    } -->
-
-    <section class="paper board-wrap">
+    <section class="paper board-wrap" [class.blurred]="!isAuthed() ">
 
         <div class="board d-flex flex-column">
             @for (category of categories; track $index) {
@@ -57,7 +33,11 @@
             <img class="sticker" src="images/tehran.png" alt="تهران">
             <div class="nameplate">
                 <i class="user-ico"></i>
-                <span class="uname">{{ username || 'کاربر' }}</span>
+                <span class="uname">{{ userName() || 'کاربر' }}</span>
+            </div>
+            <div style="display:flex; gap:8px; margin-inline-start:12px;" data-no-capture>
+                <button type="button" class="btn-primary" (click)="downloadPanel()">دانلود</button>
+                <button type="button" class="btn-ghost" (click)="sharePanel()">اشتراک‌گذاری</button>
             </div>
         </div>
     </section>

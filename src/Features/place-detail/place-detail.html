@@ -1,6 +1,5 @@
 <section class="place-page" dir="rtl">
 
-    <!-- هدر: کاور + عنوان و اکشن‌ها -->
     <header class="hero">
         <div class="cover">
             <img [src]="place()?.coverImageUrl || 'images/location.png'" alt="">
@@ -59,7 +58,6 @@
         </div>
         }
     </header>
-    <!-- گالری پولاروید -->
     <section class="section">
         <h4 class="sec-title">گالری</h4>
         <div class="filmstrip">
@@ -72,8 +70,6 @@
             }
         </div>
     </section>
-
-    <!-- توضیحات -->
     @if (place()?.description) {
     <section class="section">
         <h4 class="sec-title">دربارهٔ مکان</h4>
@@ -81,35 +77,58 @@
     </section>
     }
 
-    <!-- نظرات (Threaded) -->
     <section class="section">
         <div class="sec-head">
             <h4 class="sec-title">نظرات</h4>
         </div>
 
         <div class="reviews">
-            @for (r of reviews(); track r.id) {
-            <article class="rev" [class.amirali]="r.authorType==='AmirAli'">
-                <header>
-                    <div class="author">
-                        @if (r.authorType==='AmirAli') { <span class="tag-amir">امیرعلی</span> }
-                        {{ r.author }}
-                    </div>
 
+            <!-- ⭐ امیرعلی همیشه اول -->
+            @if (amirReview()) {
+            @let r = amirReview()!;
+            <article class="rev amirali">
+                <header>
+                    <div class="author"><span class="tag-amir">AmirAli</span> {{ r.author }}</div>
                     <div class="rate-rtl readonly">
                         @for (v of [1,2,3,4,5]; track v) {
-                        <span class="star" [class.filled]="v <= r.rating">
-                            <span class="star-shape"></span>
-                        </span>
+                        <span class="star" [class.filled]="v <= r.rating"><span class="star-shape"></span></span>
                         }
                     </div>
-
-                    <span class="when">{{ r.createdAtUtc | date:'short' }}</span>
+                    <!-- <span class="when">{{ r.createdAtJalali }}</span> -->
                 </header>
 
                 <p class="text" [innerText]="r.text"></p>
 
-                <!-- گالری؛ برای همه اگر عکس دارند، مخصوصاً امیرعلی -->
+                @if (r.images?.length) {
+                <div class="filmstrip">
+                    @for (im of r.images; track im.id) {
+                    <div class="polaroid mini" (click)="openLightbox(reviewImageUrls(r), $index)">
+                        <img [src]="im.url" alt="">
+                        <div class="caption">{{ r.author }}</div>
+                    </div>
+                    }
+                </div>
+                }
+                <!-- ریپلای/گزارش برای امیرعلی نداریم -->
+            </article>
+            }
+
+            <!-- بقیه کاربران -->
+            @for (r of userReviews(); track r.id) {
+            <article class="rev">
+                <header>
+                    <div class="author">{{ r.author }}</div>
+                    <div class="rate-rtl readonly">
+                        @for (v of [1,2,3,4,5]; track v) {
+                        <span class="star" [class.filled]="v <= r.rating"><span class="star-shape"></span></span>
+                        }
+                    </div>
+                    <!-- <span class="when">{{ r.createdAtJalali }}</span> -->
+                </header>
+
+                <p class="text" [innerText]="r.text"></p>
+
                 @if (r.images?.length) {
                 <div class="filmstrip">
                     @for (im of r.images; track im.id) {
@@ -121,19 +140,14 @@
                 </div>
                 }
 
-                <!-- 👇 لایک/دیس‌لایک -->
                 <div class="rev-reactions">
                     <button class="btn-like" (click)="like(r.id)" [disabled]="likeBusyId===r.id">👍 {{ r.likes
                         }}</button>
                     <button class="btn-dislike" (click)="dislike(r.id)" [disabled]="likeBusyId===r.id">👎 {{ r.dislikes
                         }}</button>
-
-                    <!-- 👇 ریپلای/گزارش فقط برای غیر امیرعلی -->
-                    @if (r.authorType!=='AmirAli') {
                     <span class="spacer"></span>
-                    <button class="btn-link" (click)="startReply(r.id)">پاسخ</button>
-                    <button class="btn-link danger" (click)="report(r.id)">گزارش</button>
-                    }
+                    <!-- <button class="btn-link" (click)="startReply(r.id)">پاسخ</button>
+                    <button class="btn-link danger" (click)="report(r.id)">گزارش</button> -->
                 </div>
 
                 @if (replyingFor===r.id) {
@@ -152,11 +166,10 @@
                     <article class="reply">
                         <header>
                             <div class="author">{{ rp.author }}</div>
-                            <span class="when">{{ rp.createdAtUtc | date:'short' }}</span>
+                            <span class="when">{{ rp.createdAtJalali }}</span>
                         </header>
                         <p class="text" [innerText]="rp.text"></p>
-                        <div class="rev-actions">
-                            <button class="btn-link danger" (click)="report(rp.id)">گزارش</button>
+                        <div class="rev-actions"><button class="btn-link danger" (click)="report(rp.id)">گزارش</button>
                         </div>
                     </article>
                     }
@@ -165,51 +178,9 @@
             </article>
             }
         </div>
-
-        <!-- ثبت امتیاز + متن (امتیاز فوری ذخیره می‌شود) -->
-        <div class="add-review">
-            <h5 class="sec-title">ثبت نظر شما</h5>
-
-            <div class="form-row">
-                <label>امتیاز:</label>
-
-                <!-- هاور از راست به چپ؛ DOM: 1..5 اما چیدمان معکوس -->
-                <div class="rate-rtl" (mouseleave)="hoverRating = 0">
-                    @for (v of [1,2,3,4,5]; track v) {
-                    <button type="button" class="star" [class.filled]="(hoverRating || selectedRating) >= v"
-                        (mouseenter)="hoverRating = v" (click)="setRating(v)" aria-label="{{v}} از ۵">
-                        <span class="star-shape"></span>
-                    </button>
-                    }
-                </div>
-            </div>
-
-
-            <div class="form-row">
-                <label>نظر:</label>
-                <textarea rows="3" dir="rtl" [(ngModel)]="rvForm.text"
-                    placeholder="(اختیاری) نظر خود را بنویسید…"></textarea>
-            </div>
-
-            <div class="form-row captcha">
-                <label>کد امنیتی:</label>
-                <div class="cap-box">
-                    @if (cap) { <img [src]="cap!.imageUrl" alt="captcha"> }
-                    <button class="btn ghost" type="button" (click)="refreshCaptcha()">
-                        <fa-icon [icon]="faRefresh"></fa-icon>
-                    </button>
-                </div>
-                <input dir="ltr" maxlength="8" [(ngModel)]="rvForm.captchaAnswer" placeholder="پاسخ کپچا">
-            </div>
-
-            <div class="form-actions">
-                <button class="btn" [disabled]="rvBusy" (click)="submitReview()">ارسال نظر</button>
-                @if (rvError) { <span class="err">{{ rvError }}</span> }
-            </div>
-        </div>
     </section>
 
-    <!-- لایت‌باکس گالری -->
+
     @if (lbxOpen) {
     <div class="lbx-backdrop" (click)="closeLightbox()"></div>
     <div class="lbx" role="dialog" aria-modal="true">

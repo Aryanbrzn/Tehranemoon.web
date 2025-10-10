@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, inject, effect } from '@a
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MiniMapComponent } from '../mini-map.component/mini-map.component';
 import { PlaceDetailService, PlaceDetailDto, ReviewDto } from '../services/place-detail';
@@ -11,18 +10,16 @@ import { ReviewsService } from '../services/reviews-service';
 import { MODAL_DATA } from '../../Shared/modal/modal.tokens';
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faCamera, faHeart, faRefresh } from '@fortawesome/free-solid-svg-icons'
+import { FavoritesService } from '../services/favorites.service';
 type ReviewVM = ReviewDto & { replies?: ReviewDto[] };
 
 @Component({
   selector: 'app-place-detail',
   standalone: true,
-  imports: [MiniMapComponent, DatePipe, FormsModule, FontAwesomeModule],
+  imports: [MiniMapComponent, FormsModule, FontAwesomeModule],
   templateUrl: './place-detail.html',
   styleUrl: './place-detail.css',
   providers: [
-    // { provide: PlaceDetailService, useClass: MockPlaceDetailService },
-    // { provide: ReviewsService, useClass: MockReviewsService },
-    // { provide: CaptchaService, useClass: MockCaptchaService },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -35,6 +32,8 @@ export class PlaceDetailComponent {
   private api = inject(PlaceDetailService);
   private reviewsApi = inject(ReviewsService);
   private captcha = inject(CaptchaService);
+  private favApi = inject(FavoritesService);
+
   private modalData = inject(MODAL_DATA, { optional: true }) as { id?: number } | null;
   likeBusyId: number | null = null;
   favOn = false;
@@ -54,22 +53,25 @@ export class PlaceDetailComponent {
     return Math.max(0, Math.min(5, Math.floor(a)));
   };
   // ---------- reviews (threaded) ----------
+
   readonly reviews = computed<ReviewVM[]>(() => {
     const flat = (this.place()?.reviews ?? []).slice();
+
+    // threading
     const byParent = new Map<number | null, ReviewDto[]>();
     for (const r of flat) {
       const k = (r.parentId ?? null);
-      const bucket = byParent.get(k) ?? [];
-      bucket.push(r);
-      byParent.set(k, bucket);
+      (byParent.get(k) ?? byParent.set(k, []).get(k)!).push(r);
     }
-    const roots = (byParent.get(null) ?? []);
-    roots.sort((a, b) => {
-      const pa = a.authorType === 'AmirAli' ? 0 : 1;
-      const pb = b.authorType === 'AmirAli' ? 0 : 1;
+
+    // ریشه‌ها: امیرعلی اول، بعد بقیه بر اساس تاریخ
+    const roots = (byParent.get(null) ?? []).slice().sort((a, b) => {
+      const pa = a.authorType === 1 ? 0 : 1;
+      const pb = b.authorType === 1 ? 0 : 1;
       if (pa !== pb) return pa - pb;
       return +new Date(b.createdAtUtc) - +new Date(a.createdAtUtc);
     });
+
     return roots.map(r => ({
       ...r,
       replies: (byParent.get(r.id) ?? []).sort((a, b) => +new Date(a.createdAtUtc) - +new Date(b.createdAtUtc))
@@ -80,7 +82,8 @@ export class PlaceDetailComponent {
   favLabel = 'افزودن به لیست مورد علاقه';
   favTitle = '';
   favDisabled = false;
-
+  amirReview = computed(() => this.reviews().find(r => r.authorType == 1) || null);
+  userReviews = computed(() => this.reviews().filter(r => r.authorType != 1));
   private FAVORITES_KEY = 'fav/v1'; // { [categorySlug]: number[] }
 
   private readFav(): Record<string, number[]> {
@@ -92,24 +95,25 @@ export class PlaceDetailComponent {
   }
   private refreshFavState() {
     const p = this.place(); if (!p) return;
-    const slug = (p.categoryName || '').toString().trim();
-    const store = this.readFav();
-    const list = store[slug] ?? [];
-    const has = list.includes(p.id);
-    const left = Math.max(0, 5 - list.length);
-    this.favOn = has;
-    this.favLabel = has ? 'در علاقه‌مندی‌ها هست' : 'افزودن به لیست مورد علاقه';
-    this.favTitle = has ? 'قبلاً اضافه شده' : (left ? `می‌توانید ${left} مورد دیگر برای این دسته اضافه کنید` : 'حداکثر ۵ مورد برای هر دسته');
-    this.favDisabled = !has && list.length >= 5;
+    this.favBusy = true;
+    this.favApi.has(p.id).subscribe({
+      next: has => { this.favOn = has; this.favBusy = false; },
+      error: _ => { this.favOn = false; this.favBusy = false; }
+    });
+    // Tooltip ساده
+    this.favLabel = this.favOn ? 'در علاقه‌مندی‌ها هست' : 'افزودن به لیست مورد علاقه';
   }
-
 
   like(reviewId: number) {
     if (this.likeBusyId) return;
     this.likeBusyId = reviewId;
     this.reviewsApi.like(reviewId).subscribe({
-      next: _ => this.refreshPlaceAfterAction(),
-      error: _ => this.likeBusyId = null
+      next: (res: any) => {
+        const r = (this.place()?.reviews ?? []).find(x => x.id === reviewId);
+        if (r) { r.likes = res.likes; r.dislikes = res.dislikes; (this as any).place.set(this.place()!); }
+        this.likeBusyId = null;
+      },
+      error: _ => { this.likeBusyId = null; }
     });
   }
 
@@ -117,30 +121,38 @@ export class PlaceDetailComponent {
     if (this.likeBusyId) return;
     this.likeBusyId = reviewId;
     this.reviewsApi.dislike(reviewId).subscribe({
-      next: _ => this.refreshPlaceAfterAction(),
-      error: _ => this.likeBusyId = null
+      next: (res: any) => {
+        const r = (this.place()?.reviews ?? []).find(x => x.id === reviewId);
+        if (r) { r.likes = res.likes; r.dislikes = res.dislikes; (this as any).place.set(this.place()!); }
+        this.likeBusyId = null;
+      },
+      error: _ => { this.likeBusyId = null; }
     });
   }
+
   private refreshPlaceAfterAction() {
     const p = this.place(); if (!p) { this.likeBusyId = null; return; }
     this.api.get(p.id).subscribe(np => { (this as any).place.set(np); this.likeBusyId = null; });
   }
-  toggleFavorite() {
-    const p = this.place(); if (!p) return;
-    const slug = (p.categoryName || '').toString().trim();
-    const store = this.readFav();
-    const list = store[slug] ?? [];
 
-    // اگر هست حذف؛ اگر نیست اضافه (با سقف ۵)
-    if (this.favOn) {
-      store[slug] = list.filter(id => id !== p.id);
-    } else {
-      if (list.length >= 5) { this.refreshFavState(); return; }
-      if (!list.includes(p.id)) list.push(p.id);
-      store[slug] = list;
-    }
-    this.writeFav(store);
-    this.refreshFavState();
+  toggleFavorite() {
+    const p = this.place(); if (!p || this.favBusy) return;
+    this.favBusy = true;
+
+    const done = (ok = true) => {
+      this.favBusy = false;
+      // وضعیت قلب را مجدد از سرور بخوان تا منبع واحد حقیقت باشد
+      this.refreshFavState();
+    };
+
+    const call$ = this.favOn ? this.favApi.remove(p.id) : this.favApi.add(p.id);
+    call$.subscribe({
+      next: () => done(),
+      error: (err) => {
+        if (err?.message?.includes('حداکثر ۳')) alert('حداکثر ۳ مورد در هر دسته می‌توانید ثبت کنید.');
+        done(false);
+      }
+    });
   }
 
   // همگام‌سازی وضعیت علاقه‌مندی وقتی place لود شد

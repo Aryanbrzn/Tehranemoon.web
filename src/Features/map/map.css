@@ -109,3 +109,41 @@
   height: 18px;
   filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.3));
 }
+/* پینِ مبتنی بر FA */
+.fa-pin {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 2px rgba(0, 0, 0, 0.05);
+  transform: translateZ(0); /* برای شفافیت بهتر */
+}
+.fa-pin i {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* رنگ‌بندی بر اساس دسته */
+.fa-pin.cafe i {
+  color: #b24bff;
+}
+.fa-pin.restaurant i {
+  color: #ff7a3d;
+}
+.fa-pin.park i {
+  color: #4caf50;
+}
+.fa-pin.default i {
+  color: #2f3e46;
+}
+
+/* اگر بخوای پس‌زمینه‌ی حباب هم بر اساس دسته عوض شه: */
+/*
+.fa-pin.cafe       { background: #f8f1ff; }
+.fa-pin.restaurant { background: #fff2ea; }
+.fa-pin.park       { background: #eef9f0; }
+*/

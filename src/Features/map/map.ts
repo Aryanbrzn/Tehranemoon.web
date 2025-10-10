@@ -28,10 +28,10 @@ export class MapComponent implements OnInit, OnDestroy {
 
   @Output() placeClick = new EventEmitter<number>();
   @Input() iconMap: Record<string, string> = {
-    cafe: 'images/images/location.png',
-    restaurant: 'images/images/location.png',
-    park: 'images/images/location.png',
-    default: 'images/images/location.png',
+    cafe: 'images/coffee.png',
+    restaurant: 'images/restaurant.png',
+    park: 'images/location.png',
+    default: 'images/location.png',
   };
 
   private el = inject(ElementRef<HTMLElement>);
@@ -92,7 +92,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
       this.applyBoundsAndRender();
 
-      // برای تغییرات بعدی اندازهٔ کانتینر (رسپانسیو)
       this.resizeObserver = new ResizeObserver((entries) => {
         for (const entry of entries) {
           if (entry.target === container) {
@@ -109,8 +108,6 @@ export class MapComponent implements OnInit, OnDestroy {
       this.resizeObserver.observe(container);
     });
   }
-
-  /** اعمال bounds صحیح بر اساس W/H فعلی و رندر مجدد پین‌ها */
   private applyBoundsAndRender() {
     this.bounds = L.latLngBounds([0, 0], [this.H, this.W]);
     this.overlay.setBounds(this.bounds);
@@ -118,15 +115,10 @@ export class MapComponent implements OnInit, OnDestroy {
     this.map.fitBounds(this.bounds, { animate: false });
     this.map.invalidateSize({ pan: false });
 
-    // داده‌ها را بگیر و پین‌ها را رندر کن
     this.data.getPlaces(['cafe', 'restaurant']).subscribe(items => this.renderPins(items));
   }
-
-  /** رندر مارکرها از داده‌های DB (lat/lng → x/y پیکسلی → Marker) */
   private renderPins(items: MapPlaceDto[]) {
     if (!this.W || !this.H) return;
-
-    // پاک‌سازی گروه‌های قبلی
     this.groups.forEach(g => g.removeFrom(this.map));
     this.groups.clear();
 
@@ -134,8 +126,6 @@ export class MapComponent implements OnInit, OnDestroy {
       if (p.lat == null || p.lng == null) continue;
 
       const { x01, y01 } = latLngTo01(p.lat, p.lng);
-
-      // توجه: اینجا دیگه «منفی» نداریم.
       const x = this.W * x01;
       const y = this.H * y01;
 
@@ -146,11 +136,8 @@ export class MapComponent implements OnInit, OnDestroy {
         this.groups.set(kind, grp);
       }
 
-
-      // آدرس آیکن با توجه به دسته
       const iconUrl = this.iconMap[kind] || this.iconMap;
 
-      // اگر می‌خواهی divIcon بماند:
       const icon = L.divIcon({
         className: `pin ${kind}`,
         html: `<img src="${iconUrl}" alt="${kind}" style="width:100%;height:100%;object-fit:contain">`,
@@ -158,14 +145,11 @@ export class MapComponent implements OnInit, OnDestroy {
         iconAnchor: [18, 18]
       });
 
-      // CRS.Simple → [y, x]
       const m = L.marker([y, x], { icon }).addTo(grp);
-      // کلیک مستقیم روی مارکر هم رویداد بده (برای باز کردن مودال بدون پاپ‌آپ)
       m.on('click', () => this.placeClick.emit(p.id));
     }
   }
 
-  /** نمایش فقط یک دسته (یا همه) */
   filterByCategory(slug?: string) {
     this.groups.forEach((g, k) => {
       if (!slug || k === slug) { g.addTo(this.map); } else { g.removeFrom(this.map); }
@@ -173,7 +157,6 @@ export class MapComponent implements OnInit, OnDestroy {
     setTimeout(() => this.map.invalidateSize(), 350);
   }
 
-  /** فیت به محدودهٔ یک دسته */
   fitToCategory(slug: string) {
     const g = this.groups.get(slug);
     if (!g) return;
@@ -181,7 +164,6 @@ export class MapComponent implements OnInit, OnDestroy {
     if (b && b.isValid()) this.map.fitBounds(b.pad(0.2));
   }
 
-  /** اگر لازم شد دستی صدا بزنی */
   invalidateSize() {
     this.map.invalidateSize();
   }
