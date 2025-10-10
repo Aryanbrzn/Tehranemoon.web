@@ -3,20 +3,33 @@
     <!-- هدر: کاور + عنوان و اکشن‌ها -->
     <header class="hero">
         <div class="cover">
-            <img [src]="place()?.coverImageUrl || 'images/location.jpg'" alt="">
+            <img [src]="place()?.coverImageUrl || 'images/location.png'" alt="">
             <div class="paper-frame"></div>
         </div>
 
         <div class="hero-meta">
-            <h2 class="title">{{ place()?.title }}</h2>
+            <div class="d-flex justify-content-between">
+                <h2 class="title">{{ place()?.title }}</h2>
+                <!-- علاقه‌مندی -->
+                <button class="fav-heart" type="button" [class.on]="favOn" [title]="favTitle" (click)="toggleFavorite()"
+                    [disabled]="favBusy">
+                    <fa-icon class="ico" [icon]="faheart"></fa-icon>
+                    <span class="sr-only">{{ favOn ? 'در علاقه‌مندی‌هاست' : 'افزودن به علاقه‌مندی' }}</span>
+                </button>
+            </div>
             <div class="sub">
                 <span class="cat">{{ place()?.categoryName }}</span>
                 @if (place()?.reviewCount) {
                 <span class="sep">•</span>
-                <span class="stars">★★★★★
-                    <i class="fill" [style.width]="((place()?.avgRating ?? 0)/5*100)+'%'"></i>
-                </span>
-                <span class="cnt">({{ place()?.reviewCount }})</span>
+                <!-- ستاره‌های CSS -->
+                <div class="rate-rtl">
+                    @for (v of [1,2,3,4,5]; track v) {
+                    <button type="button" class="star" [class.filled]="place()?.avgRating??0<=v"
+                        aria-label="{{v}} از ۵">
+                        <span class="star-shape"></span>
+                    </button>
+                    }
+                </div> <span class="cnt">({{ place()?.reviewCount }})</span>
                 }
             </div>
 
@@ -25,19 +38,33 @@
                 <a class="btn" [href]="'tel:'+place()?.phoneNumber">تماس</a>
                 }
                 @if (place()?.instagramUrl) {
-                <a class="btn" [href]="place()?.instagramUrl" target="_blank">اینستاگرام</a>
+                <a class="btn" [href]="place()?.instagramUrl" target="_blank">
+                    <fa-icon [icon]="facamera"></fa-icon>
+                    اینستاگرام</a>
                 }
                 <button class="btn" (click)="share()">اشتراک‌گذاری</button>
+
+
             </div>
         </div>
+        @if (hasCoord()) {
+        @let ll = parseLatLng(place()?.coordinates!);
+        <div class="hero-map">
+            <mini-map style="display:block;height:240px" [lat]="ll!.lat" [lng]="ll!.lng"
+                [title]="place()?.title || 'Location'"></mini-map>
+            <div class="nav-actions">
+                <a class="btn nav neshan" [href]="neshanDirectionUrl()" target="_blank">نشان</a>
+                <a class="btn nav gmaps" [href]="gmapsDirectionUrl()" target="_blank">Google Maps</a>
+            </div>
+        </div>
+        }
     </header>
-
     <!-- گالری پولاروید -->
     <section class="section">
         <h4 class="sec-title">گالری</h4>
         <div class="filmstrip">
             @for (img of place()?.images ?? []; track img.id) {
-            <div class="polaroid" [class.alt]="($index % 2)===1">
+            <div class="polaroid" [class.alt]="($index % 2)===1" (click)="openLightbox(placeImageUrls(), $index)">
                 <img [src]="img.url" alt="">
                 <div class="caption">{{ place()?.title }}</div>
                 <div class="idx">#{{ $index+1 }}</div>
@@ -68,15 +95,45 @@
                         @if (r.authorType==='AmirAli') { <span class="tag-amir">امیرعلی</span> }
                         {{ r.author }}
                     </div>
-                    <div class="stars small">★★★★★<i class="fill" [style.width]="(r.rating/5*100)+'%'"></i></div>
+
+                    <div class="rate-rtl readonly">
+                        @for (v of [1,2,3,4,5]; track v) {
+                        <span class="star" [class.filled]="v <= r.rating">
+                            <span class="star-shape"></span>
+                        </span>
+                        }
+                    </div>
+
                     <span class="when">{{ r.createdAtUtc | date:'short' }}</span>
                 </header>
 
                 <p class="text" [innerText]="r.text"></p>
 
-                <div class="rev-actions">
+                <!-- گالری؛ برای همه اگر عکس دارند، مخصوصاً امیرعلی -->
+                @if (r.images?.length) {
+                <div class="filmstrip">
+                    @for (im of r.images; track im.id) {
+                    <div class="polaroid mini" (click)="openLightbox(reviewImageUrls(r), $index)">
+                        <img [src]="im.url" alt="">
+                        <div class="caption">{{ r.author }}</div>
+                    </div>
+                    }
+                </div>
+                }
+
+                <!-- 👇 لایک/دیس‌لایک -->
+                <div class="rev-reactions">
+                    <button class="btn-like" (click)="like(r.id)" [disabled]="likeBusyId===r.id">👍 {{ r.likes
+                        }}</button>
+                    <button class="btn-dislike" (click)="dislike(r.id)" [disabled]="likeBusyId===r.id">👎 {{ r.dislikes
+                        }}</button>
+
+                    <!-- 👇 ریپلای/گزارش فقط برای غیر امیرعلی -->
+                    @if (r.authorType!=='AmirAli') {
+                    <span class="spacer"></span>
                     <button class="btn-link" (click)="startReply(r.id)">پاسخ</button>
                     <button class="btn-link danger" (click)="report(r.id)">گزارش</button>
+                    }
                 </div>
 
                 @if (replyingFor===r.id) {
@@ -109,31 +166,38 @@
             }
         </div>
 
-        <!-- فرم ثبت نظر -->
+        <!-- ثبت امتیاز + متن (امتیاز فوری ذخیره می‌شود) -->
         <div class="add-review">
             <h5 class="sec-title">ثبت نظر شما</h5>
 
             <div class="form-row">
                 <label>امتیاز:</label>
-                <select [(ngModel)]="rvForm.rating">
-                    <option [ngValue]="5">۵</option>
-                    <option [ngValue]="4">۴</option>
-                    <option [ngValue]="3">۳</option>
-                    <option [ngValue]="2">۲</option>
-                    <option [ngValue]="1">۱</option>
-                </select>
+
+                <!-- هاور از راست به چپ؛ DOM: 1..5 اما چیدمان معکوس -->
+                <div class="rate-rtl" (mouseleave)="hoverRating = 0">
+                    @for (v of [1,2,3,4,5]; track v) {
+                    <button type="button" class="star" [class.filled]="(hoverRating || selectedRating) >= v"
+                        (mouseenter)="hoverRating = v" (click)="setRating(v)" aria-label="{{v}} از ۵">
+                        <span class="star-shape"></span>
+                    </button>
+                    }
+                </div>
             </div>
+
 
             <div class="form-row">
                 <label>نظر:</label>
-                <textarea rows="3" dir="rtl" [(ngModel)]="rvForm.text" placeholder="نظر خود را بنویسید..."></textarea>
+                <textarea rows="3" dir="rtl" [(ngModel)]="rvForm.text"
+                    placeholder="(اختیاری) نظر خود را بنویسید…"></textarea>
             </div>
 
             <div class="form-row captcha">
                 <label>کد امنیتی:</label>
                 <div class="cap-box">
                     @if (cap) { <img [src]="cap!.imageUrl" alt="captcha"> }
-                    <button class="btn ghost" type="button" (click)="refreshCaptcha()">تغییر کد</button>
+                    <button class="btn ghost" type="button" (click)="refreshCaptcha()">
+                        <fa-icon [icon]="faRefresh"></fa-icon>
+                    </button>
                 </div>
                 <input dir="ltr" maxlength="8" [(ngModel)]="rvForm.captchaAnswer" placeholder="پاسخ کپچا">
             </div>
@@ -145,17 +209,15 @@
         </div>
     </section>
 
-    <!-- لوکیشن و مسیریابی -->
-    @if (hasCoord()) {
-    <section class="section">
-        <h4 class="sec-title">موقعیت مکانی</h4>
-        @let ll = parseLatLng(place()?.coordinates!);
-        <mini-map [lat]="ll!.lat" [lng]="ll!.lng" [title]="place()?.title || 'Location'"></mini-map>
-        <div class="nav-actions">
-            <a class="btn nav neshan" [href]="neshanDirectionUrl()" target="_blank">نشان</a>
-            <a class="btn nav gmaps" [href]="gmapsDirectionUrl()" target="_blank">Google Maps</a>
-        </div>
-    </section>
+    <!-- لایت‌باکس گالری -->
+    @if (lbxOpen) {
+    <div class="lbx-backdrop" (click)="closeLightbox()"></div>
+    <div class="lbx" role="dialog" aria-modal="true">
+        <button class="lbx-nav prev" (click)="prevLbx($event)"></button>
+        <img [src]="lbxItems[lbxIndex]" alt="">
+        <button class="lbx-nav next" (click)="nextLbx($event)"></button>
+        <button class="lbx-close" (click)="closeLightbox()">×</button>
+    </div>
     }
 
 </section>

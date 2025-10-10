@@ -33,7 +33,7 @@ export class ModalService {
             hasBackdrop: true,
             backdropClass: cfg.backdropClass ?? 'app-modal-backdrop',
             panelClass: cfg.panelClass ?? 'app-modal-panel',
-            width: cfg.width, height: cfg.height,
+            // width: cfg.width, height: cfg.height,
             maxWidth: cfg.maxWidth ?? '95vw',
             maxHeight: cfg.maxHeight ?? '90vh',
             positionStrategy: position,

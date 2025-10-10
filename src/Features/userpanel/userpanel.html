@@ -33,38 +33,33 @@
     </section>
     } -->
 
-    <!-- @if (isAuthed()) { -->
     <section class="paper board-wrap">
 
-        <div class="board">
-
-            <ul class="rail-icons">
-                <li><img src="images/business.jpg" alt="ایده"></li>
-                <li><img src="images/business.jpg" alt="کافه"></li>
-                <li><img src="images/business.jpg" alt="شهر"></li>
-                <li><img src="images/business.jpg" alt="غذا"></li>
-            </ul>
-
-            <div class="slot-grid">
-                @for (s of grid(); track $index) {
-                <button class="slot" [class.filled]="!!s" (click)="openTile(s)">
-                    @if (!!s) {
-                    <img class="thumb" [src]="s.poster" [alt]="s.title">
-                    <span class="caption">{{ s.title }}</span>
-                    }
+        <div class="board d-flex flex-column">
+            @for (category of categories; track $index) {
+            <div class="board-row d-flex flex-row  flex-nowrap w-100 mt-2" style="height: 100%;gap:5px">
+                <button class="slot ms-4" (click)="openTile(category.title??'دسته بندی')"
+                    style="box-shadow: none ;outline: none;">
+                    <img class="thumb m-auto" [src]="category.poster" [alt]="category.title??'دسته بندی'">
+                </button>
+                @for (fav of Favorites(category.catId); track $index) {
+                <button class="slot" (click)="openTile(fav.name??'دسته بندی')">
+                    <img class="thumb" [src]="category.poster" [alt]="fav.name??'دسته بندی'">
+                    <span class="caption">{{ fav.name??'دسته بندی' }}</span>
                 </button>
                 }
             </div>
+            }
+
         </div>
 
         <div class="paper-footer justify-content-center">
+            <img class="sticker" src="images/tehran.png" alt="تهران">
             <div class="nameplate">
                 <i class="user-ico"></i>
                 <span class="uname">{{ username || 'کاربر' }}</span>
             </div>
-            <img class="sticker" src="images/tehran.png" alt="تهران">
         </div>
     </section>
-    <!-- } -->
 
 </section>

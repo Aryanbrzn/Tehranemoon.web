@@ -1,85 +1,95 @@
-<div class="d-flex flex-column">
+<app-countdown [targetUtc]="'2027-04-10T00:00:00Z'" label="تا واگذاری سایت"> </app-countdown>
 
-    <app-countdown [targetUtc]="'2027-04-10T00:00:00Z'" label="تا واگذاری سایت"> </app-countdown>
-
-    <div class="map-page container-fluid w-100" [class.is-selected]="!!selected">
-        <div class="panel map-panel">
-            <app-map></app-map>
+<div class="map-page container-fluid w-100" [class.is-selected]="!!selected">
+    <div class="panel map-panel">
+        <app-map (placeClick)="openPlaceDetail($event)" [iconMap]=" {cafe: 'images/images/location.png',
+    restaurant: 'images/images/location.png',
+    park: 'images/images/location.png',
+    default: 'images/images/location.png'}"></app-map>
+    </div>
+    @if (!selected) {
+    <aside class="panel cats-panel">
+        <div class="cats-list">
+            @if (loading) {
+            <div class="alert warning" style="opacity:.7;padding:8px">در حال بارگذاری...</div>
+            } @else {
+            @for (c of categories; track c.id) {
+            <button class="cat">
+                <img [src]="c.image" alt="" (click)="select(c)" />
+                <div class="meta">
+                    <span class="name">{{ c.name }}</span>
+                </div>
+            </button>
+            }
+            }
         </div>
-        @if (!selected) {
-        <aside class="panel cats-panel">
-            <div class="cats-list">
-                @if (loading) {
-                <div style="opacity:.7;padding:8px">در حال بارگذاری...</div>
-                } @else {
-                @for (c of categories; track c.id) {
-                <button class="cat" (click)="select(c)">
-                    <img [src]="c.image" alt="" />
-                    <div class="meta"><span class="name">{{ c.name }}</span></div>
-                </button>
-                }
-                }
-            </div>
-        </aside>
-        }
-        @if (selected) {
-        <aside class="leaderboard-flyin">
-            <div class="lb-paper-title">
-                <button class="btn-back ps-3 pe-3" (click)="clearSelection()">x</button>
-                <div class="art">
-                    <img [src]="selected.image" alt="">
-                    <div class="txt">
-                        <div class="title">{{ selected.name }}</div>
-                    </div>
+    </aside>
+    }
+    @if (selected) {
+    <aside class="leaderboard-flyin">
+        <div class="lb-paper-title">
+            <button class="btn-back ps-3 pe-3" (click)="clearSelection()">x</button>
+            <div class="art">
+                <img [src]="selected.image" alt="">
+                <div class="txt">
+                    <div class="title">{{ selected.name }}</div>
                 </div>
             </div>
+        </div>
 
-            <div class="lb-search">
-                <input placeholder="جست وجو" style="direction: rtl;" />
-                <button class="icon"></button>
-            </div>
+        <div class="lb-search">
+            <input placeholder="جست وجو" style="direction: rtl;" [(ngModel)]="searchText" (keyup.enter)="doSearch()" />
+            <button class="icon d-flex justify-content-center align-items-center pt-1" (click)="doSearch()">
+                <fa-icon [icon]="faMagnify" style="color: #fff;"></fa-icon>
+            </button>
+        </div>
 
-            <div class="lb-list">
-                @for (p of places; track $index) {
-                <div class="lb-row" [class.alt]="($index % 2)===1" (click)="openPlaceDetail(p.id)">
-                    <!-- نوار کاغذی امتیاز -->
-                    <div class="paper-strip" [attr.title]="!isAuthed() ? 'برای ثبت نظر وارد حساب خود شوید' : null">
-                        <div class="stars" [style.--score]="(p.score*20)+'%'"></div>
-                    </div>
+        <div class="lb-list">
+            @if (loadingPlaces) {
+            <div style="opacity:.7;padding:8px">در حال بارگذاری نتایج…</div>
+            } @else {
+            @for (p of places; track p.id) {
+            <div class="lb-row" [class.alt]="($index % 2)===1" (click)="openPlaceDetail(p.id)">
+                <div class="paper-strip">
+                    <span class="stars" [style.--score]="(((p.avgRating ?? 0) / 5) * 100) + '%'"></span>
+                    <small style="margin-inline-start:8px;opacity:.75">
+                    </small>
 
-                    <!-- پولاروید -->
-                    <div class="polaroid">
-                        <img [src]="p.image" alt="">
-                        <div class="caption">{{ p.title }}</div>
-                        <div class="idx">#{{ $index+1 }}</div>
-                    </div>
-                </div>
-                }
-            </div>
-
-            <!-- مودال ثبت نظر -->
-            @if (modalOpen) {
-            <div class="review-backdrop" (click)="closeModal()"></div>
-            <div class="review-modal" role="dialog" aria-modal="true">
-                <h3 class="rm-title">ثبت نظر برای {{ modalPlace?.title }}</h3>
-
-                <div class="rm-stars">
-                    @for (s of starRange; track $index) {
-                    <img [src]="(tempRating> $index)? 'images/fStar.png':'images/eStar.png'" width="22" alt="">
-                    }
                 </div>
 
-                <textarea class="rm-text" [(ngModel)]="reviewText" placeholder="متن نظر شما..." rows="5"></textarea>
-
-                <div class="rm-actions">
-                    <button type="button" class="btn-primary" (click)="submitReview()">ثبت</button>
-                    <button type="button" class="btn-ghost" (click)="closeModal()">انصراف</button>
+                <div class="polaroid">
+                    <img [src]="p.image" alt="">
+                    <div class="caption">{{ p.title }}</div>
+                    <div class="idx">#{{ $index+1 }}</div>
                 </div>
             </div>
             }
-        </aside>
+            }
+        </div>
 
+        <!-- مودال ثبت نظر -->
+        @if (modalOpen) {
+        <div class="review-backdrop" (click)="closeModal()"></div>
+        <div class="review-modal" role="dialog" aria-modal="true">
+            <h3 class="rm-title">ثبت نظر برای {{ modalPlace?.title }}</h3>
+
+            <div class="rm-stars">
+                @for (s of starRange; track $index) {
+                <img [src]="(tempRating> $index)? 'images/fStar.png':'images/eStar.png'" width="22" alt="">
+                }
+            </div>
+
+            <textarea class="rm-text" [(ngModel)]="reviewText" placeholder="متن نظر شما..." rows="5"></textarea>
+
+            <div class="rm-actions">
+                <button type="button" class="btn-primary" (click)="submitReview()">ثبت</button>
+                <button type="button" class="btn-ghost" (click)="closeModal()">انصراف</button>
+            </div>
+        </div>
         }
-    </div>
-    <app-user-panel></app-user-panel>
+    </aside>
+
+    }
 </div>
+<app-user-panel></app-user-panel>
+<app-footer></app-footer>

@@ -1,19 +1,22 @@
 import { Component, ViewChild, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';                // ← برای [(ngModel)] مودال
+import { FormsModule } from '@angular/forms';
 import { MapComponent } from '../map/map';
 import { UserPanelComponent } from '../userpanel/userpanel';
 import { CountdownComponent } from '../countdown/countdown';
 import { CategoriesService, CategoryDto } from '../services/categories.service';
-import { AuthService } from '../../Core/services/auth.service';  // ← چک لاگین
+import { AuthService } from '../../Core/services/auth.service';
 import { ModalService } from '../../Shared/modal/modal.service';
 import { PlaceDetailComponent } from '../place-detail/place-detail';
-
+import { LeaderboardService, LeaderboardItem } from '../services/leaderboard.service';
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { Footer } from "../../Shared/footer/footer";
 type Cat = { id: number; name: string; slug: string; color: string; image: string };
-type PlaceRow = { id: number, title: string; image: string; score: number };
+type PlaceRow = { id: number, title: string; image: string; score: number, reviewCount: number, avgRating?: number, category: string };
 
 @Component({
   selector: 'app-home',
-  imports: [MapComponent, UserPanelComponent, CountdownComponent, FormsModule],
+  imports: [MapComponent, UserPanelComponent, CountdownComponent, FormsModule, FontAwesomeModule, Footer],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
@@ -22,81 +25,89 @@ export class Home {
   private catsApi = inject(CategoriesService);
   private auth = inject(AuthService);
   private modal = inject(ModalService);
-
+  private lbApi = inject(LeaderboardService);
+  faMagnify = faMagnifyingGlass;
   categories: Cat[] = [];
   loading = true;
 
-  // دادهٔ نمونه برای لیست لیدربورد (می‌تونی بعداً از API پرش کنی)
-  places: PlaceRow[] = [
-    { id: 101, title: 'کافه نمونه ۱', image: 'images/restaurant.jpg', score: 5 },
-    { id: 101, title: 'کافه نمونه ۲', image: 'images/restaurant.jpg', score: 4 },
-    { id: 101, title: 'کافه نمونه ۳', image: 'images/restaurant.jpg', score: 3 },
-    { id: 101, title: 'کافه نمونه ۴', image: 'images/restaurant.jpg', score: 5 },
-    { id: 101, title: 'کافه نمونه ۵', image: 'images/restaurant.jpg', score: 4 },
-  ];
+  places: PlaceRow[] = [];
+  loadingPlaces = false;
 
-  // --- وضعیت ثبت نظر/ستاره ---
-  reviewingIndex: number | null = null;   // کدام ردیف در حالت ثبت نظر است
+  searchText = '';
+
+  reviewingIndex: number | null = null;
   starRange = [1, 2, 3, 4, 5];
   hoverRating = 0;
   tempRating = 0;
 
-  // --- مودال ---
   modalOpen = false;
   modalPlace?: PlaceRow;
   reviewText = '';
 
   constructor() { this.loadCategories(); }
 
-  isAuthed() {
-    // return this.auth.isAuthenticated();
-    return true;
-  }
+  isAuthed() { true; }
+
   openPlaceDetail(placeId: number) {
     this.modal.open(PlaceDetailComponent, {
       data: { id: placeId },
-      width: 'min(920px, 92vw)',
+      width: '92vw',
       maxHeight: '90vh',
-      panelClass: ['app-modal-panel', 'paper-modal'] // اختیاری برای تم بیشتر
+      panelClass: ['app-modal-panel', 'paper-modal'],
     });
   }
-  startReview(idx: number, row: PlaceRow) {
-    if (!this.isAuthed()) return;
-    this.reviewingIndex = idx;
-    this.hoverRating = 0;
-    this.tempRating = 0;
+  selected?: Cat;
+  select(c: Cat) {
+    this.selected = c;
+    this.mapRef?.filterByCategory(c.slug);
+    this.mapRef?.fitToCategory(c.slug);
+    setTimeout(() => this.mapRef?.invalidateSize(), 650);
+    this.refreshPlaces();
+  }
+  clearSelection() {
+    this.selected = undefined;
+    this.mapRef?.filterByCategory(undefined);
+    setTimeout(() => this.mapRef?.invalidateSize(), 350);
+    this.places = [];
+  }
+
+  // --- Search ---
+  doSearch() { this.refreshPlaces(); }
+
+  private refreshPlaces() {
+    const q = this.searchText.trim();
+    const cat = q ? undefined : this.selected?.slug;
+    if (!cat && !q) { this.places = []; return; }
+
+    this.loadingPlaces = true;
+    this.lbApi.get(this.selected?.id ?? 0).subscribe({
+      next: list => {
+        this.places = list.map(x => ({
+          id: x.id,
+          title: x.title,
+          category: x.categorySlug,
+          image: x.coverImageUrl || 'images/restaurant.png',
+          score: x.avgRating ?? 0,
+          reviewCount: x.reviewCount
+        }));
+        this.loadingPlaces = false;
+      },
+      error: _ => { this.places = []; this.loadingPlaces = false; }
+    });
   }
 
   pickRating(idx: number, val: number, row: PlaceRow) {
     if (this.reviewingIndex !== idx) return;
-    this.tempRating = val;
-    // پس از انتخاب ستاره، مودال باز شود
-    this.modalPlace = row;
-    this.modalOpen = true;
+    this.tempRating = val; this.modalPlace = row; this.modalOpen = true;
   }
-
-  closeModal() {
-    this.modalOpen = false;
-    this.reviewText = '';
-    this.reviewingIndex = null;  // خروج از حالت انتخاب ستاره
-    this.hoverRating = 0;
-    this.tempRating = 0;
-  }
+  closeModal() { this.modalOpen = false; this.reviewText = ''; this.reviewingIndex = null; this.hoverRating = 0; this.tempRating = 0; }
 
   async submitReview() {
-    // TODO: اینجا سرویس API ثبت نظر/امتیاز را صدا بزن
-    // await this.reviews.add({ placeId, rating: this.tempRating, text: this.reviewText })
-
-    console.log('submit review', {
-      place: this.modalPlace?.title,
-      rating: this.tempRating,
-      text: this.reviewText
-    });
-
+    console.log('submit review', { place: this.modalPlace?.title, rating: this.tempRating, text: this.reviewText });
     this.closeModal();
   }
 
-  // ---------- موجود: بارگذاری دسته‌ها ----------
+  // --- Categories load ---
   private loadCategories() {
     this.catsApi.getActive().subscribe({
       next: (list) => {
@@ -110,25 +121,11 @@ export class Home {
   }
 
   private toCat = (x: CategoryDto & Record<string, any>): Cat => {
-    const img = x.thumbUrl ?? x.thumbUrl ?? x.imageUrl ?? x.imageUrl ?? 'images/location.jpg';
+    const img = x.thumbUrl ?? x.thumbUrl ?? x.imageUrl ?? x.imageUrl ?? 'images/location.png';
     return { id: x.id, name: x.name, slug: x.slug, image: img, color: this.pickColor(x.slug) };
   };
-
   private pickColor(slug: string): string {
     const map: Record<string, string> = { cafe: '#b24bff', restaurant: '#ff7a3d', park: '#4caf50' };
     return map[slug] ?? '#ffd166';
-  }
-
-  selected?: Cat;
-  select(c: Cat) {
-    this.selected = c;
-    this.mapRef?.filterByCategory(c.slug);
-    this.mapRef?.fitToCategory(c.slug);
-    setTimeout(() => this.mapRef?.invalidateSize(), 650);
-  }
-  clearSelection() {
-    this.selected = undefined;
-    this.mapRef?.filterByCategory(undefined);
-    setTimeout(() => this.mapRef?.invalidateSize(), 350);
   }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, effect } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -8,53 +8,54 @@ import { MiniMapComponent } from '../mini-map.component/mini-map.component';
 import { PlaceDetailService, PlaceDetailDto, ReviewDto } from '../services/place-detail';
 import { CaptchaService, CaptchaChallenge } from '../../Core/services/captcha-service';
 import { ReviewsService } from '../services/reviews-service';
-
-// موک‌ها فقط برای تست UI
-import { MockCaptchaService } from './mock-captcha.service';
-import { MockPlaceDetailService } from './mock-place-detail.service';
-import { MockReviewsService } from './mock-reviews.service';
 import { MODAL_DATA } from '../../Shared/modal/modal.tokens';
-
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { faCamera, faHeart, faRefresh } from '@fortawesome/free-solid-svg-icons'
 type ReviewVM = ReviewDto & { replies?: ReviewDto[] };
 
 @Component({
   selector: 'app-place-detail',
   standalone: true,
-  imports: [MiniMapComponent, DatePipe, FormsModule],
+  imports: [MiniMapComponent, DatePipe, FormsModule, FontAwesomeModule],
   templateUrl: './place-detail.html',
   styleUrl: './place-detail.css',
-  // ⬇️ در حالت واقعی این providers را حذف کن تا به سرویس‌های واقعی وصل شود.
   providers: [
-    { provide: PlaceDetailService, useClass: MockPlaceDetailService },
-    { provide: ReviewsService, useClass: MockReviewsService },
-    { provide: CaptchaService, useClass: MockCaptchaService },
+    // { provide: PlaceDetailService, useClass: MockPlaceDetailService },
+    // { provide: ReviewsService, useClass: MockReviewsService },
+    // { provide: CaptchaService, useClass: MockCaptchaService },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlaceDetailComponent {
+
+  facamera = faCamera;
+  faheart = faHeart;
+  faRefresh = faRefresh;
   private route = inject(ActivatedRoute);
   private api = inject(PlaceDetailService);
   private reviewsApi = inject(ReviewsService);
   private captcha = inject(CaptchaService);
-
   private modalData = inject(MODAL_DATA, { optional: true }) as { id?: number } | null;
-
+  likeBusyId: number | null = null;
+  favOn = false;
+  favBusy = false;
+  // ---------- place ----------
   readonly place = toSignal<PlaceDetailDto | null>(
     (this.modalData?.id
       ? this.api.get(this.modalData.id)
-      : this.route.paramMap.pipe(
-        map(pm => Number(pm.get('id'))),
-        switchMap(id => this.api.get(id))
-      )
+      : this.route.paramMap.pipe(map(pm => Number(pm.get('id'))), switchMap(id => this.api.get(id)))
     ),
     { initialValue: null }
   );
-
-  /** ویومدل Threaded: ریشه‌ها + ریپلای‌ها */
+  // میانگین را به 1..5 تبدیل کن (بدون اعشار)
+  avgInt = () => {
+    const a = this.place()?.avgRating ?? 0;
+    // اگر avg از 0..5 است:
+    return Math.max(0, Math.min(5, Math.floor(a)));
+  };
+  // ---------- reviews (threaded) ----------
   readonly reviews = computed<ReviewVM[]>(() => {
     const flat = (this.place()?.reviews ?? []).slice();
-
-    // گروه‌بندی بر اساس parentId
     const byParent = new Map<number | null, ReviewDto[]>();
     for (const r of flat) {
       const k = (r.parentId ?? null);
@@ -62,37 +63,133 @@ export class PlaceDetailComponent {
       bucket.push(r);
       byParent.set(k, bucket);
     }
-
-    // ریشه‌ها
     const roots = (byParent.get(null) ?? []);
-
-    // سورت: اول AmirAli، بعد جدیدتر جلوتر
     roots.sort((a, b) => {
       const pa = a.authorType === 'AmirAli' ? 0 : 1;
       const pb = b.authorType === 'AmirAli' ? 0 : 1;
       if (pa !== pb) return pa - pb;
       return +new Date(b.createdAtUtc) - +new Date(a.createdAtUtc);
     });
-
-    // ریپلای‌ها (قدیمی‌تر جلوتر برای خوانایی)
     return roots.map(r => ({
       ...r,
       replies: (byParent.get(r.id) ?? []).sort((a, b) => +new Date(a.createdAtUtc) - +new Date(b.createdAtUtc))
     }));
   });
 
-  // فرم ثبت نظر
-  rvForm = { rating: 5, text: '', captchaAnswer: '' };
+  // ---------- favorite logic (localStorage demo؛ سمت سرور وصل کن) ----------
+  favLabel = 'افزودن به لیست مورد علاقه';
+  favTitle = '';
+  favDisabled = false;
+
+  private FAVORITES_KEY = 'fav/v1'; // { [categorySlug]: number[] }
+
+  private readFav(): Record<string, number[]> {
+    try { return JSON.parse(localStorage.getItem(this.FAVORITES_KEY) || '{}'); }
+    catch { return {}; }
+  }
+  private writeFav(d: Record<string, number[]>) {
+    localStorage.setItem(this.FAVORITES_KEY, JSON.stringify(d));
+  }
+  private refreshFavState() {
+    const p = this.place(); if (!p) return;
+    const slug = (p.categoryName || '').toString().trim();
+    const store = this.readFav();
+    const list = store[slug] ?? [];
+    const has = list.includes(p.id);
+    const left = Math.max(0, 5 - list.length);
+    this.favOn = has;
+    this.favLabel = has ? 'در علاقه‌مندی‌ها هست' : 'افزودن به لیست مورد علاقه';
+    this.favTitle = has ? 'قبلاً اضافه شده' : (left ? `می‌توانید ${left} مورد دیگر برای این دسته اضافه کنید` : 'حداکثر ۵ مورد برای هر دسته');
+    this.favDisabled = !has && list.length >= 5;
+  }
+
+
+  like(reviewId: number) {
+    if (this.likeBusyId) return;
+    this.likeBusyId = reviewId;
+    this.reviewsApi.like(reviewId).subscribe({
+      next: _ => this.refreshPlaceAfterAction(),
+      error: _ => this.likeBusyId = null
+    });
+  }
+
+  dislike(reviewId: number) {
+    if (this.likeBusyId) return;
+    this.likeBusyId = reviewId;
+    this.reviewsApi.dislike(reviewId).subscribe({
+      next: _ => this.refreshPlaceAfterAction(),
+      error: _ => this.likeBusyId = null
+    });
+  }
+  private refreshPlaceAfterAction() {
+    const p = this.place(); if (!p) { this.likeBusyId = null; return; }
+    this.api.get(p.id).subscribe(np => { (this as any).place.set(np); this.likeBusyId = null; });
+  }
+  toggleFavorite() {
+    const p = this.place(); if (!p) return;
+    const slug = (p.categoryName || '').toString().trim();
+    const store = this.readFav();
+    const list = store[slug] ?? [];
+
+    // اگر هست حذف؛ اگر نیست اضافه (با سقف ۵)
+    if (this.favOn) {
+      store[slug] = list.filter(id => id !== p.id);
+    } else {
+      if (list.length >= 5) { this.refreshFavState(); return; }
+      if (!list.includes(p.id)) list.push(p.id);
+      store[slug] = list;
+    }
+    this.writeFav(store);
+    this.refreshFavState();
+  }
+
+  // همگام‌سازی وضعیت علاقه‌مندی وقتی place لود شد
+  constructor() {
+    this.refreshCaptcha();
+    effect(() => { if (this.place()) this.refreshFavState(); });
+  }
+
+  // ---------- rating (interactive) ----------
+  starRange = [1, 2, 3, 4, 5];
+  selectedRating = 0;         // امتیاز فعلی کاربر برای این مکان (اگر صفر = هنوز نداده)
+  tempRating = 0;             // برای hover
+  ratingBusy = false;
+
+  setHover(val: number) {
+    this.hoverRating = val;
+  }
+  setRating(v: number) {
+    const p = this.place(); if (!p || this.ratingBusy) return;
+    this.ratingBusy = true;
+
+    this.selectedRating = v;     // ← برای نمایش بعد از کلیک
+    this.rvForm.rating = v;      // ← برای ارسال به API
+    (this.reviewsApi as any).rate?.(p.id, v)?.subscribe?.({
+      next: () => this.afterRateSaved(p.id, v),
+      error: () => this.afterRateSaved(p.id, v) // برای دمو
+    }) ?? this.afterRateSaved(p.id, v);
+  }
+
+  private afterRateSaved(placeId: number, v: number) {
+    this.selectedRating = v;
+    this.tempRating = v;
+    this.ratingBusy = false;
+
+    // رفرش لیست/میانگین
+    this.api.get(placeId).subscribe(np => (this as any).place.set(np));
+  }
+
+  // ---------- review text (اختیاری) ----------
+  rvForm = { rating: 0, text: '', captchaAnswer: '' };
   rvBusy = false;
   rvError: string | null = null;
   cap: CaptchaChallenge | null = null;
+  hoverRating = 0;
 
-  // وضعیت ریپلای
+  // Reply
   replyingFor: number | null = null;
   replyText = '';
   replyBusy = false;
-
-  constructor() { this.refreshCaptcha(); }
 
   // Helpers
   readonly hasCoord = computed(() => !!this.parseLatLng(this.place()?.coordinates));
@@ -109,7 +206,7 @@ export class PlaceDetailComponent {
   }
   neshanDirectionUrl() {
     const ll = this.parseLatLng(this.place()?.coordinates); if (!ll) return '#';
-    return `https://neshan.org/maps/@${ll.lat},${ll.lng},16.0z`;
+    return `https://neshan.org/maps/search/${ll.lat},${ll.lng}`;
   }
 
   async share() {
@@ -120,7 +217,6 @@ export class PlaceDetailComponent {
       else { await navigator.clipboard.writeText(data.url); alert('لینک کپی شد ✅'); }
     } catch { /* بی‌صدا */ }
   }
-
   // CAPTCHA
   refreshCaptcha() {
     this.captcha.new().subscribe(c => {
@@ -129,25 +225,24 @@ export class PlaceDetailComponent {
     });
   }
 
-  // ثبت نظر
+  // ثبت متنِ نظر (rating قبلاً ذخیره شده؛ اگر هم ذخیره نشده بود، از selectedRating استفاده می‌کنیم)
   submitReview() {
-    const p = this.place();
-    if (!p) return;
-    if (!this.rvForm.text.trim()) { this.rvError = 'متن نظر را وارد کنید.'; return; }
+    const p = this.place(); if (!p) return;
     if (!this.rvForm.captchaAnswer.trim()) { this.rvError = 'کد کپچا را وارد کنید.'; return; }
 
-    this.rvBusy = true;
+    const ratingToSend = this.selectedRating || Number(this.rvForm.rating) || 0;
+
+    this.rvBusy = true; this.rvError = null;
     this.reviewsApi.addReview(p.id, {
-      rating: Number(this.rvForm.rating),
-      text: this.rvForm.text,
+      rating: ratingToSend,
+      text: (this.rvForm.text || '').trim(),
       captchaToken: this.cap?.token ?? '',
       captchaAnswer: this.rvForm.captchaAnswer
     }).subscribe({
       next: _ => {
         this.api.get(p.id).subscribe(np => {
-          // NOTE: چون place از toSignal ساخته شده، با هک زیر ریفرش می‌کنیم
           (this as any).place.set(np);
-          this.rvForm = { rating: 5, text: '', captchaAnswer: '' };
+          this.rvForm = { rating: 0, text: '', captchaAnswer: '' };
           this.rvBusy = false; this.rvError = null;
           this.refreshCaptcha();
         });
@@ -171,10 +266,7 @@ export class PlaceDetailComponent {
     this.reviewsApi.addReply(reviewId, { text: txt }).subscribe({
       next: _ => {
         const p = this.place(); if (!p) return;
-        this.api.get(p.id).subscribe(np => {
-          (this as any).place.set(np);
-          this.replyBusy = false; this.cancelReply();
-        });
+        this.api.get(p.id).subscribe(np => { (this as any).place.set(np); this.replyBusy = false; this.cancelReply(); });
       },
       error: _ => { this.replyBusy = false; }
     });
@@ -188,4 +280,27 @@ export class PlaceDetailComponent {
       error: _ => alert('ثبت گزارش ناموفق بود')
     });
   }
+
+  // ---------- Lightbox ----------
+  lbxOpen = false;
+  lbxItems: string[] = [];
+  lbxIndex = 0;
+  placeImageUrls(): string[] {
+    const p = this.place();
+    return (p?.images ?? []).map(im => (im as any).url ?? (im as any).filePath ?? '');
+  }
+
+  // آرایهٔ URLهای گالریِ عکس‌های یک نظر
+  reviewImageUrls(r: ReviewDto): string[] {
+    return (r?.images ?? []).map((im: any) => im.url ?? im.filePath ?? '');
+  }
+  openLightbox(urls: string[], index: number) {
+    if (!urls?.length) return;
+    this.lbxItems = urls;
+    this.lbxIndex = index;
+    this.lbxOpen = true;
+  }
+  closeLightbox() { this.lbxOpen = false; this.lbxItems = []; this.lbxIndex = 0; }
+  prevLbx(e: Event) { e.stopPropagation(); this.lbxIndex = (this.lbxIndex + this.lbxItems.length - 1) % this.lbxItems.length; }
+  nextLbx(e: Event) { e.stopPropagation(); this.lbxIndex = (this.lbxIndex + 1) % this.lbxItems.length; }
 }

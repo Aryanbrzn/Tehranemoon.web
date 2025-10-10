@@ -6,6 +6,8 @@ export interface MapPlaceDto {
   categorySlug: string;
   lat: number | null;
   lng: number | null;
+  avgRating?: number;
+  coverImage?: string;
 }
 @Injectable({
   providedIn: 'root'

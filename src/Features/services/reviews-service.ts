@@ -48,4 +48,11 @@ export class ReviewsService {
   report(reviewOrReplyId: number, reason: string) {
     return this.http.postJson<{ ok: true }>(`api/reviews/${reviewOrReplyId}/report`, { reason });
   }
+  like(reviewId: number) {
+    return this.http.postJson(`/api/reviews/${reviewId}/like`, {});
+  }
+  dislike(reviewId: number) {
+    return this.http.postJson(`/api/reviews/${reviewId}/dislike`, {});
+  }
+
 }

@@ -1,115 +1,179 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MapPlaceDto, MapService } from '../services/map-service';
 import * as L from 'leaflet';
 
-// گوشه‌های تصویرِ نقشه (مختصات جغرافیایی تهران روی گوگل)
-// مقادیر را یک بار بر اساس تصویر خودت تنظیم کن:
+/** BBOX جغرافیایی کل تصویری که طراحی کرده‌ای */
 const CALIB_BBOX = {
-  // شمال‌غرب (lat بالا، lng چپ)
-  maxLat: 35.8331,   // نمونه: حوالی شمال تهران
-  minLat: 35.5727,   // نمونه: حوالی جنوب تهران
-  minLng: 51.1188,   // غرب
-  maxLng: 51.62388    // شرق
+  maxLat: 35.95,  // شمال
+  minLat: 35.50,  // جنوب
+  minLng: 51.15,  // غرب
+  maxLng: 51.60   // شرق
 };
-// تبدیل lat/lng به مختصات نرمال تصویر (0..1)
+
 function latLngTo01(lat: number, lng: number) {
   const x01 = (lng - CALIB_BBOX.minLng) / (CALIB_BBOX.maxLng - CALIB_BBOX.minLng);
   const y01 = (lat - CALIB_BBOX.minLat) / (CALIB_BBOX.maxLat - CALIB_BBOX.minLat);
-  // کلمپ
-  return {
-    x01: x01,
-    y01: y01
-  };
+  const clamp = (v: number) => Math.max(0, Math.min(1, v));
+  return { x01: clamp(x01 + 0.05), y01: clamp(y01 + 0.1) };
 }
+
 @Component({
   selector: 'app-map',
   imports: [],
   templateUrl: './map.html',
   styleUrl: './map.css',
   changeDetection: ChangeDetectionStrategy.OnPush
-
 })
 export class MapComponent implements OnInit, OnDestroy {
 
+  @Output() placeClick = new EventEmitter<number>();
+  @Input() iconMap: Record<string, string> = {
+    cafe: 'images/images/location.png',
+    restaurant: 'images/images/location.png',
+    park: 'images/images/location.png',
+    default: 'images/images/location.png',
+  };
+
   private el = inject(ElementRef<HTMLElement>);
   private data = inject(MapService);
+
   private map!: L.Map;
   private bounds!: L.LatLngBounds;
-  private W = 0; private H = 0;
+  private overlay!: L.ImageOverlay;
 
-  // keep markers grouped by category
+  // ابعاد مرجع (بر اساس کانتینر Leaflet)
+  private W = 0;
+  private H = 0;
+
+  // گروه‌بندی مارکرها
   private groups = new Map<string, L.LayerGroup>();
 
-  ngOnInit() { this.initMap(); }
-  ngOnDestroy() { this.map?.remove(); }
+  // رفرنس برای ریسایز
+  private resizeObserver?: ResizeObserver;
 
+  ngOnInit() { this.initMap(); }
+  ngOnDestroy() {
+    this.resizeObserver?.disconnect();
+    this.map?.remove();
+  }
+
+  /** راه‌اندازی مپ + صبر برای load تصویر، و تراز کردن با ابعاد کانتینر Leaflet */
   async initMap() {
     const mapEl = this.el.nativeElement.querySelector('.map') as HTMLElement;
     L.DomEvent.disableScrollPropagation(mapEl);
     L.DomEvent.disableClickPropagation(mapEl);
-    const src = 'images/tehranMap.png';           // your image
-    const { width, height } = await this.loadImage(src);
-    this.W = width;
-    this.H = height;
 
-    this.bounds = L.latLngBounds([0, 0], [this.H, this.W]);
     this.map = L.map(mapEl, {
       crs: L.CRS.Simple,
-      minZoom: -2,
-      maxZoom: 3,
+      minZoom: 0,
+      maxZoom: 2,
       zoomSnap: 0.25,
+      boxZoom: true,
+      attributionControl: true,
       zoomDelta: 0.5,
       zoomAnimation: false,
-      maxBoundsViscosity: 0,
       inertia: false,
       wheelPxPerZoomLevel: 60,
-      preferCanvas: true,
-      maxBounds: this.bounds,
+      preferCanvas: true
     });
-    L.imageOverlay(src, this.bounds).addTo(this.map);
-    this.map.fitBounds(this.bounds);
-    setTimeout(() => this.map.invalidateSize(), 0);
 
+    this.map.setView([0, 0], -1);
+
+    const src = 'images/tehranMap.png';
+    const tempBounds = L.latLngBounds([0, 0], [1, 1]);
+    this.overlay = L.imageOverlay(src, tempBounds).addTo(this.map);
+
+    // وقتی تصویر لود شد
+    this.overlay.once('load', () => {
+      // ابعاد از کانتینر Leaflet (چیزی که خودت گفتی درست‌تره)
+      const container = this.map.getContainer() as HTMLElement;
+      this.W = container.clientWidth;   // عرض مرجع
+      this.H = container.clientHeight;  // ارتفاع مرجع (مثبت، رو به پایین)
+
+      this.applyBoundsAndRender();
+
+      // برای تغییرات بعدی اندازهٔ کانتینر (رسپانسیو)
+      this.resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.target === container) {
+            const cr = entry.contentRect;
+            // اگر واقعاً تغییری رخ داده:
+            if (Math.round(cr.width) !== Math.round(this.W) || Math.round(cr.height) !== Math.round(this.H)) {
+              this.W = Math.max(1, Math.round(cr.width));
+              this.H = Math.max(1, Math.round(cr.height));
+              this.applyBoundsAndRender();
+            }
+          }
+        }
+      });
+      this.resizeObserver.observe(container);
+    });
+  }
+
+  /** اعمال bounds صحیح بر اساس W/H فعلی و رندر مجدد پین‌ها */
+  private applyBoundsAndRender() {
+    this.bounds = L.latLngBounds([0, 0], [this.H, this.W]);
+    this.overlay.setBounds(this.bounds);
+    this.map.setMaxBounds(this.bounds);
+    this.map.fitBounds(this.bounds, { animate: false });
+    this.map.invalidateSize({ pan: false });
+
+    // داده‌ها را بگیر و پین‌ها را رندر کن
     this.data.getPlaces(['cafe', 'restaurant']).subscribe(items => this.renderPins(items));
   }
-  public invalidateSize() {
-    // this.map?.invalidateSize();
-  }
+
+  /** رندر مارکرها از داده‌های DB (lat/lng → x/y پیکسلی → Marker) */
   private renderPins(items: MapPlaceDto[]) {
+    if (!this.W || !this.H) return;
+
+    // پاک‌سازی گروه‌های قبلی
     this.groups.forEach(g => g.removeFrom(this.map));
     this.groups.clear();
 
     for (const p of items) {
       if (p.lat == null || p.lng == null) continue;
+
       const { x01, y01 } = latLngTo01(p.lat, p.lng);
-      const x = this.W * x01, y = y01 * this.H;
 
-      const kind = p.categorySlug.toLowerCase();
+      // توجه: اینجا دیگه «منفی» نداریم.
+      const x = this.W * x01;
+      const y = this.H * y01;
+
+      const kind = (p.categorySlug ?? '').toLowerCase() || 'default';
       let grp = this.groups.get(kind);
-      if (!grp) { grp = L.layerGroup().addTo(this.map); this.groups.set(kind, grp); }
+      if (!grp) {
+        grp = L.layerGroup().addTo(this.map);
+        this.groups.set(kind, grp);
+      }
 
-      const iconUrl = 'images/avatar.png';
+
+      // آدرس آیکن با توجه به دسته
+      const iconUrl = this.iconMap[kind] || this.iconMap;
+
+      // اگر می‌خواهی divIcon بماند:
       const icon = L.divIcon({
         className: `pin ${kind}`,
-        html: `<img src="${iconUrl}" alt="">`,
-        iconSize: [34, 34], iconAnchor: [17, 17]
+        html: `<img src="${iconUrl}" alt="${kind}" style="width:100%;height:100%;object-fit:contain">`,
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
       });
 
-      L.marker([y, x], { icon })
-        .bindTooltip(p.title, { direction: 'top', opacity: .9 })
-        .addTo(grp);
+      // CRS.Simple → [y, x]
+      const m = L.marker([y, x], { icon }).addTo(grp);
+      // کلیک مستقیم روی مارکر هم رویداد بده (برای باز کردن مودال بدون پاپ‌آپ)
+      m.on('click', () => this.placeClick.emit(p.id));
     }
   }
 
-  /** Show only a category (or all if undefined) */
+  /** نمایش فقط یک دسته (یا همه) */
   filterByCategory(slug?: string) {
     this.groups.forEach((g, k) => {
       if (!slug || k === slug) { g.addTo(this.map); } else { g.removeFrom(this.map); }
     });
-    // ensure map reflows if container width changed
     setTimeout(() => this.map.invalidateSize(), 350);
   }
 
+  /** فیت به محدودهٔ یک دسته */
   fitToCategory(slug: string) {
     const g = this.groups.get(slug);
     if (!g) return;
@@ -117,16 +181,8 @@ export class MapComponent implements OnInit, OnDestroy {
     if (b && b.isValid()) this.map.fitBounds(b.pad(0.2));
   }
 
-  private loadImage(url: string): Promise<{ width: number; height: number }> {
-    return new Promise((res, rej) => {
-      const img = new Image();
-      img.onload = () =>
-        res({
-          width: img.naturalWidth,
-          height: img.naturalHeight
-        });
-      img.onerror = rej;
-      img.src = url;
-    });
+  /** اگر لازم شد دستی صدا بزنی */
+  invalidateSize() {
+    this.map.invalidateSize();
   }
 }

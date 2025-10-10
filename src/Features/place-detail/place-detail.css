@@ -1,4 +1,3 @@
-/* صفحه جزئیات مکان - هم‌تم با بقیه صفحات */
 .place-page {
   direction: rtl;
   color: #111;
@@ -6,21 +5,66 @@
   flex-direction: column;
   gap: 14px;
   padding: 12px;
-  background: rgb(255 255 255 / 53%);
   border-radius: 14px;
   backdrop-filter: blur(2px);
 }
-
-/* هدر با کاور کاغذی */
-.hero {
+.hero-map {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fav-heart {
+  position: relative;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  width: 38px;
+  height: 36px;
+  border-radius: 10px;
+  padding: 0;
+}
+.fav-heart:hover .ico {
+  transform: scale(1.06);
+}
+.ico {
+  color: #fff;
+}
+.fav-heart.on .ico {
+  color: #ff7b89;
+}
+.fav-heart:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+.hero-map mini-map {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  height: 240px;
+}
+.hero-map mini-map > .mini-map {
+  width: 100%;
+  height: 100%;
+}
+.hero-map .leaflet-container {
+  height: 100%;
+}
+.hero {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
   gap: 14px;
   align-items: stretch;
-  background: rgba(28, 32, 38, 0.85);
-  border-radius: 12px;
   padding: 10px;
   color: #e9ecef;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.25);
 }
 .cover {
   position: relative;
@@ -37,7 +81,6 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: url("/assets/ui/paper-frame.webp") center/cover no-repeat;
   mix-blend-mode: multiply;
   opacity: 0.9;
 }
@@ -95,11 +138,10 @@
 
 /* سکشن‌ها (کارت‌های شفاف) */
 .section {
-  background: rgba(28, 32, 38, 0.85);
+  /* background: rgba(28, 32, 38, 0.85); */
   border-radius: 12px;
   padding: 12px;
   color: #e9ecef;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -287,7 +329,11 @@
 /* واکنش‌گرا */
 @media (max-width: 900px) {
   .hero {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+  .hero-map mini-map {
+    display: block;
+    height: 220px;
   }
   .cover {
     flex: 0 0 auto;
@@ -296,8 +342,6 @@
 }
 /* --- هایلایت برای نظر امیرعلی --- */
 .rev.amirali {
-  background: url("/assets/ui/paper-fiber.png") center/300px 300px repeat,
-    rgba(255, 209, 102, 0.15);
   border: 1px dashed rgba(255, 209, 102, 0.6);
   position: relative;
 }
@@ -435,4 +479,223 @@
 .add-review .err {
   color: #ff8b8b;
   font-size: 13px;
+}
+/* ---------- ستاره‌های نمایشی (CSS-only) ---------- */
+.stars-css {
+  position: relative;
+  display: inline-block;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 6px;
+}
+.stars-css.small {
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+.stars-css::before {
+  content: "★★★★★";
+  color: #e6e1d7; /* خالی */
+  text-shadow: -1px 0 #111, 1px 0 #111, 0 -1px #111, 0 1px #111, 1px 1px #111,
+    -1px 1px #111, 1px -1px #111, -1px -1px #111;
+  opacity: 0.9;
+}
+.stars-css::after {
+  content: "★★★★★";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--score, 0%); /* درصد پرشدن */
+  overflow: hidden;
+  color: #ffd23f; /* زرد */
+  text-shadow: -1px 0 #111, 1px 0 #111, 0 -1px #111, 0 1px #111, 1px 1px #111,
+    -1px 1px #111, 1px -1px #111, -1px -1px #111;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.25));
+}
+
+/* ---------- ورودی ستاره تعاملی (از راست به چپ) ---------- */
+.stars-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.stars-input.rtl {
+  flex-direction: row-reverse;
+} /* پر شدن از راست به چپ */
+.stars-input .star {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  line-height: 1;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.25));
+}
+.stars-input .star::before {
+  content: "★";
+  font-size: 28px;
+  display: block;
+  transform: translateY(-1px);
+  color: #e6e1d7;
+  text-shadow: -1px 0 #111, 1px 0 #111, 0 -1px #111, 0 1px #111, 1px 1px #111,
+    -1px 1px #111, 1px -1px #111, -1px -1px #111;
+}
+.stars-input .star.on::before,
+.stars-input .star:hover::before {
+  color: #ffd23f;
+}
+
+/* پولاروید کوچیک داخل ریویو */
+.polaroid.mini {
+  width: 120px;
+  transform: none;
+}
+.polaroid.mini img {
+  height: 90px;
+}
+
+/* ---------- Lightbox ---------- */
+.lbx-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+}
+.lbx {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+.lbx img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+.lbx-close {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.85);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+}
+.lbx-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.75);
+}
+.lbx-nav.prev {
+  right: calc(50% + 48vw - 44px);
+} /* نزدیک لبه‌ها */
+.lbx-nav.next {
+  left: calc(50% + 48vw - 44px);
+}
+@media (max-width: 900px) {
+  .lbx-nav.prev {
+    right: 12px;
+  }
+  .lbx-nav.next {
+    left: 12px;
+  }
+}
+
+/* دکمه شبحی موجود است؛ اگر در این فایل نبود: */
+.btn.ghost {
+  background: transparent;
+  color: #e9ecef;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+/* ستاره‌های قابل تعامل - راست به چپ */
+.rate-rtl {
+  display: flex;
+  flex-direction: row-reverse; /* مهم: راست به چپ */
+  gap: 8px;
+  align-items: center;
+}
+
+/* خودِ ستاره به‌صورت CSS – بدون تصویر */
+.star {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+}
+
+/* شکل ستاره (۵ پر) */
+.star .star-shape {
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* ستاره با clip-path */
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+  background: #c9c4bb;
+  /* خط دور مشکیِ لطیف شبیه آیکنی که دادی */
+  filter: drop-shadow(0 0 0.7px #000) drop-shadow(0 0 0.7px #000);
+}
+
+/* پرشدن در هاور یا وقتی انتخاب شده */
+.star:hover .star-shape {
+  transform: scale(1.06);
+}
+.star.filled .star-shape {
+  background: #ffd166;
+}
+
+/* برای touch و کیبورد هم واضح باشه */
+.star:focus-visible {
+  outline: 2px dashed rgba(255, 209, 102, 0.9);
+  outline-offset: 2px;
+}
+.rev-reactions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+.btn-like,
+.btn-dislike {
+  border: 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.15);
+  color: #e9ecef;
+}
+.btn-like:hover {
+  background: rgba(88, 227, 154, 0.25);
+}
+.btn-dislike:hover {
+  background: rgba(255, 139, 139, 0.25);
+}
+.rev-reactions .spacer {
+  margin-inline-start: auto;
 }
