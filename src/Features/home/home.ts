@@ -11,6 +11,7 @@ import { LeaderboardService, LeaderboardItem } from '../services/leaderboard.ser
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { Footer } from "../../Shared/footer/footer";
+import { Charity } from "../charity/charity";
 type Cat = { id: number; name: string; slug: string; color: string; image: string };
 type PlaceRow = {
   id: number,
@@ -26,7 +27,7 @@ type PlaceRow = {
 
 @Component({
   selector: 'app-home',
-  imports: [MapComponent, UserPanelComponent, CountdownComponent, FormsModule, FontAwesomeModule, Footer],
+  imports: [MapComponent, UserPanelComponent, CountdownComponent, FormsModule, FontAwesomeModule, Footer, Charity],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })

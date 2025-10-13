@@ -355,6 +355,7 @@
   background: rgba(24, 48, 73, 0.35);
   border-radius: 10px;
   z-index: 10;
+  max-height: fit-content;
 }
 
 /* کارت دعوت به ورود */
@@ -365,6 +366,7 @@
   place-content: center;
   text-align: center;
   z-index: 11;
+  max-height: 90%;
   color: #eaeef4;
   padding: 24px;
 }

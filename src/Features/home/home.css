@@ -82,7 +82,7 @@
   position: relative;
   font-weight: 900;
   font-size: 20px;
-  top: 11vh;
+  top: 7vh;
 }
 .lb-search {
   position: relative;
@@ -267,7 +267,7 @@
 .cat .meta {
   display: flex;
   position: absolute;
-  top: 5vh;
+  top: 3.5vh;
   align-items: center;
   gap: 8px;
 }
