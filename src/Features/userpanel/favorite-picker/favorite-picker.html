@@ -1,0 +1,25 @@
+<div class="picker-wrap  container-fluid">
+    <div class="picker-head">
+        <input class="picker-search" [value]="q()" (input)="onInput($any($event.target).value)"
+            placeholder="جستجو در همین دسته..." dir="rtl" />
+        <button class="btn-ghost" type="button" (click)="close()">بستن</button>
+    </div>
+
+    <div *ngIf="busy()" class="muted" style="margin-bottom:8px">در حال جستجو…</div>
+    <div *ngIf="!busy() && q().trim().length>0 && q().trim().length<2" class="muted">
+        برای جستجو حداقل ۲ حرف وارد کنید.
+    </div>
+    <div class="picker-list row">
+        @for (it of results(); track it.id) {
+        <button class="picker-item col-md-3" type="button" (click)="pick(it)">
+            <img class="picker-thumb" [src]="it.coverImageUrl || 'images/location.png'" alt="">
+            <div class="picker-meta">
+                <div class="picker-title">{{ it.title }}</div>
+                <div class="muted" *ngIf="it.avgRating">امتیاز: {{ it.avgRating | number:'1.1-1' }}</div>
+            </div>
+        </button>
+        }
+    </div>
+
+    <div *ngIf="!busy() && results().length===0 && q().trim().length>=2" class="muted">نتیجه‌ای یافت نشد.</div>
+</div>

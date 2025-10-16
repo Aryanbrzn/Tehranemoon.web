@@ -15,9 +15,9 @@ export interface MapPlaceDto {
 export class MapService {
   constructor(private http: Httpclient) { }
 
-  getPlaces(categories?: string[]) {
+  getPlaces(catIds?: number[]) {
     return this.http.get<MapPlaceDto[]>('api/map', {
-      categories
+      catIds: catIds?.join(',')
     });
   }
 }

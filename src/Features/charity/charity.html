@@ -1,34 +1,31 @@
-<div class="up-row">
-    <section class="ticket-strip" dir="rtl" aria-label="نوار کاغذی">
-        <!-- تکه‌نوار چسب‌ها -->
+<div class="up-row d-flex flex-column align-items-center m-auto">
+    <section class="ticket-strip " dir="rtl" aria-label="نوار کاغذی">
         <span class="tape tl" aria-hidden="true"></span>
         <span class="tape tr" aria-hidden="true"></span>
 
-        <!-- لبه‌های موج‌دار با شبه‌المان‌ها ساخته می‌شوند -->
-
-        <!-- چند خط موجی (کم‌رنگ) -->
         <div class="waves">
-            <i class="wave w1"></i>
-            <i class="wave w2"></i>
-            <i class="wave w3"></i>
+            <i class="wave w1"></i><i class="wave w2"></i><i class="wave w3"></i>
         </div>
 
-        <!-- نوار آبی وسط -->
         <div class="blue-band">
             <span class="cut left"></span>
             <span class="cut right"></span>
         </div>
 
-        <!-- قیمت‌ها -->
         <div class="prices">
-            <span class="price left">۵ تومان</span>
-            <span class="price right">۵۰ تومان</span>
+            <span class="price left">{{fmt(5000)}} تومان</span>
+            <span class="price right">{{fmt(progress()?.totalAmountToman)}} تومان</span>
         </div>
 
-        <!-- پولاروید + فلش متن -->
         <div class="polaroid-callout">
-            <span class="arrow-text">پولاروید ←</span>
-            <span class="polaroid-mini" aria-hidden="true"></span>
+            <span class="arrow-text">
+                برای هر پولاروید که بسازید ۵ هزار تومن به خیریه اهدا خواهد شد
+            </span>
         </div>
     </section>
+
+    <a class="btn-primary donate-btn btn btn-primary mt-4" href="https://reymit.ir/amiralimrt" target="_blank"
+        rel="noopener noreferrer">
+        حمایت مالی از هدف ما
+    </a>
 </div>

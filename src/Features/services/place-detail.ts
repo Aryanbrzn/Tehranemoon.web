@@ -39,8 +39,8 @@ export interface PlaceDetailDto {
   coordinates?: string | null; // "lat,lng"
   avgRating?: number | null;
   reviewCount?: number | null;
-
   images?: { id: number; url: string }[];
+  youtubeVideoUrl?: string;
   reviews?: ReviewDto[]; // اختیاری؛ اگر API جداگانه برای ریویوها داری
 }
 

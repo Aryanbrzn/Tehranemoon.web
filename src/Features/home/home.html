@@ -1,4 +1,5 @@
-<app-countdown [targetUtc]="'2027-04-10T00:00:00Z'" label="تا واگذاری سایت"> </app-countdown>
+<app-countdown [targetUtc]="'2027-04-10T00:00:00Z'" label="تا واگذاری سایت">
+</app-countdown>
 
 <div class="map-page container-fluid w-100" [class.is-selected]="!!selected">
     <div class="panel map-panel">
@@ -8,11 +9,11 @@
     <aside class="panel cats-panel">
         <div class="cats-list">
             @if (loading) {
-            <div class="alert warning" style="opacity:.7;padding:8px">در حال بارگذاری...</div>
+            <div class="alert alert-warning text-light" style="opacity:.7;padding:8px">در حال بارگذاری...</div>
             } @else {
             @for (c of categories; track c.id) {
             <button class="cat">
-                <img [src]="c.image" alt="" (click)="select(c)" />
+                <img class="drop-shadow" [src]="c.image" alt="" (click)="select(c)" />
                 <div class="meta">
                     <span class="name">{{ c.name }}</span>
                 </div>
@@ -92,9 +93,8 @@
 
     }
 </div>
-<div class="d-flex container-fluid align-items-center flex-row-reverse w-100 justify-content-evenly"
-    style="gap: 100px;">
-    <app-charity></app-charity>
+<div class="home-bottom-row container-fluid">
     <app-user-panel></app-user-panel>
+    <app-charity></app-charity>
 </div>
 <app-footer></app-footer>

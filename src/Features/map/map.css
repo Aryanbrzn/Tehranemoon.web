@@ -1,4 +1,6 @@
 @import "leaflet/dist/leaflet.css";
+
+/* پنهان‌کردن کنترل‌های پیش‌فرض */
 ::ng-deep .leaflet-control-attribution.leaflet-control {
   display: none;
 }
@@ -9,15 +11,18 @@
   position: absolute;
   top: 0;
 }
+
 .leaflet-container {
   background: transparent;
   direction: ltr !important;
   z-index: 5;
   position: relative;
 }
+
 .tm-pop .leaflet-popup-content {
   margin: 6px 8px;
 }
+
 .map-pop {
   display: flex;
   gap: 8px;
@@ -38,6 +43,7 @@
   font-weight: 800;
   color: #183049;
 }
+
 .map-pop__btn {
   border: 0;
   padding: 6px 10px;
@@ -47,22 +53,26 @@
   color: #222;
   font-weight: 800;
 }
+
 .stars-css.small {
   font-size: 14px;
   letter-spacing: 2px;
 }
+
 .map-wrap {
   position: relative;
+  width: 100%;
   height: 100vh;
   overflow: hidden;
-  width: 160vh;
-  min-height: 100vh;
 }
+
 .map {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  min-height: 100%;
 }
+
 .legend {
   position: absolute;
   right: 12px;
@@ -75,6 +85,7 @@
   align-items: center;
   backdrop-filter: blur(6px);
 }
+
 .dot {
   width: 10px;
   height: 10px;
@@ -88,7 +99,8 @@
 .dot.restaurant {
   background: #ff7a3d;
 }
-/* custom pin (divIcon) */
+
+/* Pins */
 .pin {
   display: flex;
   align-items: center;
@@ -109,7 +121,8 @@
   height: 18px;
   filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.3));
 }
-/* پینِ مبتنی بر FA */
+
+/* FontAwesome-based pin */
 .fa-pin {
   width: 36px;
   height: 36px;
@@ -120,7 +133,7 @@
   justify-content: center;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25),
     inset 0 0 0 2px rgba(0, 0, 0, 0.05);
-  transform: translateZ(0); /* برای شفافیت بهتر */
+  transform: translateZ(0);
 }
 .fa-pin i {
   font-size: 18px;
@@ -141,9 +154,23 @@
   color: #2f3e46;
 }
 
-/* اگر بخوای پس‌زمینه‌ی حباب هم بر اساس دسته عوض شه: */
-/*
-.fa-pin.cafe       { background: #f8f1ff; }
-.fa-pin.restaurant { background: #fff2ea; }
-.fa-pin.park       { background: #eef9f0; }
-*/
+::ng-deep .leaflet-image-layer {
+  filter: drop-shadow(5px 14px 6px black);
+}
+
+/* ---------------- Media ---------------- */
+@media (min-width: 1025px) {
+  .map-wrap {
+    min-height: 100vh;
+  }
+}
+@media (min-width: 901px) {
+  .map-wrap {
+    min-height: 100vh;
+  }
+}
+@media (max-width: 430px) {
+  .map-wrap {
+    height: 50vh !important;
+  }
+}

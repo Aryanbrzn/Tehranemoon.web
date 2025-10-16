@@ -9,24 +9,37 @@
     </div>
     }
 
-    <section class="paper board-wrap" [class.blurred]="!isAuthed() ">
+    <section class="paper board-wrap" [class.blurred]="!isAuthed()">
 
-        <div class="board d-flex flex-column">
-            @for (category of categories; track $index) {
-            <div class="board-row d-flex flex-row  flex-nowrap w-100 mt-2" style="height: 100%;gap:5px">
-                <button class="slot ms-4" (click)="openTile(category.title??'دسته بندی')"
-                    style="box-shadow: none ;outline: none;">
-                    <img class="thumb m-auto" [src]="category.poster" [alt]="category.title??'دسته بندی'">
+        <div class="board">
+
+            @if(catsLoading()==false){
+            @for (cat of categories(); track cat.catId) { <div class="board-row d-flex flex-row flex-nowrap w-100 mt-2">
+                <img class="img-fluid" width="200" [src]="cat.poster" [alt]="cat.title">
+
+                <!-- سه خانه برای هر کتگوری -->
+                @for (slot of rowSlots(cat.catId); track $index) {
+                <!-- اگر خانه پر است -->
+                @if (slot) {
+                <button class="slot filled" (click)="openTile(slot.title)">
+                    <img class="thumb" [src]="slot.poster" [alt]="slot.title">
+                    <span class="caption">{{ slot.title }}</span>
                 </button>
-                @for (fav of Favorites(category.catId); track $index) {
-                <button class="slot" (click)="openTile(fav.name??'دسته بندی')">
-                    <img class="thumb" [src]="category.poster" [alt]="fav.name??'دسته بندی'">
-                    <span class="caption">{{ fav.name??'دسته بندی' }}</span>
+                } @else {
+                <!-- اگر خانه خالی است: دکمه + -->
+                <button class="slot empty" (click)="openFavoritePicker(cat.catId)">
+                    <span class="slot-plus" aria-hidden="true">＋</span>
                 </button>
+                }
                 }
             </div>
             }
-
+            }
+            @else{
+            <div class="alert alert-success">
+                <p>در حال بارگزاری...</p>
+            </div>
+            }
         </div>
 
         <div class="paper-footer justify-content-center">

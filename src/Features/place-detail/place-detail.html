@@ -20,7 +20,6 @@
                 <span class="cat">{{ place()?.categoryName }}</span>
                 @if (place()?.reviewCount) {
                 <span class="sep">•</span>
-                <!-- ستاره‌های CSS -->
                 <div class="rate-rtl">
                     @for (v of [1,2,3,4,5]; track v) {
                     <button type="button" class="star" [class.filled]="place()?.avgRating??0<=v"
@@ -28,7 +27,8 @@
                         <span class="star-shape"></span>
                     </button>
                     }
-                </div> <span class="cnt">({{ place()?.reviewCount }})</span>
+                </div>
+                <span class="cnt">({{ place()?.reviewCount }})</span>
                 }
             </div>
 
@@ -39,13 +39,19 @@
                 @if (place()?.instagramUrl) {
                 <a class="btn" [href]="place()?.instagramUrl" target="_blank">
                     <fa-icon [icon]="facamera"></fa-icon>
-                    اینستاگرام</a>
+                    اینستاگرام
+                </a>
+                }
+                @if (place()?.youtubeVideoUrl) {
+                <a class="btn" [href]="place()?.youtubeVideoUrl" target="_blank">
+                    <fa-icon [icon]="tv"></fa-icon>
+                    ویدیو امیرعلی
+                </a>
                 }
                 <button class="btn" (click)="share()">اشتراک‌گذاری</button>
-
-
             </div>
         </div>
+
         @if (hasCoord()) {
         @let ll = parseLatLng(place()?.coordinates!);
         <div class="hero-map">
@@ -58,6 +64,7 @@
         </div>
         }
     </header>
+
     <section class="section">
         <h4 class="sec-title">گالری</h4>
         <div class="filmstrip">
@@ -70,6 +77,7 @@
             }
         </div>
     </section>
+
     @if (place()?.description) {
     <section class="section">
         <h4 class="sec-title">دربارهٔ مکان</h4>
@@ -83,7 +91,6 @@
         </div>
 
         <div class="reviews">
-
             <!-- ⭐ امیرعلی همیشه اول -->
             @if (amirReview()) {
             @let r = amirReview()!;
@@ -95,7 +102,6 @@
                         <span class="star" [class.filled]="v <= r.rating"><span class="star-shape"></span></span>
                         }
                     </div>
-                    <!-- <span class="when">{{ r.createdAtJalali }}</span> -->
                 </header>
 
                 <p class="text" [innerText]="r.text"></p>
@@ -110,7 +116,6 @@
                     }
                 </div>
                 }
-                <!-- ریپلای/گزارش برای امیرعلی نداریم -->
             </article>
             }
 
@@ -124,7 +129,6 @@
                         <span class="star" [class.filled]="v <= r.rating"><span class="star-shape"></span></span>
                         }
                     </div>
-                    <!-- <span class="when">{{ r.createdAtJalali }}</span> -->
                 </header>
 
                 <p class="text" [innerText]="r.text"></p>
@@ -146,8 +150,6 @@
                     <button class="btn-dislike" (click)="dislike(r.id)" [disabled]="likeBusyId===r.id">👎 {{ r.dislikes
                         }}</button>
                     <span class="spacer"></span>
-                    <!-- <button class="btn-link" (click)="startReply(r.id)">پاسخ</button>
-                    <button class="btn-link danger" (click)="report(r.id)">گزارش</button> -->
                 </div>
 
                 @if (replyingFor===r.id) {
@@ -169,7 +171,8 @@
                             <span class="when">{{ rp.createdAtJalali }}</span>
                         </header>
                         <p class="text" [innerText]="rp.text"></p>
-                        <div class="rev-actions"><button class="btn-link danger" (click)="report(rp.id)">گزارش</button>
+                        <div class="rev-actions">
+                            <button class="btn-link danger" (click)="report(rp.id)">گزارش</button>
                         </div>
                     </article>
                     }
@@ -180,6 +183,69 @@
         </div>
     </section>
 
+    <section class="section">
+        @if(isAuthed()){
+        <h4 class="sec-title">ثبت نظر شما</h4>
+        }
+
+        <div class="add-review" data-no-capture>
+
+            @if(!isAuthed()){
+            <div class="auth-inline">
+                <div style="margin-bottom:8px">برای ثبت نظر ابتدا وارد حساب خود شوید.</div>
+                <button class="btn" type="button" (click)="openLogin()">ورود / ثبت‌نام</button>
+            </div>
+            }
+
+            @if(isAuthed()){
+
+            <!-- امتیازدهی -->
+            <div class="form-row">
+                <label>امتیاز</label>
+                <div class="stars-input ">
+                    @for (v of starRange; track v) {
+                    <button type="button" class="star" [class.on]="(hoverRating || selectedRating) >= v"
+                        (mouseenter)="setHover(v)" (mouseleave)="setHover(selectedRating)" (click)="setRating(v)"
+                        [disabled]="ratingBusy || !isAuthed()" aria-label="{{ v }} از ۵">
+                    </button>
+                    }
+                </div>
+            </div>
+
+            <!-- متن نظر -->
+            <div class="form-row">
+                <label>نظر</label>
+                <textarea style="color: #fff !important;" rows="4" dir="rtl" [(ngModel)]="rvForm.text"
+                    placeholder="تجربه‌ات از این مکان..." [disabled]="!isAuthed()"></textarea>
+            </div>
+
+            <!-- کپچا -->
+            <div class="form-row captcha">
+                <label>کپچا</label>
+                <div class="cap-box">
+                    <img [src]="cap?.imageUrl" alt="captcha">
+                    <input type="text" [(ngModel)]="rvForm.captchaAnswer" placeholder="کد امنیتی"
+                        [disabled]="!isAuthed()">
+                    <button class="btn ghost" type="button" (click)="refreshCaptcha()" [disabled]="rvBusy">
+                        <fa-icon [icon]="faRefresh"></fa-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn" type="button" (click)="submitReview()" [disabled]="rvBusy() || !isAuthed()">
+                    {{ rvBusy() ? 'در حال ارسال…' : 'ثبت نظر' }}
+                </button>
+                @if(rvError){
+                <div class="err">{{ rvError }}</div>
+
+                }
+            </div>
+            }
+
+            <!-- اکشن‌ها -->
+
+        </div>
+    </section>
 
     @if (lbxOpen) {
     <div class="lbx-backdrop" (click)="closeLightbox()"></div>

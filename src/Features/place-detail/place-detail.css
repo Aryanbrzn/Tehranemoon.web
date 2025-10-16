@@ -1,3 +1,7 @@
+:root {
+  --place-modal-pad: 12px;
+}
+
 .place-page {
   direction: rtl;
   color: #111;
@@ -7,6 +11,9 @@
   padding: 12px;
   border-radius: 14px;
   backdrop-filter: blur(2px);
+  max-width: min(960px, 96vw);
+  max-height: 90dvh; /* داخل مودال اسکرول بشه */
+  overflow: auto;
 }
 .hero-map {
   display: flex;
@@ -43,6 +50,7 @@
   overflow: hidden;
   clip: rect(0 0 0 0);
 }
+
 .hero-map mini-map {
   display: block;
   border-radius: 12px;
@@ -57,6 +65,7 @@
 .hero-map .leaflet-container {
   height: 100%;
 }
+
 .hero {
   display: grid;
   grid-template-columns: 280px 1fr 320px;
@@ -84,6 +93,7 @@
   mix-blend-mode: multiply;
   opacity: 0.9;
 }
+
 .rev.amirali {
   background: linear-gradient(
     135deg,
@@ -155,7 +165,6 @@
 
 /* سکشن‌ها (کارت‌های شفاف) */
 .section {
-  /* background: rgba(28, 32, 38, 0.85); */
   border-radius: 12px;
   padding: 12px;
   color: #e9ecef;
@@ -180,7 +189,7 @@
   font-weight: 800;
 }
 
-/* فیلم‌استریپ مشترک با یوزرپنل/لیدربورد */
+/* فیلم‌استریپ */
 .filmstrip {
   display: flex;
   gap: 14px;
@@ -196,7 +205,7 @@
   border-radius: 999px;
 }
 
-/* پولاروید (همان استایل لیدربورد/یوزرپنل) */
+/* پولاروید */
 .polaroid {
   width: 150px;
   background: #fff;
@@ -243,7 +252,7 @@
   border-radius: 2px;
 }
 
-/* کارت ریویوی امیرعلی */
+/* کارت ریویو امیرعلی */
 .amir-card {
   display: flex;
   flex-direction: column;
@@ -282,6 +291,7 @@
   background: #ffd166;
   width: 0%;
 }
+
 .text {
   white-space: pre-wrap;
   line-height: 1.6;
@@ -355,6 +365,7 @@
     height: 220px;
   }
 }
+
 /* --- هایلایت برای نظر امیرعلی --- */
 .rev.amirali {
   border: 1px dashed rgba(255, 209, 102, 0.6);
@@ -391,7 +402,7 @@
   color: #ff8b8b;
 }
 
-/* ریپلای‌ها (تو در تو) */
+/* ریپلای‌ها */
 .replies {
   margin-top: 8px;
   display: flex;
@@ -450,6 +461,7 @@
   margin-top: 10px;
   display: flex;
   flex-direction: column;
+  position: relative;
   gap: 10px;
 }
 .add-review .form-row {
@@ -465,7 +477,7 @@
 .add-review select,
 .add-review input {
   flex: 1;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(250 250 250 / 38%);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   color: #e9ecef;
@@ -495,6 +507,18 @@
   color: #ff8b8b;
   font-size: 13px;
 }
+
+/* متن و دکمه ورودِ حالت مهمان (به‌جای اورلی) */
+.auth-inline {
+  background: rgba(24, 48, 73, 0.85);
+  color: #e9ecef;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
 /* ---------- ستاره‌های نمایشی (CSS-only) ---------- */
 .stars-css {
   position: relative;
@@ -509,7 +533,7 @@
 }
 .stars-css::before {
   content: "★★★★★";
-  color: #e6e1d7; /* خالی */
+  color: #e6e1d7;
   text-shadow: -1px 0 #111, 1px 0 #111, 0 -1px #111, 0 1px #111, 1px 1px #111,
     -1px 1px #111, 1px -1px #111, -1px -1px #111;
   opacity: 0.9;
@@ -518,15 +542,15 @@
   content: "★★★★★";
   position: absolute;
   inset: 0 auto 0 0;
-  width: var(--score, 0%); /* درصد پرشدن */
+  width: var(--score, 0%);
   overflow: hidden;
-  color: #ffd23f; /* زرد */
+  color: #ffd23f;
   text-shadow: -1px 0 #111, 1px 0 #111, 0 -1px #111, 0 1px #111, 1px 1px #111,
     -1px 1px #111, 1px -1px #111, -1px -1px #111;
   filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.25));
 }
 
-/* ---------- ورودی ستاره تعاملی (از راست به چپ) ---------- */
+/* ورودی ستاره تعاملی (RTL) */
 .stars-input {
   display: flex;
   gap: 8px;
@@ -534,7 +558,7 @@
 }
 .stars-input.rtl {
   flex-direction: row-reverse;
-} /* پر شدن از راست به چپ */
+}
 .stars-input .star {
   width: 28px;
   height: 28px;
@@ -615,7 +639,7 @@
 }
 .lbx-nav.prev {
   right: calc(50% + 48vw - 44px);
-} /* نزدیک لبه‌ها */
+}
 .lbx-nav.next {
   left: calc(50% + 48vw - 44px);
 }
@@ -627,22 +651,163 @@
     left: 12px;
   }
 }
+@media (max-width: 600px) {
+  /* ظرف اصلی مودال */
+  .place-page {
+    padding: var(--place-modal-pad);
+    border-radius: 12px;
+    max-height: 96dvh;
+  }
 
-/* دکمه شبحی موجود است؛ اگر در این فایل نبود: */
+  /* هدر تک‌ستونه + فاصله‌ها جمع‌وجور */
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 8px;
+  }
+
+  /* کاور کوچک‌تر */
+  .cover {
+    height: 180px;
+    flex: 0 0 auto;
+    border-radius: 10px;
+  }
+  .cover img {
+    object-fit: cover;
+  }
+
+  /* عنوان و هارت */
+  .title {
+    font-size: clamp(16px, 4.8vw, 20px);
+  }
+  .fav-heart {
+    width: 34px;
+    height: 32px;
+  }
+
+  /* زیرعنوان‌ها در دو خط بشکنند */
+  .sub {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+
+  /* دکمه‌های اکشن: دو ستونه، تمام‌عرض */
+  .actions {
+    margin-top: 6px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .btn {
+    width: 100%;
+  }
+
+  /* مینی‌مپ جمع‌وجور */
+  .hero-map mini-map {
+    height: 200px;
+  }
+  .nav-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* کارت‌های سکشن فشرده‌تر */
+  .section {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  /* فیلم‌استریپ و پولارویدها کوچک‌تر */
+  .filmstrip {
+    gap: 10px;
+  }
+  .polaroid {
+    width: 120px;
+  }
+  .polaroid img {
+    height: 90px;
+  }
+  .polaroid.mini {
+    width: 100px;
+  }
+  .polaroid.mini img {
+    height: 76px;
+  }
+
+  /* لیست نظرات و فرم‌ها */
+  .reviews {
+    gap: 8px;
+  }
+  .rev {
+    padding: 10px;
+  }
+  .rev header {
+    gap: 6px;
+  }
+
+  .add-review .form-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .add-review label {
+    min-width: 0;
+  }
+  .add-review .cap-box {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .add-review .cap-box img {
+    height: 36px;
+  }
+  .reply-form .row-actions {
+    justify-content: flex-end;
+  }
+
+  /* لایت‌باکس: ناوبری نزدیک لبه‌ها و تصویر کوچک‌تر */
+  .lbx img {
+    max-width: 92vw;
+    max-height: 70dvh;
+  }
+  .lbx-nav.prev {
+    right: 12px;
+  }
+  .lbx-nav.next {
+    left: 12px;
+  }
+}
+
+/* ===== Tablet (600–900px): کمی فشرده‌تر ولی سه‌ستونه نمی‌شکنیم ===== */
+@media (min-width: 601px) and (max-width: 900px) {
+  .place-page {
+    max-height: 92dvh;
+  }
+  .hero {
+    grid-template-columns: 240px 1fr 280px;
+    gap: 12px;
+  }
+  .cover {
+    min-height: 220px;
+  }
+  .actions {
+    flex-wrap: wrap;
+  }
+}
+/* دکمه شبحی */
 .btn.ghost {
   background: transparent;
   color: #e9ecef;
   border: 1px solid rgba(255, 255, 255, 0.25);
 }
-/* ستاره‌های قابل تعامل - راست به چپ */
+
+/* ستاره ساده */
 .rate-rtl {
   display: flex;
-  flex-direction: row-reverse; /* مهم: راست به چپ */
+  flex-direction: row-reverse;
   gap: 8px;
   align-items: center;
 }
-
-/* خودِ ستاره به‌صورت CSS – بدون تصویر */
 .star {
   width: 22px;
   height: 22px;
@@ -652,13 +817,10 @@
   cursor: pointer;
   position: relative;
 }
-
-/* شکل ستاره (۵ پر) */
 .star .star-shape {
   width: 100%;
   height: 100%;
   display: block;
-  /* ستاره با clip-path */
   clip-path: polygon(
     50% 0%,
     61% 35%,
@@ -672,23 +834,20 @@
     39% 35%
   );
   background: #c9c4bb;
-  /* خط دور مشکیِ لطیف شبیه آیکنی که دادی */
   filter: drop-shadow(0 0 0.7px #000) drop-shadow(0 0 0.7px #000);
 }
-
-/* پرشدن در هاور یا وقتی انتخاب شده */
 .star:hover .star-shape {
   transform: scale(1.06);
 }
 .star.filled .star-shape {
   background: #ffd166;
 }
-
-/* برای touch و کیبورد هم واضح باشه */
 .star:focus-visible {
   outline: 2px dashed rgba(255, 209, 102, 0.9);
   outline-offset: 2px;
 }
+
+/* واکنش‌های ریویو */
 .rev-reactions {
   display: flex;
   align-items: center;
