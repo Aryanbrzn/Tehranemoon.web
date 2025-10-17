@@ -71,7 +71,6 @@ export class Home {
   select(c: Cat) {
     this.selected = c;
     this.mapRef?.filterByCategory(c.id);
-    this.mapRef?.fitToCategory(c.id);
     setTimeout(() => this.mapRef?.invalidateSize(), 650);
     this.refreshPlaces();
   }

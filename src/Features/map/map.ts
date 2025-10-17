@@ -25,7 +25,7 @@ export class MapComponent implements OnInit, OnDestroy {
     cafe: '#ff7b89',
     restaurant: '#ffd166',
     park: '#4cd964',
-    default: '#5da9ff',
+    business: '#5da9ff',
   };
 
   dotRadius = 7;
