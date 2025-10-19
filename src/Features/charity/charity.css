@@ -2,7 +2,8 @@
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
 } /* ستون پنل (فقط جهت کنترل فاصله) */
 .up-col {
   min-width: 0;
@@ -195,11 +196,104 @@
   filter: brightness(1.05);
   transform: translateY(-1px);
 } /* ریسپانسیو */
+/* Enhanced Mobile Charity Component */
 @media (max-width: 900px) {
   .up-row {
     grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 12px;
   }
+
   .ticket-strip {
     min-height: 200px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px;
+  }
+
+  .donate-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .donate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  }
+
+  .polaroid-callout {
+    padding: 12px;
+  }
+
+  .arrow-text {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 480px) {
+  .up-row {
+    padding: 8px;
+    gap: 12px;
+  }
+
+  .ticket-strip {
+    min-height: 180px;
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .polaroid-callout {
+    padding: 8px;
+  }
+
+  .arrow-text {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .donate-btn {
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .up-row {
+    padding: 6px;
+    gap: 10px;
+  }
+
+  .ticket-strip {
+    min-height: 160px;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .polaroid-callout {
+    padding: 6px;
+  }
+
+  .arrow-text {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .donate-btn {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
   }
 }

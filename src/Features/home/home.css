@@ -10,24 +10,24 @@
   position: relative;
   z-index: 2;
   left: 0;
-  transition: left 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
   flex: 0 1 75%;
+  transition: left 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .cats-panel {
   position: relative;
   z-index: 1;
-  flex: 0 0 25%;
-  transition: opacity 0.3s;
-  margin-top: 25px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  overflow: hidden;
   align-items: center;
   justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  margin-top: 25px;
   max-height: 100vh;
+  overflow: hidden;
+  transition: opacity 0.3s;
+  flex: 0 0 25%;
 }
 
 .map-page.is-selected .map-panel {
@@ -41,21 +41,21 @@
 /* Drawer-like leader board (desktop default) */
 .leaderboard-flyin {
   position: fixed;
-  inset: 0 auto 0 0;
-  width: min(420px, 56vw);
-  transform: translateX(-100%);
-  transition: transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1),
-    right 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+  top: 0;
+  right: calc(-50vw + 15px);
+  bottom: 0;
+  left: 0;
   z-index: 3;
   display: flex;
   flex-direction: column;
+  width: min(420px, 56vw);
+  height: 100vh;
   padding: 14px 16px;
   gap: 12px;
-  height: 100vh;
-  top: 0;
-  bottom: 0;
-  right: calc(-50vw + 15px);
   background: transparent;
+  transform: translateX(-100%);
+  transition: transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    right 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .map-page.is-selected .leaderboard-flyin {
@@ -75,10 +75,10 @@
 
 .lb-paper-title .btn-back {
   border: 0;
+  padding: 6px 10px;
   margin-top: 4vh;
   background: rgba(255, 255, 255, 0.75);
   border-radius: 8px;
-  padding: 6px 10px;
   cursor: pointer;
 }
 
@@ -103,9 +103,9 @@
 
 .lb-paper-title .title {
   position: relative;
+  top: 7vh;
   font-weight: 900;
   font-size: 20px;
-  top: 7vh;
 }
 
 /* Search in leaderboard */
@@ -117,22 +117,22 @@
 .lb-search input {
   flex: 1;
   padding: 10px 40px 10px 12px;
-  border-radius: 999px;
   border: 0;
-  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 999px;
   outline: none;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
 .lb-search .icon {
   position: absolute;
-  right: 6px;
   top: 50%;
-  transform: translateY(-50%);
+  right: 6px;
   width: 28px;
   height: 28px;
-  border-radius: 50%;
   border: 0;
+  border-radius: 50%;
   cursor: pointer;
+  transform: translateY(-50%);
   background: url("/assets/ui/icons/search.svg") center/16px 16px no-repeat,
     rgba(0, 0, 0, 0.15);
 }
@@ -142,8 +142,8 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  overflow: auto;
   padding: 6px 2px 20px;
+  overflow: auto;
   overflow-x: hidden;
 }
 
@@ -152,32 +152,34 @@
   align-items: flex-start;
   gap: 14px;
 }
+
 .lb-row.alt .polaroid {
   transform: rotate(6deg);
 }
+
 .lb-row:not(.alt) .polaroid {
   transform: rotate(-6deg);
 }
 
 /* Paper strip + stars */
 .paper-strip {
+  position: relative;
   flex: 1;
   min-height: 42px;
   display: flex;
   align-items: center;
   padding: 8px 12px;
   border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   background: url("/assets/ui/paper-strip.webp") center/auto 100% repeat-x,
     linear-gradient(#efe6dc, #efe6dc);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  position: relative;
 }
 
 .paper-strip::after {
   content: "";
   position: absolute;
-  right: -10px;
   top: 10px;
+  right: -10px;
   width: 0;
   height: 0;
   border-left: 10px solid #c9b8a7;
@@ -195,8 +197,8 @@
 
 .stars::after {
   position: absolute;
-  left: 0;
   top: 0;
+  left: 0;
   width: var(--score, 100%);
   overflow: hidden;
   color: #f8c23a;
@@ -205,32 +207,33 @@
 
 /* Polaroid */
 .polaroid {
+  position: relative;
   width: 110px;
+  padding: 6px 6px 10px;
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 6px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-  padding: 6px 6px 10px;
-  position: relative;
 }
 
 .polaroid img {
   width: 100%;
   height: 90px;
-  object-fit: cover;
-  border-radius: 4px;
   margin-bottom: 6px;
+  object-fit: cover;
   border: 0.5px solid #cfcfcf;
+  border-radius: 4px;
 }
 
 .polaroid .caption {
   font-size: 12px;
   text-align: center;
 }
+
 .polaroid .idx {
   position: absolute;
-  right: 4px;
   bottom: 0;
+  right: 4px;
   font-size: 11px;
   opacity: 0.7;
 }
@@ -238,8 +241,8 @@
 .polaroid::before {
   content: "";
   position: absolute;
-  left: 8px;
   top: -10px;
+  left: 8px;
   width: 44px;
   height: 16px;
   transform: rotate(-8deg);
@@ -261,18 +264,18 @@
 }
 
 .cat {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  width: 100%;
   padding: 8px;
-  background: transparent;
-  border-radius: 12px;
-  position: relative;
   border: 0;
+  border-radius: 12px;
+  background: transparent;
   cursor: default;
   text-align: right;
-  width: 100%;
 }
 
 .cat img {
@@ -284,9 +287,9 @@
 }
 
 .cat .meta {
-  display: flex;
   position: absolute;
   top: 3.5vh;
+  display: flex;
   align-items: center;
   gap: 8px;
 }
@@ -400,13 +403,7 @@
   background: rgba(0, 0, 0, 0.15);
 }
 
-/* Review modal */
-.review-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 10;
-}
+/* Review modal - using global modal-backdrop */
 .review-modal {
   position: fixed;
   z-index: 11;
@@ -444,22 +441,7 @@
   justify-content: flex-end;
 }
 
-.btn-primary {
-  background: #183049;
-  color: #fff;
-  border: 0;
-  padding: 8px 14px;
-  border-radius: 10px;
-  font-weight: 800;
-}
-.btn-ghost {
-  background: transparent;
-  border: 2px solid #183049;
-  color: #183049;
-  padding: 6px 12px;
-  border-radius: 10px;
-  font-weight: 800;
-}
+/* Button styles moved to global styles.css */
 
 /* Solid stars (paper-strip) */
 .paper-strip .stars {
@@ -506,14 +488,18 @@
 .home-bottom-row app-charity {
   order: 2;
 }
-/* ---------------- Mobile Layout Rules (cats next to map, leaderboard below map) ---------------- */
+/* ---------------- Mobile Layout Rules (Enhanced for Samsung Android & iOS) ---------------- */
 @media (max-width: 900px) {
   .home-bottom-row {
     flex-direction: column;
     align-items: center;
+    gap: 16px;
+    padding: 0 12px;
   }
   .home-bottom-row > * {
     flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
   }
   .home-bottom-row app-user-panel {
     order: 1;
@@ -521,14 +507,16 @@
   .home-bottom-row app-charity {
     order: 2;
   }
-  /* Grid دو ستونه: مپ (ستون اصلی) + ریل کتگوری باریک کنار مپ */
+
+  /* Enhanced Grid Layout for Mobile - Equal Heights */
   .map-page {
     display: grid;
-    grid-template-columns: 1fr 88px; /* مپ + ستون باریک کتگوری‌ها */
-    grid-template-rows: auto auto; /* سطر 1: مپ و کتگوری | سطر 2: لیدربرد */
-    gap: 6px;
-    padding: var(--mobile-pad);
-    align-items: start;
+    grid-template-columns: 1fr 80px; /* Slightly smaller category panel */
+    grid-template-rows: 1fr; /* Single row with equal height */
+    gap: 8px;
+    padding: 12px;
+    align-items: stretch; /* Stretch to fill height */
+    min-height: calc(50vh - 120px); /* Better height calculation */
   }
 
   .map-panel {
@@ -537,6 +525,9 @@
     flex: 1 1 auto;
     left: 0 !important;
     width: 100%;
+    height: 100%; /* Fill available height */
+    display: flex;
+    flex-direction: column;
   }
 
   .cats-panel {
@@ -548,23 +539,44 @@
     pointer-events: auto !important;
     align-items: stretch;
     justify-content: flex-start;
+    height: 100%; /* Match map height */
+    display: flex;
+    flex-direction: column;
   }
 
-  /* لیست کتگوری‌ها ستونی و اسکرول‌دار کنار مپ */
+  /* Enhanced Category List for Mobile */
   .cats-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     overflow-y: auto;
     max-height: 100%;
     padding-inline: 2px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  }
+
+  .cats-list::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .cats-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+
+  .cat {
+    padding: 6px;
+    border-radius: 10px;
   }
 
   .cat img {
     height: auto;
+    max-height: 60px;
+    object-fit: contain;
   }
 
-  /* لیدربرد زیر مپ، تمام‌عرض، بدون افکت دراور */
+  /* Enhanced Leaderboard for Mobile */
   .leaderboard-flyin {
     position: static !important;
     grid-column: 1 / -1;
@@ -573,42 +585,301 @@
     height: auto;
     transform: none !important;
     right: auto !important;
-    padding: 8px 0 0 0;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    margin-top: 8px;
   }
 
-  /* عنوان فیت‌تر */
+  .lb-paper-title {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+
   .lb-paper-title .title {
     font-size: 18px;
     top: auto;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .lb-paper-title .btn-back {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    margin-top: 0;
+    padding: 8px 12px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .lb-search {
+    margin-bottom: 12px;
   }
 
   .lb-search input {
     font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 20px;
   }
 
-  /* محدودیت ارتفاع لیست به ۳ آیتم و اسکرول */
+  .lb-search .icon {
+    width: 32px;
+    height: 32px;
+    right: 4px;
+  }
+
+  /* Enhanced List for Mobile */
   .lb-list {
-    /* ارتفاع هر آیتم ~ 120-140px بسته به محتوا؛ 3 آیتم: */
-    max-height: calc(3 * 132px);
+    max-height: calc(3 * 120px);
     overflow-y: auto;
+    padding: 8px 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
   }
-}
 
-/* کمی کوچک‌تر شدن پولاروید در موبایل‌های خیلی کوچک */
-@media (max-width: 480px) {
+  .lb-list::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .lb-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+
+  .lb-row {
+    gap: 10px;
+    padding: 4px 0;
+    align-items: center;
+  }
+
+  .paper-strip {
+    min-height: 38px;
+    padding: 6px 10px;
+    flex: 1;
+  }
+
   .polaroid {
-    width: 96px;
+    width: 100px;
+    padding: 4px 4px 8px;
+    flex-shrink: 0;
   }
+
   .polaroid img {
-    height: 78px;
+    height: 70px;
+    object-fit: cover;
+  }
+
+  .polaroid .caption {
+    font-size: 11px;
+    text-align: center;
+    line-height: 1.2;
   }
 }
 
-/* تیترها روی موبایل‌های بسیار کوچک */
+/* Enhanced Mobile Layout for Small Screens (Samsung Galaxy, iPhone SE) */
+@media (max-width: 480px) {
+  .map-page {
+    grid-template-columns: 1fr 70px; /* Even smaller category panel */
+    grid-template-rows: 1fr; /* Single row with equal height */
+    gap: 6px;
+    padding: 8px;
+    align-items: stretch; /* Ensure equal heights */
+  }
+
+  .map-panel {
+    height: 100%; /* Fill available height */
+  }
+
+  .cats-panel {
+    height: 100%; /* Match map height */
+  }
+
+  .cats-panel {
+    padding: 4px;
+  }
+
+  .cat {
+    padding: 4px;
+  }
+
+  .cat img {
+    max-height: 50px;
+  }
+
+  .leaderboard-flyin {
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 6px;
+  }
+
+  .lb-paper-title {
+    padding: 6px 8px;
+    margin-bottom: 6px;
+  }
+
+  .lb-paper-title .title {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .lb-paper-title .btn-back {
+    top: 6px;
+    right: 6px;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+
+  .lb-search {
+    margin-bottom: 8px;
+  }
+
+  .lb-search input {
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: 16px;
+  }
+
+  .lb-search .icon {
+    width: 28px;
+    height: 28px;
+    right: 3px;
+  }
+
+  .lb-list {
+    max-height: calc(3 * 100px);
+    padding: 6px 2px;
+  }
+
+  .lb-row {
+    gap: 8px;
+  }
+
+  .paper-strip {
+    min-height: 32px;
+    padding: 4px 8px;
+  }
+
+  .polaroid {
+    width: 90px;
+    padding: 3px 3px 6px;
+  }
+
+  .polaroid img {
+    height: 60px;
+  }
+
+  .polaroid .caption {
+    font-size: 10px;
+  }
+
+  .polaroid .idx {
+    font-size: 9px;
+  }
+}
+
+/* Ultra Small Screens (iPhone SE, Older Android) */
 @media (max-width: 380px) {
-  .lb-paper-title .title,
+  .map-page {
+    grid-template-columns: 1fr 60px;
+    grid-template-rows: 1fr; /* Single row with equal height */
+    gap: 4px;
+    padding: 6px;
+    align-items: stretch; /* Ensure equal heights */
+  }
+
+  .map-panel {
+    height: 100%; /* Fill available height */
+  }
+
+  .cats-panel {
+    height: 100%; /* Match map height */
+    padding: 2px;
+  }
+
+  .cat {
+    padding: 2px;
+  }
+
+  .cat img {
+    max-height: 40px;
+  }
+
+  .leaderboard-flyin {
+    padding: 6px;
+    border-radius: 6px;
+    margin-top: 4px;
+  }
+
+  .lb-paper-title {
+    padding: 4px 6px;
+    margin-bottom: 4px;
+  }
+
+  .lb-paper-title .title {
+    font-size: clamp(14px, 4vw, 16px);
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .lb-paper-title .btn-back {
+    top: 4px;
+    right: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .lb-search {
+    margin-bottom: 6px;
+  }
+
+  .lb-search input {
+    font-size: 12px;
+    padding: 6px 8px;
+    border-radius: 12px;
+  }
+
+  .lb-search .icon {
+    width: 24px;
+    height: 24px;
+    right: 2px;
+  }
+
+  .lb-list {
+    max-height: calc(3 * 90px);
+    padding: 4px 1px;
+  }
+
+  .lb-row {
+    gap: 6px;
+  }
+
+  .paper-strip {
+    min-height: 28px;
+    padding: 3px 6px;
+  }
+
+  .polaroid {
+    width: 80px;
+    padding: 2px 2px 4px;
+  }
+
+  .polaroid img {
+    height: 50px;
+  }
+
+  .polaroid .caption {
+    font-size: 9px;
+  }
+
+  .polaroid .idx {
+    font-size: 8px;
+  }
+
+  /* Responsive text sizing */
   .sec-title,
   .title {
-    font-size: clamp(16px, 4vw, 20px);
+    font-size: clamp(14px, 4vw, 18px);
   }
 }

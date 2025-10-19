@@ -136,15 +136,103 @@ body::after {
   display: none !important;
 }
 
+/* ---------------- Mobile Image Optimization ---------------- */
 img,
 video {
   max-width: 100%;
   height: auto;
 }
 
-/* ارتفاع امن موبایل */
-.is-mobile-viewport {
-  min-height: 100dvh;
+/* Lazy loading for better mobile performance */
+img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+img[loading="lazy"].loaded {
+  opacity: 1;
+}
+
+/* Mobile-specific image sizing */
+@media (max-width: 768px) {
+  .polaroid img {
+    height: auto;
+    min-height: 80px;
+  }
+
+  .cover img {
+    height: 200px;
+    object-fit: cover;
+  }
+}
+
+/* ---------------- iOS and Android Mobile Optimizations ---------------- */
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari viewport fixes */
+  .is-mobile-viewport {
+    min-height: -webkit-fill-available;
+  }
+
+  /* Prevent iOS zoom on form inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="password"],
+  textarea {
+    font-size: 16px !important;
+    transform: translateZ(0);
+  }
+
+  /* iOS scroll momentum */
+  .cats-list,
+  .lb-list {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Android Chrome specific fixes */
+@supports not (-webkit-touch-callout: none) {
+  /* Android Chrome optimizations */
+  .is-mobile-viewport {
+    min-height: 100vh;
+  }
+
+  /* Better scrolling on Android */
+  .cats-list,
+  .lb-list {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Samsung Galaxy specific optimizations */
+@media screen and (max-width: 480px) and (max-height: 800px) {
+  .map-page {
+    min-height: calc(100vh - 100px);
+  }
+
+  .map-panel {
+    min-height: 45vh;
+  }
+
+  .leaderboard-flyin {
+    max-height: 40vh;
+  }
+}
+
+/* iPhone specific optimizations */
+@media screen and (max-width: 480px) and (max-height: 900px) {
+  .map-page {
+    min-height: calc(100vh - 80px);
+  }
+
+  .map-panel {
+    min-height: 50vh;
+  }
+
+  .leaderboard-flyin {
+    max-height: 35vh;
+  }
 }
 
 /* کانتینر عمومی */
@@ -156,13 +244,140 @@ video {
   filter: drop-shadow(1px 14px 6px black);
 }
 
-/* جلوگیری از پرش اسکرول افقی (تکراری‌ها ادغام شد) */
-html,
-body {
-  overflow-x: hidden;
+/* ---------------- Common Components ---------------- */
+
+/* Button Styles */
+.btn {
+  border: 0;
+  background: #ffd166;
+  color: #222;
+  padding: 6px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.15s ease;
 }
 
-/* ---------------- Media Queries (Global) ---------------- */
+.btn:hover {
+  filter: brightness(0.95);
+}
+
+.btn-primary {
+  background: #183049;
+  color: #fff;
+  border: 0;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 2px solid #183049;
+  color: #183049;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-link {
+  border: 0;
+  background: transparent;
+  color: #9fb5ff;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.btn-link.danger {
+  color: #ff8b8b;
+}
+
+/* Form Controls */
+.form-control {
+  border: 2px solid #183049;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.7);
+  outline: none;
+  font-size: 14px;
+}
+
+/* Tab Styles */
+.tab {
+  border: 2px solid #183049;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 800;
+  color: #183049;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tab.active,
+.tab:hover {
+  background: #183049;
+  color: #fff;
+}
+
+/* Stars CSS */
+.stars-css {
+  position: relative;
+  display: inline-block;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 6px;
+}
+
+.stars-css.small {
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+.stars-css::before {
+  content: "★★★★★";
+  color: #e6e1d7;
+  text-shadow: -1px 0 #111, 1px 0 #111, 0 -1px #111, 0 1px #111, 1px 1px #111,
+    -1px 1px #111, 1px -1px #111, -1px -1px #111;
+  opacity: 0.9;
+}
+
+.stars-css::after {
+  content: "★★★★★";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--score, 0%);
+  overflow: hidden;
+  color: #ffd23f;
+  text-shadow: -1px 0 #111, 1px 0 #111, 0 -1px #111, 0 1px #111, 1px 1px #111,
+    -1px 1px #111, 1px -1px #111, -1px -1px #111;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.25));
+}
+
+/* Modal/Backdrop Styles */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 10;
+}
+
+.auth-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 90;
+}
+
+/* ---------------- Mobile Touch Improvements ---------------- */
 @media (hover: none) {
   .btn,
   .btn-link,
@@ -171,6 +386,20 @@ body {
   .cat,
   .slot,
   .btn-review {
-    min-height: 40px;
+    min-height: 44px; /* iOS recommended minimum */
+    min-width: 44px;
+  }
+
+  /* Larger touch targets for interactive elements */
+  .star,
+  .star-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better spacing for mobile */
+  .form-control {
+    min-height: 44px;
+    font-size: 16px; /* Prevents zoom on iOS */
   }
 }

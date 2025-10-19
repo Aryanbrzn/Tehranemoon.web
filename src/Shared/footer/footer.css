@@ -89,14 +89,97 @@
   white-space: nowrap;
 }
 
-/* واکنش‌گرا */
+/* Enhanced Mobile Footer */
 @media (max-width: 720px) {
   .glass-footer .inner {
     grid-template-columns: 1fr;
     text-align: center;
-    gap: 6px;
+    gap: 8px;
+    padding: 16px 12px;
   }
+
+  .brand {
+    margin-bottom: 8px;
+  }
+
+  .brand .logo {
+    width: 120px;
+    height: 120px;
+  }
+
+  .brand .name {
+    font-size: 18px;
+    margin-top: 8px;
+  }
+
+  .links {
+    gap: 8px;
+    margin: 8px 0;
+  }
+
+  .link {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
   .copy {
     justify-content: center;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .glass-footer .inner {
+    padding: 12px 8px;
+    gap: 6px;
+  }
+
+  .brand .logo {
+    width: 100px;
+    height: 100px;
+  }
+
+  .brand .name {
+    font-size: 16px;
+  }
+
+  .links {
+    gap: 6px;
+    margin: 6px 0;
+  }
+
+  .link {
+    padding: 4px 8px;
+    font-size: 13px;
+  }
+
+  .copy {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 380px) {
+  .glass-footer .inner {
+    padding: 10px 6px;
+    gap: 4px;
+  }
+
+  .brand .logo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .brand .name {
+    font-size: 14px;
+  }
+
+  .link {
+    padding: 3px 6px;
+    font-size: 12px;
+  }
+
+  .copy {
+    font-size: 10px;
   }
 }

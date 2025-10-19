@@ -1,5 +1,10 @@
 <section class="place-page" dir="rtl">
 
+    <!-- Close Button -->
+    <button class="close-modal-btn" type="button" (click)="closeModal()" aria-label="بستن">
+        <fa-icon [icon]="faTimes"></fa-icon>
+    </button>
+
     <header class="hero">
         <div class="cover">
             <img [src]="place()?.coverImageUrl || 'images/location.png'" alt="">

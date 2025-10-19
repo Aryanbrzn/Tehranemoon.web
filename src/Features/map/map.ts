@@ -29,6 +29,18 @@ export class MapComponent implements OnInit, OnDestroy {
   };
 
   dotRadius = 7;
+
+  // Responsive pin sizes based on screen size
+  getResponsiveDotRadius(): number {
+    if (typeof window !== 'undefined') {
+      const width = window.innerWidth;
+      if (width <= 380) return 5;      // Small mobile
+      if (width <= 480) return 6;      // Medium mobile
+      if (width <= 768) return 7;      // Tablet
+      return 8;                        // Desktop
+    }
+    return 7;
+  }
   private el = inject(ElementRef<HTMLElement>);
   private data = inject(MapService);
 
@@ -135,7 +147,7 @@ export class MapComponent implements OnInit, OnDestroy {
       const color = this.dotColorMap[slug] ?? this.dotColorMap;
 
       const m = L.circleMarker([y, x], {
-        radius: this.dotRadius,
+        radius: this.getResponsiveDotRadius(),
         color,
         weight: 0,
         fillColor: color,

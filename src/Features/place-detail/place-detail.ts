@@ -8,8 +8,9 @@ import { PlaceDetailService, PlaceDetailDto, ReviewDto } from '../services/place
 import { CaptchaService, CaptchaChallenge } from '../../Core/services/captcha-service';
 import { ReviewsService } from '../services/reviews-service';
 import { MODAL_DATA } from '../../Shared/modal/modal.tokens';
+import { ModalRef } from '../../Shared/modal/modal-ref';
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { faCamera, faHeart, faRefresh, faTv } from '@fortawesome/free-solid-svg-icons'
+import { faCamera, faHeart, faRefresh, faTv, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FavoritesService } from '../services/favorites.service';
 import { AuthService } from '../../Core/services/auth.service';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog';
@@ -32,6 +33,7 @@ export class PlaceDetailComponent {
   tv = faTv;
   faheart = faHeart;
   faRefresh = faRefresh;
+  faTimes = faTimes;
   private route = inject(ActivatedRoute);
   private api = inject(PlaceDetailService);
   private reviewsApi = inject(ReviewsService);
@@ -41,6 +43,7 @@ export class PlaceDetailComponent {
   private modal = inject(ModalService);
 
   private modalData = inject(MODAL_DATA, { optional: true }) as { id?: number } | null;
+  private modalRef = inject(ModalRef, { optional: true });
   likeBusyId: number | null = null;
   favOn = false;
   favBusy = false;
@@ -325,4 +328,11 @@ export class PlaceDetailComponent {
   closeLightbox() { this.lbxOpen = false; this.lbxItems = []; this.lbxIndex = 0; }
   prevLbx(e: Event) { e.stopPropagation(); this.lbxIndex = (this.lbxIndex + this.lbxItems.length - 1) % this.lbxItems.length; }
   nextLbx(e: Event) { e.stopPropagation(); this.lbxIndex = (this.lbxIndex + 1) % this.lbxItems.length; }
+
+  // Close modal method
+  closeModal() {
+    if (this.modalRef) {
+      this.modalRef.close();
+    }
+  }
 }

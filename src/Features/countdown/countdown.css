@@ -3,26 +3,75 @@
   align-items: center;
   justify-content: center;
   flex-direction: row-reverse;
-  padding-top: 15px;
-  padding-bottom: 10px !important;
+  padding: 12px 16px;
   border-radius: 15px;
   background-color: #ffffff04;
   backdrop-filter: blur(15px);
   gap: 0.35rem;
   color: #c1b8d7;
   font-weight: 800;
+  font-size: 14px;
+  line-height: 1.4;
 }
+
 .num {
   font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  font-weight: 900;
 }
+
 .sep {
   opacity: 0.8;
+  font-size: 12px;
 }
+
 .tail {
   opacity: 0.85;
   margin-inline-start: 0.25rem;
+  font-size: 12px;
 }
+
 .done {
   opacity: 0.8;
   font-weight: 700;
+  font-size: 14px;
+}
+
+/* Mobile optimizations for Samsung Android and iOS */
+@media (max-width: 768px) {
+  .countdown {
+    padding: 10px 12px;
+    font-size: 13px;
+    gap: 0.25rem;
+    border-radius: 12px;
+  }
+
+  .num {
+    font-size: 15px;
+  }
+
+  .sep,
+  .tail {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .countdown {
+    padding: 8px 10px;
+    font-size: 12px;
+    gap: 0.2rem;
+    border-radius: 10px;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+
+  .num {
+    font-size: 14px;
+  }
+
+  .sep,
+  .tail {
+    font-size: 10px;
+  }
 }

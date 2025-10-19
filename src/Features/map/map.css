@@ -159,18 +159,134 @@
 }
 
 /* ---------------- Media ---------------- */
-@media (min-width: 1025px) {
+/* Enhanced Mobile Map Layout */
+@media (max-width: 900px) {
   .map-wrap {
-    min-height: 100vh;
+    height: 50vh;
+    min-height: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .map-pop {
+    gap: 6px;
+  }
+
+  .map-pop__thumb {
+    width: 50px;
+    height: 50px;
+  }
+
+  .map-pop__title {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .map-pop__btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  /* Responsive pin sizes */
+  .pin {
+    width: 56px;
+    height: 56px;
+  }
+
+  .pin img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .fa-pin {
+    width: 32px;
+    height: 32px;
+  }
+
+  .fa-pin i {
+    font-size: 16px;
   }
 }
-@media (min-width: 901px) {
+
+@media (max-width: 480px) {
   .map-wrap {
-    min-height: 100vh;
+    height: 45vh;
+    min-height: 250px;
+    border-radius: 8px;
+  }
+
+  .map-pop {
+    gap: 4px;
+  }
+
+  .map-pop__thumb {
+    width: 40px;
+    height: 40px;
+  }
+
+  .map-pop__title {
+    font-size: 13px;
+  }
+
+  .map-pop__btn {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+
+  /* Smaller pins for mobile */
+  .pin {
+    width: 48px;
+    height: 48px;
+  }
+
+  .pin img {
+    width: 14px;
+    height: 14px;
+  }
+
+  .fa-pin {
+    width: 28px;
+    height: 28px;
+  }
+
+  .fa-pin i {
+    font-size: 14px;
   }
 }
-@media (max-width: 430px) {
+
+@media (max-width: 380px) {
   .map-wrap {
-    height: 50vh !important;
+    height: 40vh;
+    min-height: 200px;
+    border-radius: 6px;
+  }
+
+  .map-pop__thumb {
+    width: 35px;
+    height: 35px;
+  }
+
+  .map-pop__title {
+    font-size: 12px;
+  }
+
+  /* Smallest pins for very small screens */
+  .pin {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pin img {
+    width: 12px;
+    height: 12px;
+  }
+
+  .fa-pin {
+    width: 24px;
+    height: 24px;
+  }
+
+  .fa-pin i {
+    font-size: 12px;
   }
 }
