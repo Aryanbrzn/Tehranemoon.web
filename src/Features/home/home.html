@@ -9,13 +9,22 @@
     <aside class="panel cats-panel">
         <div class="cats-list">
             @if (loading) {
-            <div class="alert alert-warning text-light" style="opacity:.7;padding:8px">در حال بارگذاری...</div>
+            <!-- Skeleton: Categories loading -->
+            @for (x of [1,2,3,4,5,6]; track x) {
+            <button class="cat" disabled>
+                <div class="sk sk-rect sk-h-120 sk-w-120 sk-br-12"></div>
+                <div class="meta">
+                    <!-- <span class="name">{{ c.name }}</span> -->
+                </div>
+            </button>
+            }
             } @else {
             @for (c of categories; track c.id) {
             <button class="cat">
-                <img class="drop-shadow" [src]="c.image" alt="" (click)="select(c)" />
+                <img class="drop-shadow" [src]="c.image" alt="" (click)="select(c)" (error)="onImageError($event, c)"
+                    (load)="onImageLoad($event, c)" />
                 <div class="meta">
-                    <span class="name">{{ c.name }}</span>
+                    <!-- <span class="name">{{ c.name }}</span> -->
                 </div>
             </button>
             }
@@ -30,7 +39,7 @@
             <div class="art">
                 <img [src]="selected.image" alt="">
                 <div class="txt">
-                    <div class="title">{{ selected.name }}</div>
+                    <!-- <div class="title">{{ selected.name }}</div> -->
                 </div>
             </div>
         </div>
@@ -45,7 +54,22 @@
 
         <div class="lb-list">
             @if (loadingPlaces) {
-            <div style="opacity:.7;padding:8px">در حال بارگذاری نتایج…</div>
+            <!-- Skeleton: Leaderboard loading -->
+            @for (x of [1,2,3,4,5,6]; track x) {
+            <div class="lb-row" [class.alt]="(x % 2)===1">
+                <div class="paper-strip">
+                    <div class="sk sk-text sk-w-40 sk-h-16"></div>
+                    <div class="sk sk-text sk-w-20 sk-h-12"></div>
+                </div>
+                <div class="polaroid">
+                    <div class="sk sk-rect sk-h-90 sk-w-120 sk-br-6"></div>
+                    <div class="caption">
+                        <div class="sk sk-text sk-w-80 sk-h-12"></div>
+                    </div>
+                    <div class="idx">#{{ x }}</div>
+                </div>
+            </div>
+            }
             } @else {
             @for (p of places; track p.id) {
             <div class="lb-row" [class.alt]="($index % 2)===1" (click)="openPlaceDetail(p.id)">
@@ -60,7 +84,7 @@
                 </div>
 
                 <div class="polaroid">
-                    <img [src]="p.image" alt="">
+                    <img [src]="p.image" alt="" loading="lazy" decoding="async">
                     <div class="caption">{{ p.title }}</div>
                     <div class="idx">#{{ $index+1 }}</div>
                 </div>

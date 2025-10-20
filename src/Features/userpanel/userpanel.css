@@ -1,14 +1,10 @@
 /* دیوار + کاغذ پولاروید - Desktop Layout Preserved */
 .polaroid-profile {
-  direction: rtl;
-  padding: 16px;
   display: grid;
   position: relative;
   place-items: center;
-  padding-bottom: 150px;
-  min-width: 100%;
-  overflow-x: auto; /* Allow horizontal scrolling on mobile */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  margin-bottom: 150px;
+  min-width: 105%;
 }
 .paper {
   background: radial-gradient(#f7f5ed, #efe9dc);
@@ -40,8 +36,8 @@
     inset 0 0 24px rgba(0, 0, 0, 0.5);
   padding: 26px;
   position: relative;
-  min-width: 800px; /* Ensure minimum width to maintain desktop layout */
-  width: max-content; /* Allow content to determine width */
+  width: 100%; /* Fill available width */
+  max-width: 1400px; /* Keep a pleasant max width on wide screens */
 }
 .rail-icons {
   list-style: none;
@@ -62,49 +58,50 @@
 }
 /* Desktop Layout Slots - Preserved for Mobile */
 .slot {
-  min-width: 150px;
-  min-height: 200px;
-  border: 0;
-  background: transparent;
+  position: relative; /* anchor absolute children */
+  width: 100%;
+  aspect-ratio: 3 / 4; /* small polaroid proportion */
+  min-height: 0;
+  border: 3px solid #e8e8e8; /* polaroid frame */
+  background: #fff; /* polaroid paper */
   cursor: pointer;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06) inset,
-    0 0 0 10px rgba(0, 0, 0, 0) inset;
   outline: 6px solid transparent;
   border-radius: 10px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  flex-shrink: 0; /* Prevent slots from shrinking */
 }
 /* Desktop Layout Board Rows - Preserved for Mobile */
 .board-row {
   width: 100%;
-  display: flex;
-  flex-wrap: nowrap; /* Prevent wrapping to maintain desktop layout */
+  display: grid;
+  grid-template-columns: clamp(140px, 16vw, 220px) repeat(3, minmax(140px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
+  align-items: stretch;
+}
+.slot-strip {
+  display: contents; /* desktop: keep three columns controlled by grid above */
+}
+.board-row > img.img-fluid {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
 }
 .slot::after {
-  content: "";
-  position: absolute;
-  inset: -6px;
-  border-radius: 12px;
-  box-shadow: 0 0 0 6px rgba(15, 32, 48, 0.35) inset;
-  opacity: 0.8;
-  pointer-events: none;
+  content: none;
 }
 .slot:hover {
   transform: translateY(-2px) scale(1.01);
 }
 .slot.filled {
-  background: #0f1e2c;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08) inset,
-    0 0 22px rgba(0, 0, 0, 0.45) inset;
+  background: transparent;
 }
 .thumb {
   position: absolute;
   inset: 10px;
   width: calc(100% - 20px);
-  height: calc(100% - 44px);
+  height: calc(100% - 56px); /* leave more space for caption strip */
   object-fit: cover;
   border-radius: 8px;
 }
@@ -113,20 +110,34 @@
   right: 12px;
   left: 12px;
   bottom: 10px;
-  color: #eaeef4;
+  color: #183049;
   font-weight: 800;
   text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* subtle bottom strip to mimic small polaroid label */
+.slot.filled::before,
+.slot.empty::before {
+  content: "";
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  height: 36px;
+  background: #fff;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.06) inset;
+}
 /* Desktop Layout Footer - Preserved for Mobile */
 .paper-footer {
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: 15px;
-  flex-wrap: nowrap; /* Prevent wrapping */
+  flex-wrap: wrap; /* allow wrapping to avoid overflow */
 }
 /* Desktop Layout Nameplate - Preserved for Mobile */
 .nameplate {
@@ -156,7 +167,7 @@
   user-select: none;
   filter: drop-shadow(-10px 20px 0px rgba(0, 0, 0, 0.2))
     drop-shadow(0 6px 12px rgba(0, 0, 0, 0.35));
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 
 /* Mobile: Preserve Desktop Layout with Horizontal Scrolling */
@@ -164,22 +175,19 @@
   .polaroid-profile {
     padding: 12px;
     padding-bottom: 100px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden; /* still no scroll on mobile */
   }
 
   .paper {
     padding: 14px;
     border-radius: 10px;
-    min-width: 800px; /* Ensure minimum width */
+    width: 100%;
   }
-
   .board {
     padding: 18px;
-    min-width: 800px; /* Maintain desktop layout */
+    width: 100%;
   }
 
-  /* Keep rail icons visible */
   .rail-icons {
     position: absolute;
     left: 8px;
@@ -200,21 +208,74 @@
   .polaroid-profile {
     padding: 10px;
     padding-bottom: 80px;
+    margin-bottom: 60px; /* tighter gap below userpanel on mobile */
   }
-
   .paper {
     padding: 12px;
-    min-width: 750px;
+    width: 100%;
   }
-
   .board {
     padding: 16px;
-    min-width: 750px;
+    width: 100%;
   }
-
   .rail-icons img {
     width: 45px;
     height: 45px;
+  }
+  /* Shrink images to keep desktop-like proportions on small screens */
+  .board-row > img.img-fluid {
+    max-height: 110px;
+    width: 100%;
+    height: auto;
+    align-self: center; /* vertically center poster relative to tiles */
+    display: block;
+    margin: auto 0;
+  }
+  .board-row {
+    gap: 8px;
+    align-items: center; /* center items within row */
+  }
+  .slot {
+    border-width: 2px;
+    border-radius: 8px;
+    aspect-ratio: 2 / 3; /* vertical rectangle */
+    max-height: 150px;
+  }
+  .thumb {
+    inset: 6px;
+    height: calc(100% - 40px);
+    border-radius: 6px;
+  }
+  .slot.filled::before,
+  .slot.empty::before {
+    height: 24px;
+  }
+  .caption {
+    bottom: 6px;
+    font-size: 11px;
+  }
+  .fav-item {
+    grid-template-columns: 54px 1fr;
+    padding: 6px;
+  }
+  .fav-thumb {
+    width: 54px;
+    height: 54px;
+    border-radius: 6px;
+  }
+  .picker-thumb {
+    width: 54px;
+    height: 54px;
+    border-radius: 6px;
+  }
+  .slot-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* show three tiles */
+    gap: 8px;
+    overflow: visible;
+  }
+  .slot-strip .slot {
+    flex: initial;
   }
 }
 
@@ -223,40 +284,73 @@
   .polaroid-profile {
     padding: 8px;
     padding-bottom: 60px;
+    margin-bottom: 40px; /* even tighter gap under userpanel on small phones */
   }
-
   .paper {
     padding: 10px;
-    min-width: 700px;
+    width: 100%;
   }
-
   .board {
     padding: 12px;
-    min-width: 700px;
+    width: 100%;
   }
-
   .rail-icons img {
     width: 40px;
     height: 40px;
   }
-
-  /* Ensure all elements maintain desktop proportions */
-  .slot {
-    min-width: 140px;
-    min-height: 180px;
-  }
-
-  .board-row > img.img-fluid {
-    width: 180px;
-  }
-
   .sticker {
-    width: 180px;
+    width: 160px;
   }
-
   .nameplate {
-    min-width: 160px;
-    padding: 6px 12px;
+    min-width: 140px;
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+  /* Mobile rule: category image fixed column, items become horizontal snap scroller */
+  .board-row {
+    grid-template-columns: clamp(80px, 24vw, 120px) 1fr;
+    align-items: center; /* vertically center poster and tiles */
+  }
+  .slot-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* keep three visible */
+    gap: 6px;
+    overflow: visible;
+    padding-inline: 0;
+  }
+  .slot-strip .slot {
+    flex: initial;
+  }
+  /* Further shrink imagery on very small screens */
+  .board-row > img.img-fluid {
+    max-height: 80px;
+    align-self: center;
+  }
+  .thumb {
+    inset: 5px;
+    height: calc(100% - 36px);
+  }
+  .slot {
+    aspect-ratio: 2 / 3; /* vertical rectangle */
+    max-height: 130px;
+  }
+  .slot.filled::before,
+  .slot.empty::before {
+    height: 20px;
+  }
+  .caption {
+    font-size: 10px;
+  }
+  .fav-item {
+    grid-template-columns: 50px 1fr;
+  }
+  .fav-thumb,
+  .picker-thumb {
+    width: 50px;
+    height: 50px;
+  }
+  .slot-strip .slot {
+    flex: 0 0 56%;
   }
 }
 
@@ -266,39 +360,17 @@
     padding: 6px;
     padding-bottom: 50px;
   }
-
   .paper {
     padding: 8px;
-    min-width: 650px;
+    width: 100%;
   }
-
   .board {
     padding: 10px;
-    min-width: 650px;
+    width: 100%;
   }
-
   .rail-icons img {
     width: 35px;
     height: 35px;
-  }
-
-  .slot {
-    min-width: 130px;
-    min-height: 160px;
-  }
-
-  .board-row > img.img-fluid {
-    width: 160px;
-  }
-
-  .sticker {
-    width: 160px;
-  }
-
-  .nameplate {
-    min-width: 140px;
-    padding: 5px 10px;
-    font-size: 13px;
   }
 }
 /* --- لیست علاقه‌مندی‌ها --- */
@@ -392,6 +464,8 @@
   z-index: 50;
   backdrop-filter: blur(4px);
   background: rgba(15, 30, 44, 0.35);
+  color: #fff; /* ensure overlay text is visible if any */
+  text-align: center;
 }
 
 .auth-overlay-card {
@@ -411,15 +485,16 @@
 }
 
 .auth-overlay-card .msg {
-  margin: 0 0 14px 0;
+  margin: 0 auto 14px;
   color: #183049;
   opacity: 0.9;
+  max-width: 90%;
   line-height: 1.7;
 }
 
 /* Modal styles moved to global styles.css */
 .slot.empty {
-  background: rgba(24, 48, 73, 0.06);
+  background: transparent;
   position: relative;
 }
 .slot-plus {
@@ -429,11 +504,16 @@
   place-items: center;
   font-size: 38px;
   font-weight: 900;
-  color: #eaeef4;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  color: #183049;
+  text-shadow: none;
+  z-index: 2; /* ensure plus icon stays above any inner elements */
+  line-height: 1;
+  pointer-events: none; /* click goes to the button */
+  opacity: 0.9;
 }
 .slot.empty:hover .slot-plus {
   transform: scale(1.05);
+  opacity: 1;
 }
 
 /* لیست داخل مودال پیکر */
@@ -481,75 +561,18 @@
   font-weight: 800;
   color: #183049;
 }
-/* Ensure Desktop Layout is Preserved on All Devices */
-.polaroid-profile {
-  /* Force desktop layout preservation */
-  min-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.paper {
-  /* Ensure paper maintains desktop proportions */
-  min-width: 800px;
-  width: max-content;
-}
-
-.board {
-  /* Ensure board maintains desktop layout */
-  min-width: 800px;
-  width: max-content;
-}
-
-/* Prevent any element from shrinking below desktop size */
-.slot,
-.board-row > img.img-fluid,
-.sticker,
-.nameplate {
-  flex-shrink: 0;
-}
-
-/* Ensure proper scrolling indicators */
-.polaroid-profile::-webkit-scrollbar {
-  height: 8px;
-}
-
-.polaroid-profile::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-}
-
-.polaroid-profile::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-}
-
-.polaroid-profile::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.5);
-}
-
-/* Additional Mobile Optimizations */
+/* Remove forced desktop-preserving widths and scrollbars; fit container instead */
+/* Also ensure good touch behavior without enabling horizontal scroll */
 @media (max-width: 700px) {
-  /* Ensure smooth scrolling on mobile */
   .polaroid-profile {
     min-height: 100dvh;
-    scroll-behavior: smooth;
   }
-
-  /* Keep rail icons accessible */
   .rail-icons {
     z-index: 10;
   }
 }
 
-/* iOS Safari specific optimizations */
 @supports (-webkit-touch-callout: none) {
-  .polaroid-profile {
-    -webkit-overflow-scrolling: touch;
-    overflow-x: auto;
-  }
-
-  /* Prevent iOS zoom on touch */
   .slot,
   .board-row > img.img-fluid,
   .sticker,
@@ -558,10 +581,41 @@
   }
 }
 
-/* Android Chrome specific optimizations */
-@supports not (-webkit-touch-callout: none) {
-  .polaroid-profile {
-    scroll-behavior: smooth;
-    overflow-x: auto;
+/* ---------- Skeleton Loading ---------- */
+.sk {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.16) 20%,
+    rgba(255, 255, 255, 0.08) 40%
+  );
+  background-size: 200% 100%;
+  border-radius: 8px;
+  animation: sk-shimmer 1.2s ease-in-out infinite;
+}
+.sk-br-8 {
+  border-radius: 8px;
+}
+.sk-h-60 {
+  height: 60px;
+}
+.sk-h-80 {
+  height: 80px;
+}
+.sk-w-60 {
+  width: 60px;
+}
+.sk-w-120 {
+  width: 120px;
+}
+
+@keyframes sk-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }

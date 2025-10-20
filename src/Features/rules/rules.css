@@ -1,0 +1,264 @@
+.rules-page {
+  min-height: 100vh;
+  padding: 20px 0;
+  background: linear-gradient(
+    135deg,
+    rgba(24, 48, 73, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+}
+
+/* Neutral cursor on hover for non-interactive elements */
+.rules-page *:not(a):not(button):hover {
+  cursor: default;
+}
+
+.glass-card {
+  backdrop-filter: blur(15px) saturate(140%);
+  -webkit-backdrop-filter: blur(15px) saturate(140%);
+  background: color-mix(
+    in oklab,
+    var(--card-bg, rgba(255, 255, 255, 0.15)) 100%,
+    transparent
+  );
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  padding: 40px;
+  margin: 20px auto;
+  max-width: 900px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .glass-card {
+    background-color: rgba(15, 32, 48, 0.4);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e6edf5;
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #183049;
+  margin: 0 0 15px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  h1 {
+    color: #e6edf5;
+  }
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #5a6c7d;
+  margin: 0;
+  font-weight: 500;
+}
+
+@media (prefers-color-scheme: dark) {
+  .subtitle {
+    color: #9fb5c7;
+  }
+}
+
+h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #183049;
+  margin: 40px 0 20px 0;
+  border-bottom: 2px solid rgba(24, 48, 73, 0.2);
+  padding-bottom: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  h2 {
+    color: #e6edf5;
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.rule-section {
+  margin: 30px 0;
+}
+
+.rule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rule-item {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 25px;
+  transition: all 0.3s ease;
+}
+
+.rule-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(-5px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .rule-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .rule-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.rule-item h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #183049;
+  margin: 0 0 10px 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .rule-item h3 {
+    color: #e6edf5;
+  }
+}
+
+.rule-item p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #2c3e50;
+  margin: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .rule-item p {
+    color: #b8c5d1;
+  }
+}
+
+.warning-box {
+  background: rgba(255, 193, 7, 0.1);
+  border: 2px solid rgba(255, 193, 7, 0.3);
+  border-radius: 15px;
+  padding: 25px;
+  margin: 20px 0;
+}
+
+.warning-box p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #856404;
+  margin: 0;
+  font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  .warning-box {
+    background: rgba(255, 193, 7, 0.05);
+    border-color: rgba(255, 193, 7, 0.2);
+  }
+
+  .warning-box p {
+    color: #ffd23f;
+  }
+}
+
+.contact-info,
+.update-info {
+  background: rgba(24, 48, 73, 0.1);
+  border: 1px solid rgba(24, 48, 73, 0.2);
+  border-radius: 15px;
+  padding: 25px;
+  margin: 20px 0;
+}
+
+.contact-info p,
+.update-info p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #2c3e50;
+  margin: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .contact-info,
+  .update-info {
+    background: rgba(24, 48, 73, 0.2);
+    border-color: rgba(24, 48, 73, 0.3);
+  }
+
+  .contact-info p,
+  .update-info p {
+    color: #b8c5d1;
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .glass-card {
+    padding: 25px;
+    margin: 10px;
+    border-radius: 15px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .rule-item {
+    padding: 20px;
+  }
+
+  .rule-item h3 {
+    font-size: 1.2rem;
+  }
+
+  .rule-item p {
+    font-size: 1rem;
+  }
+
+  .warning-box,
+  .contact-info,
+  .update-info {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .glass-card {
+    padding: 20px;
+    margin: 5px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  .rule-item {
+    padding: 15px;
+  }
+
+  .rule-item:hover {
+    transform: none;
+  }
+}

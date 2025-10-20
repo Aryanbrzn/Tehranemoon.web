@@ -32,8 +32,7 @@ export class CountdownComponent implements OnDestroy {
   days = computed(() => Math.floor(this.remainMs() / 86_400_000));
   hours = computed(() => Math.floor((this.remainMs() % 86_400_000) / 3_600_000));
   minutes = computed(() => Math.floor((this.remainMs() % 3_600_000) / 60_000));
-  // اگر ثانیه هم بخواهی:
-  // seconds = computed(() => Math.floor((this.remainMs() % 60_000) / 1000));
+  seconds = computed(() => Math.floor((this.remainMs() % 60_000) / 1000));
 
   private _intId: any;
 
@@ -44,10 +43,15 @@ export class CountdownComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() { this.stop(); }
+  ngOnDestroy() {
+    this.stop();
+  }
 
   private stop() {
-    if (this._intId) { clearInterval(this._intId); this._intId = null; }
+    if (this._intId) {
+      clearInterval(this._intId);
+      this._intId = null;
+    }
   }
 
   /** تراز روی لبه‌ی ثانیه + جلوگیری از دریفت */

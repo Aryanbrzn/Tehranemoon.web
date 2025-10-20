@@ -17,6 +17,11 @@
   direction: ltr !important;
   z-index: 5;
   position: relative;
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+  /* Optimize rendering */
+  contain: layout style paint;
 }
 
 .tm-pop .leaflet-popup-content {

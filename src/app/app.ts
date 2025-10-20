@@ -2,10 +2,11 @@ import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faL, fas } from '@fortawesome/free-solid-svg-icons';
+import { ToastContainerComponent } from '../Shared/toast/toast.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, FontAwesomeModule],
+  imports: [RouterOutlet, FontAwesomeModule, ToastContainerComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

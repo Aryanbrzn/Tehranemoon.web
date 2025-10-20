@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, effect, signal, DestroyRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -15,6 +15,8 @@ import { FavoritesService } from '../services/favorites.service';
 import { AuthService } from '../../Core/services/auth.service';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog';
 import { ModalService } from '../../Shared/modal/modal.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ToastService } from '../../Core/services/toast.service';
 
 type ReviewVM = ReviewDto & { replies?: ReviewDto[] };
 
@@ -41,6 +43,8 @@ export class PlaceDetailComponent {
   private favApi = inject(FavoritesService);
   private auth = inject(AuthService);
   private modal = inject(ModalService);
+  private destroyRef = inject(DestroyRef);
+  private toastService = inject(ToastService);
 
   private modalData = inject(MODAL_DATA, { optional: true }) as { id?: number } | null;
   private modalRef = inject(ModalRef, { optional: true });
@@ -103,7 +107,9 @@ export class PlaceDetailComponent {
   private refreshFavState() {
     const p = this.place(); if (!p) return;
     this.favBusy = true;
-    this.favApi.has(p.id).subscribe({
+    this.favApi.has(p.id).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: has => { this.favOn = has; this.favBusy = false; },
       error: _ => { this.favOn = false; this.favBusy = false; }
     });
@@ -113,7 +119,9 @@ export class PlaceDetailComponent {
   like(reviewId: number) {
     if (this.likeBusyId) return;
     this.likeBusyId = reviewId;
-    this.reviewsApi.like(reviewId).subscribe({
+    this.reviewsApi.like(reviewId).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (res: any) => {
         const r = (this.place()?.reviews ?? []).find(x => x.id === reviewId);
         if (r) { r.likes = res.likes; r.dislikes = res.dislikes; (this as any).place.set(this.place()!); }
@@ -126,7 +134,9 @@ export class PlaceDetailComponent {
   dislike(reviewId: number) {
     if (this.likeBusyId) return;
     this.likeBusyId = reviewId;
-    this.reviewsApi.dislike(reviewId).subscribe({
+    this.reviewsApi.dislike(reviewId).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (res: any) => {
         const r = (this.place()?.reviews ?? []).find(x => x.id === reviewId);
         if (r) { r.likes = res.likes; r.dislikes = res.dislikes; (this as any).place.set(this.place()!); }
@@ -242,9 +252,15 @@ export class PlaceDetailComponent {
   }
 
   submitReview() {
-    if (!this.isAuthed()) { this.rvError = 'برای ثبت نظر ابتدا وارد شوید.'; return; }
+    if (!this.isAuthed()) {
+      this.toastService.warning('برای ثبت نظر ابتدا وارد شوید.');
+      return;
+    }
     const p = this.place(); if (!p) return;
-    if (!this.rvForm.captchaAnswer.trim()) { this.rvError = 'کد کپچا را وارد کنید.'; return; }
+    if (!this.rvForm.captchaAnswer.trim()) {
+      this.toastService.warning('کد کپچا را وارد کنید.');
+      return;
+    }
 
     const ratingToSend = this.selectedRating || Number(this.rvForm.rating) || 0;
 
@@ -265,6 +281,7 @@ export class PlaceDetailComponent {
           this.rvError = null;
           this.refreshPlaceAfterAction();
           this.refreshCaptcha();
+          this.toastService.success('نظر شما با موفقیت ثبت شد!');
           window.location.reload()
         });
       },
@@ -272,6 +289,7 @@ export class PlaceDetailComponent {
         this.rvBusy.set(false);
         this.rvError = err?.message ?? 'خطا در ثبت نظر';
         this.refreshCaptcha();
+        // Toast will be shown automatically by the error interceptor
       }, complete: () => {
         this.rvBusy.set(false);
         this.rvError = null;

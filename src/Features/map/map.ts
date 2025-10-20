@@ -50,15 +50,18 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private W = 0;
   private H = 0;
-  private groups = new Map<number, L.LayerGroup>();
-  private slugByCatId = new Map<number, string>();
+  private groups = new Map<string, L.LayerGroup>();
   private resizeObserver?: ResizeObserver;
+  // Add marker cache to avoid recreating markers
+  private markerCache = new Map<number, L.CircleMarker>();
 
   ngOnInit() { this.initMap(); }
 
   ngOnDestroy() {
     this.resizeObserver?.disconnect();
     this.map?.remove();
+    // Clear marker cache
+    this.markerCache.clear();
   }
 
   private async initMap() {
@@ -123,11 +126,18 @@ export class MapComponent implements OnInit, OnDestroy {
   private renderPins(items: MapPlaceDto[]) {
     if (!this.W || !this.H) return;
 
-    // پاک‌سازی قبلی
-    this.groups.forEach(g => g.removeFrom(this.map));
-    this.groups.clear();
-    this.slugByCatId.clear();
+    // Create a set of current item IDs for efficient lookup
+    const currentIds = new Set(items.map(p => p.id));
 
+    // Remove markers that are no longer needed
+    for (const [id, marker] of this.markerCache) {
+      if (!currentIds.has(id)) {
+        marker.remove();
+        this.markerCache.delete(id);
+      }
+    }
+
+    // Add or update markers for current items
     for (const p of items) {
       if (p.lat == null || p.lng == null) continue;
 
@@ -135,32 +145,42 @@ export class MapComponent implements OnInit, OnDestroy {
       const x = this.W * x01;
       const y = this.H * y01;
 
-      this.slugByCatId.set(p.id, p.categorySlug?.toLowerCase() ?? 'default');
+      const slug = p.categorySlug?.toLowerCase() ?? 'default';
 
-      let grp = this.groups.get(p.id);
+      let grp = this.groups.get(slug);
       if (!grp) {
         grp = L.layerGroup().addTo(this.map);
-        this.groups.set(p.id, grp);
+        this.groups.set(slug, grp);
       }
 
-      const slug = p.categorySlug?.toLowerCase() ?? 'default';
-      const color = this.dotColorMap[slug] ?? this.dotColorMap;
+      // Check if marker already exists
+      let marker = this.markerCache.get(p.id);
+      if (!marker) {
+        const color = this.dotColorMap[slug] ?? '#ffd166';
+        marker = L.circleMarker([y, x], {
+          radius: this.getResponsiveDotRadius(),
+          color,
+          weight: 0,
+          fillColor: color,
+          fillOpacity: 1
+        });
 
-      const m = L.circleMarker([y, x], {
-        radius: this.getResponsiveDotRadius(),
-        color,
-        weight: 0,
-        fillColor: color,
-        fillOpacity: 1
-      }).addTo(grp);
+        marker.on('click', () => this.placeClick.emit(p.id));
+        this.markerCache.set(p.id, marker);
+      } else {
+        // Update position if needed
+        marker.setLatLng([y, x]);
+      }
 
-      m.on('click', () => this.placeClick.emit(p.id));
+      // Ensure marker is in the correct group
+      marker.addTo(grp);
     }
   }
 
-  filterByCategory(id?: number) {
+  filterByCategorySlug(slug?: string) {
+    const normalized = slug?.toLowerCase();
     this.groups.forEach((g, k) => {
-      if (!id || k === id) {
+      if (!normalized || k === normalized) {
         g.addTo(this.map);
       } else {
         g.removeFrom(this.map);

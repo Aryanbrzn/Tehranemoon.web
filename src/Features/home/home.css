@@ -471,7 +471,6 @@
 }
 .home-bottom-row {
   display: flex;
-  gap: 12px;
   align-items: stretch;
 }
 
@@ -493,8 +492,6 @@
   .home-bottom-row {
     flex-direction: column;
     align-items: center;
-    gap: 16px;
-    padding: 0 12px;
   }
   .home-bottom-row > * {
     flex: 0 0 auto;
@@ -512,11 +509,12 @@
   .map-page {
     display: grid;
     grid-template-columns: 1fr 80px; /* Slightly smaller category panel */
-    grid-template-rows: 1fr; /* Single row with equal height */
+    grid-template-rows: 52vh auto; /* Map row fixed, leaderboard fits below */
+    grid-auto-rows: auto;
     gap: 8px;
     padding: 12px;
     align-items: stretch; /* Stretch to fill height */
-    min-height: calc(50vh - 120px); /* Better height calculation */
+    min-height: 50vh; /* occupy full viewport to avoid page scroll */
   }
 
   .map-panel {
@@ -526,6 +524,7 @@
     left: 0 !important;
     width: 100%;
     height: 100%; /* Fill available height */
+    min-height: 52vh; /* match grid row */
     display: flex;
     flex-direction: column;
   }
@@ -583,6 +582,10 @@
     grid-row: 2;
     width: 100%;
     height: auto;
+    max-height: calc(
+      100vh - 52vh - 8px - 24px
+    ); /* viewport minus map and spacing */
+    overflow: hidden; /* inner list will scroll */
     transform: none !important;
     right: auto !important;
     padding: 12px;
@@ -590,6 +593,8 @@
     border-radius: 12px;
     backdrop-filter: blur(10px);
     margin-top: 8px;
+    display: flex;
+    flex-direction: column;
   }
 
   .lb-paper-title {
@@ -632,7 +637,8 @@
 
   /* Enhanced List for Mobile */
   .lb-list {
-    max-height: calc(3 * 120px);
+    flex: 1 1 auto;
+    min-height: 0; /* allow flex container to constrain height */
     overflow-y: auto;
     padding: 8px 4px;
     scrollbar-width: thin;
@@ -682,7 +688,8 @@
 @media (max-width: 480px) {
   .map-page {
     grid-template-columns: 1fr 70px; /* Even smaller category panel */
-    grid-template-rows: 1fr; /* Single row with equal height */
+    grid-template-rows: 52vh auto; /* fixed map height */
+    grid-auto-rows: auto;
     gap: 6px;
     padding: 8px;
     align-items: stretch; /* Ensure equal heights */
@@ -712,11 +719,15 @@
     padding: 8px;
     border-radius: 8px;
     margin-top: 6px;
+    max-height: calc(100vh - 52vh - 6px - 16px);
+    overflow: hidden;
   }
 
   .lb-paper-title {
+    height: 100px;
     padding: 6px 8px;
     margin-bottom: 6px;
+    justify-content: center;
   }
 
   .lb-paper-title .title {
@@ -730,7 +741,9 @@
     padding: 6px 10px;
     font-size: 14px;
   }
-
+  .lb-paper-title .art {
+    height: 100px;
+  }
   .lb-search {
     margin-bottom: 8px;
   }
@@ -783,7 +796,8 @@
 @media (max-width: 380px) {
   .map-page {
     grid-template-columns: 1fr 60px;
-    grid-template-rows: 1fr; /* Single row with equal height */
+    grid-template-rows: 50vh auto; /* slightly smaller on ultra-small */
+    grid-auto-rows: auto;
     gap: 4px;
     padding: 6px;
     align-items: stretch; /* Ensure equal heights */
@@ -810,6 +824,8 @@
     padding: 6px;
     border-radius: 6px;
     margin-top: 4px;
+    max-height: calc(100vh - 50vh - 4px - 12px);
+    overflow: hidden;
   }
 
   .lb-paper-title {
@@ -881,5 +897,62 @@
   .sec-title,
   .title {
     font-size: clamp(14px, 4vw, 18px);
+  }
+}
+
+/* ---------- Skeleton Loading ---------- */
+.sk {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.16) 20%,
+    rgba(255, 255, 255, 0.08) 40%
+  );
+  background-size: 200% 100%;
+  border-radius: 8px;
+  animation: sk-shimmer 1.2s ease-in-out infinite;
+}
+.sk-text {
+  height: 14px;
+}
+.sk-br-6 {
+  border-radius: 6px;
+}
+.sk-br-12 {
+  border-radius: 12px;
+}
+.sk-h-12 {
+  height: 12px;
+}
+.sk-h-16 {
+  height: 16px;
+}
+.sk-h-90 {
+  height: 90px;
+}
+.sk-h-120 {
+  height: 120px;
+}
+.sk-w-20 {
+  width: 20px;
+}
+.sk-w-40 {
+  width: 40px;
+}
+.sk-w-80 {
+  width: 80px;
+}
+.sk-w-120 {
+  width: 120px;
+}
+
+@keyframes sk-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }

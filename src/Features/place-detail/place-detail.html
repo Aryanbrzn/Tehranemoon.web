@@ -5,6 +5,100 @@
         <fa-icon [icon]="faTimes"></fa-icon>
     </button>
 
+    @if (!place()) {
+    <!-- Skeleton: Loading state -->
+    <header class="hero">
+        <div class="cover">
+            <div class="sk sk-rect sk-h-220"></div>
+            <div class="paper-frame"></div>
+        </div>
+
+        <div class="hero-meta">
+            <div class="d-flex justify-content-between">
+                <div class="sk sk-text sk-w-60 sk-h-20"></div>
+                <button class="fav-heart" type="button" disabled>
+                    <div class="sk sk-rect sk-h-20 sk-w-20"></div>
+                </button>
+            </div>
+            <div class="sub">
+                <div class="sk sk-text sk-w-24 sk-h-16"></div>
+                <span class="sep">•</span>
+                <div class="rate-rtl">
+                    @for (v of [1,2,3,4,5]; track v) {
+                    <span class="star"><span class="star-shape"></span></span>
+                    }
+                </div>
+                <div class="sk sk-text sk-w-20 sk-h-14"></div>
+            </div>
+
+            <div class="actions">
+                <div class="sk sk-rect sk-h-32 sk-w-64"></div>
+                <div class="sk sk-rect sk-h-32 sk-w-96"></div>
+                <div class="sk sk-rect sk-h-32 sk-w-80"></div>
+                <div class="sk sk-rect sk-h-32 sk-w-72"></div>
+            </div>
+        </div>
+
+        <div class="hero-map">
+            <div class="sk sk-rect sk-h-240 sk-br-12"></div>
+            <div class="nav-actions">
+                <div class="sk sk-rect sk-h-32 sk-w-64"></div>
+                <div class="sk sk-rect sk-h-32 sk-w-96"></div>
+            </div>
+        </div>
+    </header>
+
+    <section class="section">
+        <h4 class="sec-title">گالری</h4>
+        <div class="filmstrip">
+            @for (x of [1,2,3,4,5,6]; track x) {
+            <div class="polaroid" [class.alt]="(x % 2)===1">
+                <div class="sk sk-rect sk-h-120"></div>
+                <div class="caption">
+                    <div class="sk sk-text sk-w-80 sk-h-12"></div>
+                </div>
+                <div class="idx">#{{ x }}</div>
+            </div>
+            }
+        </div>
+    </section>
+
+    <section class="section">
+        <h4 class="sec-title">دربارهٔ مکان</h4>
+        <div class="desc">
+            <div class="sk sk-text sk-w-100 sk-h-12"></div>
+            <div class="sk sk-text sk-w-90 sk-h-12"></div>
+            <div class="sk sk-text sk-w-95 sk-h-12"></div>
+            <div class="sk sk-text sk-w-60 sk-h-12"></div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="sec-head">
+            <h4 class="sec-title">نظرات</h4>
+        </div>
+        <div class="reviews">
+            @for (x of [1,2,3]; track x) {
+            <article class="rev">
+                <header>
+                    <div class="sk sk-text sk-w-40 sk-h-14"></div>
+                    <div class="rate-rtl readonly">
+                        @for (v of [1,2,3,4,5]; track v) {
+                        <span class="star"><span class="star-shape"></span></span>
+                        }
+                    </div>
+                </header>
+                <p class="text">
+                    <span class="sk sk-text sk-w-100 sk-h-12"></span>
+                    <span class="sk sk-text sk-w-80 sk-h-12"></span>
+                    <span class="sk sk-text sk-w-60 sk-h-12"></span>
+                </p>
+            </article>
+            }
+        </div>
+    </section>
+    } @else {
+
     <header class="hero">
         <div class="cover">
             <img [src]="place()?.coverImageUrl || 'images/location.png'" alt="">
@@ -231,7 +325,7 @@
                     <img [src]="cap?.imageUrl" alt="captcha">
                     <input type="text" [(ngModel)]="rvForm.captchaAnswer" placeholder="کد امنیتی"
                         [disabled]="!isAuthed()">
-                    <button class="btn ghost" type="button" (click)="refreshCaptcha()" [disabled]="rvBusy">
+                    <button class="btn ghost" type="button" (click)="refreshCaptcha()" [disabled]="rvBusy()">
                         <fa-icon [icon]="faRefresh"></fa-icon>
                     </button>
                 </div>
@@ -260,6 +354,8 @@
         <button class="lbx-nav next" (click)="nextLbx($event)"></button>
         <button class="lbx-close" (click)="closeLightbox()">×</button>
     </div>
+    }
+
     }
 
 </section>

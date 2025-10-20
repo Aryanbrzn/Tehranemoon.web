@@ -21,9 +21,27 @@ export class AuthService {
     async loadMe(): Promise<void> {
         this._loading.set(true);
         try {
+            // Check if token is valid before making request
+            if (!this.isTokenValid()) {
+                console.log('Token is invalid or expired, clearing...');
+                this.clearInvalidToken();
+                return;
+            }
+
+            console.log('Loading user profile with token:', this._token ? 'present' : 'missing');
             const me = await this.http.get<UserProfileDto>('/api/auth/me').toPromise();
             this._user.set(me ?? null);
-        } catch { this._user.set(null); }
+            console.log('User profile loaded:', me);
+        } catch (error: any) {
+            console.error('Failed to load user profile:', error);
+            // If we get 401, the token might be invalid
+            if (error?.code === 401 || error?.httpError?.status === 401) {
+                console.log('Received 401, clearing invalid token');
+                this.clearInvalidToken();
+            } else {
+                this._user.set(null);
+            }
+        }
         finally { this._loading.set(false); }
     }
 
@@ -54,4 +72,26 @@ export class AuthService {
     }
 
     get token() { return this._token; }
+
+    // Check if token exists and is not expired
+    private isTokenValid(): boolean {
+        if (!this._token) return false;
+
+        try {
+            // Decode JWT token to check expiration
+            const payload = JSON.parse(atob(this._token.split('.')[1]));
+            const now = Math.floor(Date.now() / 1000);
+            return payload.exp > now;
+        } catch {
+            // If token is not a valid JWT, assume it's invalid
+            return false;
+        }
+    }
+
+    // Clear invalid token
+    private clearInvalidToken(): void {
+        localStorage.removeItem('tm_access');
+        this._token = null;
+        this._user.set(null);
+    }
 }

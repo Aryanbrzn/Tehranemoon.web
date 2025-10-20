@@ -5,82 +5,38 @@
 }
 
 /* ---------------- Fonts ---------------- */
+/* Critical fonts only - Regular and Bold */
 @font-face {
   font-family: IRANSansX;
   font-style: normal;
-  font-weight: 100;
-  src: url("/fonts/iranSans/woff/IRANSansX-Thin.woff") format("woff"),
-    url("/fonts/iranSans/woff2/IRANSansX-Thin.woff2") format("woff2");
+  font-weight: 400;
+  src: url("/fonts/iranSans/woff2/IRANSansX-Regular.woff2") format("woff2");
+  font-display: swap;
 }
+
 @font-face {
   font-family: IRANSansX;
   font-style: normal;
-  font-weight: 200;
-  src: url("/fonts/iranSans/woff/IRANSansX-UltraLight.woff") format("woff"),
-    url("/fonts/iranSans/woff2/IRANSansX-UltraLight.woff2") format("woff2");
+  font-weight: 700;
+  src: url("/fonts/iranSans/woff2/IRANSansX-Bold.woff2") format("woff2");
+  font-display: swap;
 }
+
+/* Additional weights loaded on demand */
 @font-face {
   font-family: IRANSansX;
   font-style: normal;
   font-weight: 300;
-  src: url("/fonts/iranSans/woff/IRANSansX-Light.woff") format("woff"),
-    url("/fonts/iranSans/woff2/IRANSansX-Light.woff2") format("woff2");
+  src: url("/fonts/iranSans/woff2/IRANSansX-Light.woff2") format("woff2");
+  font-display: swap;
 }
+
 @font-face {
   font-family: IRANSansX;
   font-style: normal;
   font-weight: 500;
-  src: url("/fonts/iranSans/woff/IRANSansX-Medium.woff") format("woff"),
-    url("/fonts/iranSans/woff2/IRANSansX-Medium.woff2") format("woff2");
-}
-@font-face {
-  font-family: IRANSansX;
-  font-style: normal;
-  font-weight: 600;
-  src: url("/fonts/iranSans/woff/IRANSansX-DemiBold.woff") format("woff"),
-    url("/fonts/iranSans/woff2/IRANSansX-DemiBold.woff2") format("woff2");
-}
-@font-face {
-  font-family: IRANSansX;
-  font-style: normal;
-  font-weight: 800;
-  src: url("/fonts/iranSans/woff/IRANSansX-ExtraBold.woff") format("woff"),
-    url("/fonts/iranSans/woff2/IRANSansX-ExtraBold.woff2") format("woff2");
-}
-@font-face {
-  font-family: IRANSansX;
-  font-style: normal;
-  font-weight: 900;
-  src: url("/fonts/iranSans/woff/IRANSansX-Black.woff") format("woff"),
-    url("/fonts/iranSans/woff2/IRANSansX-Black.woff2") format("woff2");
-}
-@font-face {
-  font-family: IRANSansX;
-  font-style: normal;
-  font-weight: 950;
-  src: url("/fonts/iranSans/woff/IRANSansX-ExtraBlack.woff") format("woff"),
-    url("/fonts/iranSans/woff2/IRANSansX-ExtraBlack.woff2") format("woff2");
-}
-@font-face {
-  font-family: IRANSansX;
-  font-style: normal;
-  font-weight: 1000;
-  src: url("/fonts/iranSans/woff/IRANSansX-Heavy.woff") format("woff"),
-    url("/fonts/iranSans/woff2/IRANSansX-Heavy.woff2") format("woff2");
-}
-@font-face {
-  font-family: IRANSansX;
-  font-style: normal;
-  font-weight: bold;
-  src: url("/fonts/iranSans/woff/IRANSansX-Bold.woff") format("woff"),
-    url("/fonts/iranSans/woff2/IRANSansX-Bold.woff2") format("woff2");
-}
-@font-face {
-  font-family: IRANSansX;
-  font-style: normal;
-  font-weight: normal;
-  src: url("/fonts/iranSans/woff/IRANSansX-Regular.woff") format("woff"),
-    url("/fonts/iranSans/woff2/IRANSansX-Regular.woff2") format("woff2");
+  src: url("/fonts/iranSans/woff2/IRANSansX-Medium.woff2") format("woff2");
+  font-display: swap;
 }
 
 /* ---------------- Reset / Base ---------------- */
@@ -100,8 +56,10 @@ body {
   inset: 0;
   z-index: -1;
   background-image: url("/images/brick-wall.png");
-  background-size: 750px 500px;
+  background-size: cover;
   background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   background-color: rgb(122, 57, 0);
 }
 
@@ -136,21 +94,20 @@ body::after {
   display: none !important;
 }
 
-/* ---------------- Mobile Image Optimization ---------------- */
+/* ---------------- Image Optimization ---------------- */
 img,
 video {
   max-width: 100%;
   height: auto;
 }
 
-/* Lazy loading for better mobile performance */
-img[loading="lazy"] {
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-img[loading="lazy"].loaded {
-  opacity: 1;
+/* Optimize background images */
+body {
+  background-image: url("/images/brick-wall.png");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 /* Mobile-specific image sizing */
@@ -181,7 +138,6 @@ img[loading="lazy"].loaded {
   input[type="password"],
   textarea {
     font-size: 16px !important;
-    transform: translateZ(0);
   }
 
   /* iOS scroll momentum */
@@ -255,11 +211,12 @@ img[loading="lazy"].loaded {
   border-radius: 10px;
   cursor: pointer;
   font-weight: 700;
-  transition: all 0.15s ease;
+  /* Optimize transitions - use transform instead of filter */
+  transition: transform 0.15s ease;
 }
 
 .btn:hover {
-  filter: brightness(0.95);
+  transform: scale(0.98);
 }
 
 .btn-primary {
@@ -318,7 +275,8 @@ img[loading="lazy"].loaded {
   font-weight: 800;
   color: #183049;
   cursor: pointer;
-  transition: all 0.15s ease;
+  /* Optimize transitions */
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .tab.active,
@@ -377,7 +335,16 @@ img[loading="lazy"].loaded {
   z-index: 90;
 }
 
-/* ---------------- Mobile Touch Improvements ---------------- */
+/* ---------------- Performance Optimizations ---------------- */
+
+/* Optimize animations */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 @media (hover: none) {
   .btn,
   .btn-link,
