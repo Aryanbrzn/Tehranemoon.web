@@ -1,8 +1,8 @@
 export const environment = {
-    production: true,
-    apiBaseUrl: 'https://yourdomain.com/api',
-    uploadBaseUrl: 'https://yourdomain.com/uploads',
-    adminBaseUrl: 'https://yourdomain.com/admin',
+    production: false,
+    apiBaseUrl: 'http://localhost:5129',
+    uploadBaseUrl: 'http://localhost:5129/uploads',
+    adminBaseUrl: 'http://localhost:5129/admin',
     // JWT token settings
     tokenRefreshThreshold: 5 * 60 * 1000, // 5 minutes before expiry
     accessTokenKey: 'tm_access',

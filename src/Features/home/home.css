@@ -22,7 +22,7 @@
   align-items: center;
   justify-content: flex-start;
   gap: 12px;
-  width: 100%;
+  /* width: 100%; */
   margin-top: 25px;
   max-height: 100vh;
   overflow: hidden;
@@ -165,9 +165,8 @@
 .paper-strip {
   position: relative;
   flex: 1;
-  min-height: 42px;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   padding: 8px 12px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
@@ -269,7 +268,7 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  width: 100%;
+  /* width: 100%; */
   padding: 8px;
   border: 0;
   border-radius: 12px;
@@ -505,94 +504,94 @@
     order: 2;
   }
 
-  /* Enhanced Grid Layout for Mobile - Equal Heights */
+  /* New Mobile Layout: Categories top, Map center, Leaderboard bottom */
   .map-page {
-    display: grid;
-    grid-template-columns: 1fr 80px; /* Slightly smaller category panel */
-    grid-template-rows: 52vh auto; /* Map row fixed, leaderboard fits below */
-    grid-auto-rows: auto;
-    gap: 8px;
-    padding: 12px;
-    align-items: stretch; /* Stretch to fill height */
-    min-height: 50vh; /* occupy full viewport to avoid page scroll */
-  }
-
-  .map-panel {
-    grid-column: 1 / 2;
-    grid-row: 1;
-    flex: 1 1 auto;
-    left: 0 !important;
-    width: 100%;
-    height: 100%; /* Fill available height */
-    min-height: 52vh; /* match grid row */
     display: flex;
     flex-direction: column;
+    gap: 12px;
+    padding: 12px;
   }
 
+  /* Categories Panel - Horizontal at top */
   .cats-panel {
-    grid-column: 2 / 3;
-    grid-row: 1;
+    order: 1;
+    width: 100%;
     margin-top: 0;
     max-height: none;
     opacity: 1 !important;
     pointer-events: auto !important;
+    display: flex;
+    flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    height: 100%; /* Match map height */
-    display: flex;
-    flex-direction: column;
   }
 
-  /* Enhanced Category List for Mobile */
+  /* Categories List - Horizontal scroll */
   .cats-list {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    overflow-y: auto;
-    max-height: 100%;
-    padding-inline: 2px;
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 0;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    -webkit-overflow-scrolling: touch;
   }
 
   .cats-list::-webkit-scrollbar {
-    width: 3px;
+    height: 4px;
   }
 
   .cats-list::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.3);
-    border-radius: 3px;
+    border-radius: 4px;
   }
 
   .cat {
-    padding: 6px;
-    border-radius: 10px;
+    flex: 0 0 auto;
+    padding: 8px;
+    border-radius: 12px;
+    min-width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .cat img {
-    height: auto;
-    max-height: 60px;
+    width: 60px;
+    height: 60px;
     object-fit: contain;
+    border-radius: 8px;
   }
 
-  /* Enhanced Leaderboard for Mobile */
+  /* Map Panel - Centered */
+  .map-panel {
+    order: 2;
+    flex: 1;
+    left: 0 !important;
+    width: 100%;
+    height: 50vh;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Enhanced Leaderboard for Mobile - Horizontal at bottom */
   .leaderboard-flyin {
+    order: 3;
     position: static !important;
-    grid-column: 1 / -1;
-    grid-row: 2;
     width: 100%;
     height: auto;
-    max-height: calc(
-      100vh - 52vh - 8px - 24px
-    ); /* viewport minus map and spacing */
-    overflow: hidden; /* inner list will scroll */
+    max-height: 40vh;
+    overflow: hidden;
     transform: none !important;
     right: auto !important;
     padding: 12px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
     backdrop-filter: blur(10px);
-    margin-top: 8px;
     display: flex;
     flex-direction: column;
   }
@@ -635,35 +634,100 @@
     right: 4px;
   }
 
-  /* Enhanced List for Mobile */
+  /* Enhanced List for Mobile - Horizontal */
   .lb-list {
-    flex: 1 1 auto;
-    min-height: 0; /* allow flex container to constrain height */
-    overflow-y: auto;
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
     padding: 8px 4px;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    -webkit-overflow-scrolling: touch;
   }
 
   .lb-list::-webkit-scrollbar {
-    width: 4px;
+    height: 4px;
   }
 
   .lb-list::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.3);
     border-radius: 4px;
   }
-
+  .paper-strip::after {
+    content: none;
+  }
   .lb-row {
-    gap: 10px;
-    padding: 4px 0;
+    flex: 0 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 12px;
+    padding: 8px;
     align-items: center;
+    min-width: 200px;
   }
 
   .paper-strip {
-    min-height: 38px;
-    padding: 6px 10px;
+    min-height: 60px;
+    padding: 8px 12px;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .place-name {
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: #333;
+    line-height: 1.2;
+    background: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+
+  .rating-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: white;
+    border-radius: 6px;
+    padding: 4px 8px;
+    margin-bottom: 8px;
+  }
+
+  .rank-number {
+    font-weight: 800;
+    font-size: 16px;
+    margin-right: 6px;
+    color: #ff6b35;
+  }
+
+  /* First place golden styling */
+  .first-place .place-name {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #8b4513;
+    border: 2px solid #ffd700;
+  }
+
+  .first-place .rank-number {
+    color: #8b4513;
+  }
+
+  .first-place .rating-info {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #8b4513;
+    border: 2px solid #ffd700;
+  }
+
+  .first-place .polaroid {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border: 2px solid #ffd700;
   }
 
   .polaroid {
@@ -673,12 +737,12 @@
   }
 
   .polaroid img {
-    height: 70px;
+    height: 60px;
     object-fit: cover;
   }
 
   .polaroid .caption {
-    font-size: 11px;
+    font-size: 10px;
     text-align: center;
     line-height: 1.2;
   }
@@ -687,20 +751,13 @@
 /* Enhanced Mobile Layout for Small Screens (Samsung Galaxy, iPhone SE) */
 @media (max-width: 480px) {
   .map-page {
-    grid-template-columns: 1fr 70px; /* Even smaller category panel */
-    grid-template-rows: 52vh auto; /* fixed map height */
-    grid-auto-rows: auto;
-    gap: 6px;
+    gap: 8px;
     padding: 8px;
-    align-items: stretch; /* Ensure equal heights */
   }
 
   .map-panel {
-    height: 100%; /* Fill available height */
-  }
-
-  .cats-panel {
-    height: 100%; /* Match map height */
+    height: 45vh;
+    min-height: 250px;
   }
 
   .cats-panel {
@@ -708,19 +765,19 @@
   }
 
   .cat {
-    padding: 4px;
+    padding: 6px;
+    min-width: 70px;
   }
 
   .cat img {
-    max-height: 50px;
+    width: 50px;
+    height: 50px;
   }
 
   .leaderboard-flyin {
     padding: 8px;
     border-radius: 8px;
-    margin-top: 6px;
-    max-height: calc(100vh - 52vh - 6px - 16px);
-    overflow: hidden;
+    max-height: 60vh;
   }
 
   .lb-paper-title {
@@ -772,6 +829,9 @@
   .paper-strip {
     min-height: 32px;
     padding: 4px 8px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
 
   .polaroid {
@@ -795,37 +855,33 @@
 /* Ultra Small Screens (iPhone SE, Older Android) */
 @media (max-width: 380px) {
   .map-page {
-    grid-template-columns: 1fr 60px;
-    grid-template-rows: 50vh auto; /* slightly smaller on ultra-small */
-    grid-auto-rows: auto;
-    gap: 4px;
+    gap: 6px;
     padding: 6px;
-    align-items: stretch; /* Ensure equal heights */
   }
 
   .map-panel {
-    height: 100%; /* Fill available height */
+    height: 40vh;
+    min-height: 200px;
   }
 
   .cats-panel {
-    height: 100%; /* Match map height */
     padding: 2px;
   }
 
   .cat {
-    padding: 2px;
+    padding: 4px;
+    min-width: 60px;
   }
 
   .cat img {
-    max-height: 40px;
+    width: 40px;
+    height: 40px;
   }
 
   .leaderboard-flyin {
     padding: 6px;
     border-radius: 6px;
-    margin-top: 4px;
-    max-height: calc(100vh - 50vh - 4px - 12px);
-    overflow: hidden;
+    max-height: 30vh;
   }
 
   .lb-paper-title {
@@ -897,6 +953,37 @@
   .sec-title,
   .title {
     font-size: clamp(14px, 4vw, 18px);
+  }
+}
+
+/* Desktop Ranking Styles */
+@media (min-width: 901px) {
+  .rank-number {
+    font-weight: 800;
+    font-size: 16px;
+    margin-right: 6px;
+    color: #ff6b35;
+  }
+
+  .first-place .place-name {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #8b4513;
+    border: 2px solid #ffd700;
+  }
+
+  .first-place .rank-number {
+    color: #8b4513;
+  }
+
+  .first-place .rating-info {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #8b4513;
+    border: 2px solid #ffd700;
+  }
+
+  .first-place .polaroid {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border: 2px solid #ffd700;
   }
 }
 

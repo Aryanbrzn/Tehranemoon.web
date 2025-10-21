@@ -1,4 +1,5 @@
 import { Component, ViewChild, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MapComponent } from '../map/map';
 import { UserPanelComponent } from '../userpanel/userpanel';
@@ -27,7 +28,7 @@ type PlaceRow = {
 
 @Component({
   selector: 'app-home',
-  imports: [MapComponent, UserPanelComponent, CountdownComponent, FormsModule, FontAwesomeModule, Footer, Charity],
+  imports: [CommonModule, MapComponent, UserPanelComponent, CountdownComponent, FormsModule, FontAwesomeModule, Footer, Charity],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })

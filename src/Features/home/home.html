@@ -73,20 +73,23 @@
             } @else {
             @for (p of places; track p.id) {
             <div class="lb-row" [class.alt]="($index % 2)===1" (click)="openPlaceDetail(p.id)">
-                <div class="paper-strip">
-                    <span class="stars" [style.--score]="((p.roundedAvg / 5) * 100) + '%'"></span>
-                    <small class="five-count" [title]="'تعداد 5 ستاره ها'"
-                        style="margin-inline-start:8px;opacity:.85;cursor:help;">
-                        ({{ p.fiveStarCount }})
-                    </small>
-
-
-                </div>
-
                 <div class="polaroid">
                     <img [src]="p.image" alt="" loading="lazy" decoding="async">
-                    <div class="caption">{{ p.title }}</div>
                     <div class="idx">#{{ $index+1 }}</div>
+                </div>
+
+                <div class="paper-strip" [class.first-place]="$index === 0">
+                    <div class="place-name">
+                        <span class="rank-number" *ngIf="$index < 3">#{{ $index + 1 }}</span>
+                        {{ p.title }}
+                    </div>
+                    <div class="rating-info">
+                        <span class="stars" [style.--score]="((p.roundedAvg / 5) * 100) + '%'"></span>
+                        <small class="five-count" [title]="'تعداد 5 ستاره ها'"
+                            style="margin-inline-start:8px;opacity:.85;cursor:help;">
+                            ({{ p.fiveStarCount }})
+                        </small>
+                    </div>
                 </div>
             </div>
             }
