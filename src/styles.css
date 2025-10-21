@@ -57,7 +57,7 @@ body {
   z-index: -1;
   background-image: url("/images/brick-wall.png");
   background-size: 750px 500px;
-  background-position: center top;
+  background-position: top right;
   background-repeat: repeat;
   background-attachment: fixed;
   background-color: rgb(122, 57, 0);
@@ -104,7 +104,7 @@ video {
 /* Optimize background images */
 body {
   background-image: url("/images/brick-wall.png");
-  background-position: center top;
+  background-position: top right;
   background-attachment: fixed;
 }
 
