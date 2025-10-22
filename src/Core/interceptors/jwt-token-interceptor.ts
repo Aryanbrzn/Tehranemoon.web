@@ -25,12 +25,20 @@ export const jwtTokenInterceptor: HttpInterceptorFn = (req, next) => {
 };
 
 function isAuthEndpoint(req: HttpRequest<any>): boolean {
-    const authPaths = ['/api/auth/login', '/api/auth/register', '/api/auth/refresh'];
-    return authPaths.some(path => req.url.includes(path));
+    // Only skip token attachment for endpoints that don't require authentication
+    const publicAuthPaths = ['/api/auth/login', '/api/auth/register', '/api/auth/refresh'];
+    return publicAuthPaths.includes(req.url);
 }
 
 function isExternalUrl(req: HttpRequest<any>): boolean {
-    return req.url.startsWith('http://') || req.url.startsWith('https://');
+    // Only consider URLs external if they don't point to our API
+    const url = req.url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return false; // Relative URLs are internal
+    }
+
+    // Check if it's pointing to our API server
+    return !url.includes('localhost:5129') && !url.includes('127.0.0.1:5129');
 }
 
 function isTokenValid(token: string): boolean {

@@ -4,9 +4,6 @@ export const withCredentialsInterceptor: HttpInterceptorFn = (req, next) => {
   // Only add credentials for same-origin requests or specific API endpoints
   if (shouldIncludeCredentials(req)) {
     const modifiedReq = req.clone({
-      setHeaders: {
-        'Content-Type': 'application/json'
-      },
       withCredentials: true
     });
     return next(modifiedReq);

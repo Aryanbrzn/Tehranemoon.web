@@ -563,6 +563,56 @@
   color: #ffd23f;
 }
 
+/* Stars display for already rated */
+.stars-display {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.star-disabled {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  position: relative;
+  cursor: default;
+}
+
+.star-disabled::before {
+  content: "★";
+  font-size: 28px;
+  display: block;
+  transform: translateY(-1px);
+  color: #e6e1d7;
+  text-shadow: -1px 0 #111, 1px 0 #111, 0 -1px #111, 0 1px #111, 1px 1px #111,
+    -1px 1px #111, 1px -1px #111, -1px -1px #111;
+}
+
+.star-disabled.on::before {
+  color: #ffd23f;
+}
+
+.rating-text {
+  margin-right: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.rating-text.rating-only {
+  color: #ffd23f;
+  font-weight: bold;
+}
+
+.already-rated-message {
+  padding: 12px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 8px;
+  color: #b8860b;
+  text-align: center;
+  font-size: 14px;
+}
+
 /* پولاروید کوچیک داخل ریویو */
 .polaroid.mini {
   width: 120px;

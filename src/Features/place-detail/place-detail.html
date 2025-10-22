@@ -1,11 +1,6 @@
 <section class="place-page" dir="rtl">
   <!-- Close Button -->
-  <button
-    class="close-modal-btn"
-    type="button"
-    (click)="closeModal()"
-    aria-label="بستن"
-  >
+  <button class="close-modal-btn" type="button" (click)="closeModal()" aria-label="بستن">
     <fa-icon [icon]="faTimes"></fa-icon>
   </button>
 
@@ -113,18 +108,12 @@
       <div class="d-flex justify-content-between">
         <h2 class="title">{{ place()?.title }}</h2>
         <!-- علاقه‌مندی -->
-        <button
-          class="fav-heart"
-          type="button"
-          [class.on]="favOn"
-          [title]="favTitle"
-          (click)="toggleFavorite()"
-          [disabled]="favBusy"
-        >
+        <button class="fav-heart" type="button" [class.on]="favOn" [title]="favTitle" (click)="toggleFavorite()"
+          [disabled]="favBusy">
           <fa-icon class="ico" [icon]="faheart"></fa-icon>
           <span class="sr-only">{{
             favOn ? "در علاقه‌مندی‌هاست" : "افزودن به علاقه‌مندی"
-          }}</span>
+            }}</span>
         </button>
       </div>
       <div class="sub">
@@ -133,12 +122,7 @@
         <span class="sep">•</span>
         <div class="rate-rtl">
           @for (v of [1,2,3,4,5]; track v) {
-          <button
-            type="button"
-            class="star"
-            [class.filled]="place()?.avgRating ?? 0 <= v"
-            aria-label="{{ v }} از ۵"
-          >
+          <button type="button" class="star" [class.filled]="place()?.avgRating ?? 0 <= v" aria-label="{{ v }} از ۵">
             <span class="star-shape"></span>
           </button>
           }
@@ -167,19 +151,11 @@
 
     @if (hasCoord()) { @let ll = parseLatLng(place()?.coordinates!);
     <div class="hero-map">
-      <mini-map
-        style="display: block; height: 240px"
-        [lat]="ll!.lat"
-        [lng]="ll!.lng"
-        [title]="place()?.title || 'Location'"
-      ></mini-map>
+      <mini-map style="display: block; height: 240px" [lat]="ll!.lat" [lng]="ll!.lng"
+        [title]="place()?.title || 'Location'"></mini-map>
       <div class="nav-actions">
-        <a class="btn nav neshan" [href]="neshanDirectionUrl()" target="_blank"
-          >نشان</a
-        >
-        <a class="btn nav gmaps" [href]="gmapsDirectionUrl()" target="_blank"
-          >Google Maps</a
-        >
+        <a class="btn nav neshan" [href]="neshanDirectionUrl()" target="_blank">نشان</a>
+        <a class="btn nav gmaps" [href]="gmapsDirectionUrl()" target="_blank">Google Maps</a>
       </div>
     </div>
     }
@@ -189,11 +165,7 @@
     <h4 class="sec-title">گالری</h4>
     <div class="filmstrip">
       @for (img of place()?.images ?? []; track img.id) {
-      <div
-        class="polaroid"
-        [class.alt]="$index % 2 === 1"
-        (click)="openLightbox(placeImageUrls(), $index)"
-      >
+      <div class="polaroid" [class.alt]="$index % 2 === 1" (click)="openLightbox(placeImageUrls(), $index)">
         <img [src]="img.url" alt="" />
         <div class="caption">{{ place()?.title }}</div>
         <div class="idx">#{{ $index + 1 }}</div>
@@ -224,9 +196,7 @@
           </div>
           <div class="rate-rtl readonly">
             @for (v of [1,2,3,4,5]; track v) {
-            <span class="star" [class.filled]="v <= r.rating"
-              ><span class="star-shape"></span
-            ></span>
+            <span class="star" [class.filled]="v <= r.rating"><span class="star-shape"></span></span>
             }
           </div>
         </header>
@@ -236,10 +206,7 @@
         @if (r.images?.length) {
         <div class="filmstrip">
           @for (im of r.images; track im.id) {
-          <div
-            class="polaroid mini"
-            (click)="openLightbox(reviewImageUrls(r), $index)"
-          >
+          <div class="polaroid mini" (click)="openLightbox(reviewImageUrls(r), $index)">
             <img [src]="im.url" alt="" />
             <div class="caption">{{ r.author }}</div>
           </div>
@@ -256,9 +223,7 @@
           <div class="author">{{ r.author }}</div>
           <div class="rate-rtl readonly">
             @for (v of [1,2,3,4,5]; track v) {
-            <span class="star" [class.filled]="v <= r.rating"
-              ><span class="star-shape"></span
-            ></span>
+            <span class="star" [class.filled]="v <= r.rating"><span class="star-shape"></span></span>
             }
           </div>
         </header>
@@ -268,10 +233,7 @@
         @if (r.images?.length) {
         <div class="filmstrip">
           @for (im of r.images; track im.id) {
-          <div
-            class="polaroid mini"
-            (click)="openLightbox(reviewImageUrls(r), $index)"
-          >
+          <div class="polaroid mini" (click)="openLightbox(reviewImageUrls(r), $index)">
             <img [src]="im.url" alt="" />
             <div class="caption">{{ r.author }}</div>
           </div>
@@ -280,18 +242,10 @@
         }
 
         <div class="rev-reactions">
-          <button
-            class="btn-like"
-            (click)="like(r.id)"
-            [disabled]="likeBusyId === r.id"
-          >
+          <button class="btn-like" (click)="like(r.id)" [disabled]="likeBusyId === r.id">
             👍 {{ r.likes }}
           </button>
-          <button
-            class="btn-dislike"
-            (click)="dislike(r.id)"
-            [disabled]="likeBusyId === r.id"
-          >
+          <button class="btn-dislike" (click)="dislike(r.id)" [disabled]="likeBusyId === r.id">
             👎 {{ r.dislikes }}
           </button>
           <span class="spacer"></span>
@@ -299,18 +253,9 @@
 
         @if (replyingFor===r.id) {
         <div class="reply-form">
-          <textarea
-            rows="2"
-            dir="rtl"
-            [(ngModel)]="replyText"
-            placeholder="پاسخ شما..."
-          ></textarea>
+          <textarea rows="2" dir="rtl" [(ngModel)]="replyText" placeholder="پاسخ شما..."></textarea>
           <div class="row-actions">
-            <button
-              class="btn"
-              [disabled]="replyBusy"
-              (click)="submitReply(r.id)"
-            >
+            <button class="btn" [disabled]="replyBusy" (click)="submitReply(r.id)">
               ارسال پاسخ
             </button>
             <button class="btn ghost" (click)="cancelReply()">انصراف</button>
@@ -354,38 +299,34 @@
           ورود / ثبت‌نام
         </button>
       </div>
-      } @if(isAuthed()){
+      } @if(isAuthed() && !(hasUserRated && hasUserDescription)){
 
       <!-- امتیازدهی -->
       <div class="form-row">
         <label>امتیاز</label>
+        @if(hasUserRated) {
+        <div class="stars-display">
+          @for (v of starRange; track v) {
+          <span class="star-disabled" [class.on]="selectedRating >= v" aria-label="{{ v }} از ۵"></span>
+          }
+          <span class="rating-text" [class.rating-only]="!hasUserDescription">امتیاز شما</span>
+        </div>
+        } @else {
         <div class="stars-input">
           @for (v of starRange; track v) {
-          <button
-            type="button"
-            class="star"
-            [class.on]="(hoverRating || selectedRating) >= v"
-            (mouseenter)="setHover(v)"
-            (mouseleave)="setHover(selectedRating)"
-            (click)="setRating(v)"
-            [disabled]="ratingBusy || !isAuthed()"
-            aria-label="{{ v }} از ۵"
-          ></button>
+          <button type="button" class="star" [class.on]="(hoverRating || selectedRating) >= v"
+            (mouseenter)="setHover(v)" (mouseleave)="setHover(selectedRating)" (click)="setRating(v)"
+            [disabled]="ratingBusy || !isAuthed()" aria-label="{{ v }} از ۵"></button>
           }
         </div>
+        }
       </div>
 
       <!-- متن نظر -->
       <div class="form-row">
         <label>نظر</label>
-        <textarea
-          style="color: #fff !important"
-          rows="4"
-          dir="rtl"
-          [(ngModel)]="rvForm.text"
-          placeholder="تجربه‌ات از این مکان..."
-          [disabled]="!isAuthed()"
-        ></textarea>
+        <textarea style="color: #fff !important" rows="4" dir="rtl" [(ngModel)]="rvForm.text"
+          placeholder="تجربه‌ات از این مکان..." [disabled]="!isAuthed()"></textarea>
       </div>
 
       <!-- کپچا -->
@@ -393,35 +334,25 @@
         <label>کپچا</label>
         <div class="cap-box">
           <img [src]="cap?.imageUrl" alt="captcha" />
-          <input
-            type="text"
-            [(ngModel)]="rvForm.captchaAnswer"
-            placeholder="کد امنیتی"
-            [disabled]="!isAuthed()"
-          />
-          <button
-            class="btn ghost"
-            type="button"
-            (click)="refreshCaptcha()"
-            [disabled]="rvBusy()"
-          >
+          <input type="text" [(ngModel)]="rvForm.captchaAnswer" placeholder="کد امنیتی" [disabled]="!isAuthed()" />
+          <button class="btn ghost" type="button" (click)="refreshCaptcha()" [disabled]="rvBusy()">
             <fa-icon [icon]="faRefresh"></fa-icon>
           </button>
         </div>
       </div>
       <div class="form-actions">
-        <button
-          class="btn"
-          type="button"
-          (click)="submitReview()"
-          [disabled]="rvBusy() || !isAuthed()"
-        >
-          {{ rvBusy() ? "در حال ارسال…" : "ثبت نظر" }}
+        <button class="btn" type="button" (click)="submitReview()" [disabled]="rvBusy() || !isAuthed()">
+          {{ rvBusy() ? "در حال ارسال…" : (hasUserRated ? "ثبت توضیحات" : "ثبت نظر") }}
         </button>
         @if(rvError){
         <div class="err">{{ rvError }}</div>
-
         }
+      </div>
+      } @if(isAuthed() && hasUserRated && hasUserDescription) {
+      <div class="form-actions">
+        <div class="already-rated-message">
+          شما قبلاً برای این مکان نظر کامل ثبت کرده‌اید.
+        </div>
       </div>
       }
 

@@ -6,7 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { MiniMapComponent } from '../mini-map.component/mini-map.component';
 import { PlaceDetailService, PlaceDetailDto, ReviewDto } from '../services/place-detail';
 import { CaptchaService, CaptchaChallenge } from '../../Core/services/captcha-service';
-import { ReviewsService } from '../services/reviews-service';
+import { ReviewsService, UserRatingResponse } from '../services/reviews-service';
+import { FingerprintService } from '../../Core/services/fingerprint.service';
 import { MODAL_DATA } from '../../Shared/modal/modal.tokens';
 import { ModalRef } from '../../Shared/modal/modal-ref';
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -45,6 +46,7 @@ export class PlaceDetailComponent {
   private modal = inject(ModalService);
   private destroyRef = inject(DestroyRef);
   private toastService = inject(ToastService);
+  private fingerprintService = inject(FingerprintService);
 
   private modalData = inject(MODAL_DATA, { optional: true }) as { id?: number } | null;
   private modalRef = inject(ModalRef, { optional: true });
@@ -173,7 +175,47 @@ export class PlaceDetailComponent {
 
   constructor() {
     this.refreshCaptcha();
-    effect(() => { if (this.place()) this.refreshFavState(); });
+    effect(() => {
+      if (this.place()) {
+        this.refreshFavState();
+        this.loadUserRating();
+      }
+    });
+  }
+
+  /**
+   * Load user's existing rating for this place
+   */
+  private loadUserRating() {
+    const p = this.place();
+    if (!p || !this.isAuthed()) return;
+
+    this.reviewsApi.getUserRating(p.id).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: (rating) => {
+        this.userRating = rating;
+        this.hasUserRated = rating.hasRated;
+        this.hasUserDescription = rating.hasDescription;
+
+        if (rating.hasRated) {
+          this.selectedRating = rating.rating;
+          this.rvForm.rating = rating.rating;
+          this.rvForm.text = rating.text || '';
+        } else {
+          this.selectedRating = 0;
+          this.rvForm.rating = 0;
+          this.rvForm.text = '';
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load user rating:', err);
+        // If user is not authenticated, this is expected
+        if (err?.status !== 401) {
+          this.toastService.error('خطا در بارگذاری وضعیت امتیازدهی');
+        }
+      }
+    });
   }
 
   // ---------- rating (interactive) ----------
@@ -181,12 +223,23 @@ export class PlaceDetailComponent {
   selectedRating = 0;
   tempRating = 0;
   ratingBusy = false;
+  userRating: UserRatingResponse | null = null;
+  hasUserRated = false;
+  hasUserDescription = false;
 
   setHover(val: number) {
     this.hoverRating = val;
   }
   setRating(v: number) {
-    const p = this.place(); if (!p || this.ratingBusy) return;
+    const p = this.place();
+    if (!p || this.ratingBusy || this.hasUserRated) return;
+
+    // Validate rating range (1-5)
+    if (v < 1 || v > 5) {
+      this.toastService.warning('امتیاز باید بین ۱ تا ۵ باشد');
+      return;
+    }
+
     this.ratingBusy = true;
     this.selectedRating = v;
     this.rvForm.rating = v;
@@ -256,19 +309,39 @@ export class PlaceDetailComponent {
       this.toastService.warning('برای ثبت نظر ابتدا وارد شوید.');
       return;
     }
-    const p = this.place(); if (!p) return;
+
+    const p = this.place();
+    if (!p) return;
+
+    // If user has both rating and description, they can't submit anything
+    if (this.hasUserRated && this.hasUserDescription) {
+      this.toastService.warning('شما قبلاً برای این مکان نظر کامل ثبت کرده‌اید.');
+      return;
+    }
+
     if (!this.rvForm.captchaAnswer.trim()) {
       this.toastService.warning('کد کپچا را وارد کنید.');
       return;
     }
 
-    const ratingToSend = this.selectedRating || Number(this.rvForm.rating) || 0;
+    const ratingToSend = this.selectedRating || Number(this.rvForm.rating);
+
+    // If user hasn't rated yet, validate rating range (1-5, not 0-5)
+    if (!this.hasUserRated && (!ratingToSend || ratingToSend < 1 || ratingToSend > 5)) {
+      this.toastService.warning('لطفاً امتیازی بین ۱ تا ۵ انتخاب کنید.');
+      return;
+    }
 
     this.rvBusy.set(true);
     this.rvError = null;
+
+    const fingerprint = this.fingerprintService.getFingerprint();
+
     this.reviewsApi.addReview(p.id, {
+      placeId: p.id,
       rating: ratingToSend,
-      text: (this.rvForm.text || '').trim(),
+      text: (this.rvForm.text || '').trim(), // Can be empty string
+      fingerprint: fingerprint,
       captchaToken: this.cap?.token ?? '',
       captchaAnswer: this.rvForm.captchaAnswer
     }).subscribe({
@@ -282,15 +355,26 @@ export class PlaceDetailComponent {
           this.refreshPlaceAfterAction();
           this.refreshCaptcha();
           this.toastService.success('نظر شما با موفقیت ثبت شد!');
-          window.location.reload()
+          // Reload user rating to update hasRated status
+          this.loadUserRating();
         });
       },
       error: err => {
         this.rvBusy.set(false);
         this.rvError = err?.message ?? 'خطا در ثبت نظر';
         this.refreshCaptcha();
-        // Toast will be shown automatically by the error interceptor
-      }, complete: () => {
+
+        // Handle specific error cases
+        if (err?.status === 409) {
+          this.toastService.error('شما قبلاً برای این مکان نظر ثبت کرده‌اید.');
+          this.hasUserRated = true;
+        } else if (err?.status === 400) {
+          this.toastService.error('کپچا نامعتبر است.');
+        } else if (err?.status === 401) {
+          this.toastService.error('برای ثبت نظر ابتدا وارد شوید.');
+        }
+      },
+      complete: () => {
         this.rvBusy.set(false);
         this.rvError = null;
         this.refreshPlaceAfterAction();

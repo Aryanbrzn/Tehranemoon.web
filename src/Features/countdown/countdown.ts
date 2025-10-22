@@ -18,7 +18,7 @@ export class CountdownComponent implements OnDestroy {
     this.targetIso = new Date(this._targetMs).toISOString();
     this.alignAndStart();
   }
-  @Input() label = 'تا واگذاری سایت';
+  @Input() label = 'تا اهدای تندیس طلایی هر کتگوری';
 
   targetIso = '';
   private _targetMs = 0;

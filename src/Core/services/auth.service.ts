@@ -18,8 +18,8 @@ export class AuthService {
     readonly isAuthenticated = computed(() => !!this._user());
     private _loading = signal(false);
     readonly loading = computed(() => this._loading());
-    private _token: string | null = localStorage.getItem(environment.accessTokenKey);
-    private _refreshToken: string | null = localStorage.getItem(environment.refreshTokenKey);
+    private _token: string | null = sessionStorage.getItem(environment.accessTokenKey);
+    private _refreshToken: string | null = sessionStorage.getItem(environment.refreshTokenKey);
     private _refreshPromise: Promise<boolean> | null = null;
 
     async loadMe(): Promise<void> {
@@ -62,8 +62,8 @@ export class AuthService {
             const res = await this.http.postJson<LoginRes>('/api/auth/login', dto, { withCredentials: true }).toPromise();
             this._token = res?.accessToken || null;
             this._refreshToken = res?.refreshToken || null;
-            if (this._token) localStorage.setItem(environment.accessTokenKey, this._token);
-            if (this._refreshToken) localStorage.setItem(environment.refreshTokenKey, this._refreshToken);
+            if (this._token) sessionStorage.setItem(environment.accessTokenKey, this._token);
+            if (this._refreshToken) sessionStorage.setItem(environment.refreshTokenKey, this._refreshToken);
             await this.loadMe();
             return !!this._token;
         } catch { return false; }
@@ -80,8 +80,8 @@ export class AuthService {
     async logout(): Promise<void> {
         try { await this.http.postJson('/api/auth/revoke', {}, { withCredentials: true }).toPromise(); }
         finally {
-            localStorage.removeItem(environment.accessTokenKey);
-            localStorage.removeItem(environment.refreshTokenKey);
+            sessionStorage.removeItem(environment.accessTokenKey);
+            sessionStorage.removeItem(environment.refreshTokenKey);
             this._token = null;
             this._refreshToken = null;
             this._user.set(null);
@@ -89,7 +89,22 @@ export class AuthService {
     }
 
     get token() { return this._token; }
-    get refreshToken() { return this._refreshToken; }
+    get refreshTokenValue() { return this._refreshToken; }
+
+    // Public method to manually refresh token
+    async refreshToken(): Promise<boolean> {
+        return await this.refreshTokenIfNeeded();
+    }
+
+    // Get current user info
+    getCurrentUser(): UserProfileDto | null {
+        return this._user();
+    }
+
+    // Check if user is authenticated (method version)
+    isUserAuthenticated(): boolean {
+        return !!this._user();
+    }
 
     // Check if token exists and is not expired
     private isTokenValid(): boolean {
@@ -101,8 +116,9 @@ export class AuthService {
             const now = Math.floor(Date.now() / 1000);
             const timeUntilExpiry = (payload.exp - now) * 1000;
 
-            // Return true if token is valid and not close to expiry
-            return payload.exp > now && timeUntilExpiry > environment.tokenRefreshThreshold;
+            // Return true if token is valid and has more than 3 minutes left (180 seconds)
+            // This ensures we refresh tokens 2-3 minutes before expiration
+            return payload.exp > now && timeUntilExpiry > (3 * 60 * 1000);
         } catch {
             // If token is not a valid JWT, assume it's invalid
             return false;
@@ -127,16 +143,17 @@ export class AuthService {
     private async performTokenRefresh(): Promise<boolean> {
         try {
             console.log('Attempting token refresh...');
+            // Send refresh token via cookie (withCredentials: true) or header
             const res = await this.http.postJson<RefreshRes>('/api/auth/refresh',
-                { refreshToken: this._refreshToken },
+                {}, // Empty body since refresh token is sent via cookie
                 { withCredentials: true }
             ).toPromise();
 
             this._token = res?.accessToken || null;
             this._refreshToken = res?.refreshToken || null;
 
-            if (this._token) localStorage.setItem(environment.accessTokenKey, this._token);
-            if (this._refreshToken) localStorage.setItem(environment.refreshTokenKey, this._refreshToken);
+            if (this._token) sessionStorage.setItem(environment.accessTokenKey, this._token);
+            if (this._refreshToken) sessionStorage.setItem(environment.refreshTokenKey, this._refreshToken);
 
             console.log('Token refresh successful');
             return true;
@@ -149,8 +166,8 @@ export class AuthService {
 
     // Clear invalid tokens
     private clearInvalidTokens(): void {
-        localStorage.removeItem(environment.accessTokenKey);
-        localStorage.removeItem(environment.refreshTokenKey);
+        sessionStorage.removeItem(environment.accessTokenKey);
+        sessionStorage.removeItem(environment.refreshTokenKey);
         this._token = null;
         this._refreshToken = null;
         this._user.set(null);

@@ -3,7 +3,21 @@ import { Httpclient } from '../../Core/services/httpclient';
 
 export type ReviewAuthorType = 'AmirAli' | 'User';
 export interface Paged<T> { items: T[]; total: number; page: number; pageSize: number; }
-export interface AddReviewBody { rating: number; text?: string; captchaToken: string; captchaAnswer: string; }
+export interface AddReviewBody {
+  placeId: number;
+  rating: number;
+  text: string;
+  fingerprint: string;
+  captchaToken: string;
+  captchaAnswer: string;
+}
+
+export interface UserRatingResponse {
+  rating: number;  // 0 if not rated
+  text: string | null;  // null if no text
+  hasRated: boolean;  // boolean indicating if user has rated
+  hasDescription: boolean;  // boolean indicating if user has submitted description
+}
 export interface AddReplyBody { text: string; }
 export interface ReviewDto {
   id: number;
@@ -28,13 +42,13 @@ export class ReviewsService {
   private http = inject(Httpclient);
 
   /** ثبت نظر سطح اول برای یک مکان */
-  addReview(placeId: number, dto: {
-    rating: number;
-    text: string;
-    captchaToken: string;
-    captchaAnswer: string;
-  }) {
+  addReview(placeId: number, dto: AddReviewBody) {
     return this.http.postJson<{ id: number }>(`api/places/${placeId}/reviews`, dto);
+  }
+
+  /** دریافت امتیاز کاربر برای یک مکان */
+  getUserRating(placeId: number) {
+    return this.http.get<UserRatingResponse>(`api/places/${placeId}/user-rating`);
   }
   list(placeId: number, page = 1, pageSize = 10) {
     return this.http.get<Paged<any>>('/api/reviews', { placeId, page, pageSize });
