@@ -149,6 +149,7 @@
 
 .lb-row {
   display: flex;
+  flex-direction: row-reverse;
   align-items: flex-start;
   gap: 14px;
 }
@@ -166,24 +167,13 @@
   position: relative;
   flex: 1;
   display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-around;
   align-items: stretch;
   padding: 8px 12px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  background: url("/assets/ui/paper-strip.webp") center/auto 100% repeat-x,
-    linear-gradient(#efe6dc, #efe6dc);
-}
-
-.paper-strip::after {
-  content: "";
-  position: absolute;
-  top: 10px;
-  right: -10px;
-  width: 0;
-  height: 0;
-  border-left: 10px solid #c9b8a7;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
+  background: transparent;
 }
 
 .stars {
@@ -707,27 +697,99 @@
     margin-right: 6px;
     color: #ff6b35;
   }
+  .rank-badge {
+    background: #000 !important;
+    color: #fff !important;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 8px;
+    text-align: center;
+    min-width: 30px;
+    border: 1px solid #333 !important;
+  }
 
   /* First place golden styling */
-  .first-place .place-name {
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
+  .lb-row.first-place .place-name {
+    background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
     color: #8b4513;
     border: 2px solid #ffd700;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
   }
 
-  .first-place .rank-number {
-    color: #8b4513;
-  }
-
-  .first-place .rating-info {
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
+  .lb-row.first-place .rating-info {
+    background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
     color: #8b4513;
     border: 2px solid #ffd700;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
   }
 
-  .first-place .polaroid {
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
+  .lb-row.first-place .polaroid {
+    background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+    border: 3px solid #ffd700 !important;
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.5),
+      0 0 0 1px rgba(255, 215, 0, 0.3) !important;
+  }
+
+  .lb-row.first-place .polaroid img {
     border: 2px solid #ffd700;
+    box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.3);
+    background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+  }
+
+  .lb-row.first-place .polaroid::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    bottom: 10px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+    z-index: -1;
+    border-radius: 4px;
+  }
+
+  .lb-row.first-place .polaroid .idx {
+    color: #8b4513;
+    font-weight: 800;
+    text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.5);
+  }
+
+  .lb-row.first-place .paper-strip {
+    background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4) !important;
+  }
+
+  /* Override mobile transparent background for first place */
+  @media (max-width: 480px) {
+    .lb-row.first-place .paper-strip {
+      background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+      border: 2px solid #ffd700 !important;
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4) !important;
+    }
+  }
+
+  /* Override ultra-small screen transparent background for first place */
+  @media (max-width: 380px) {
+    .lb-row.first-place .paper-strip {
+      background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+      border: 2px solid #ffd700 !important;
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4) !important;
+    }
+  }
+
+  /* Mobile rank badge styling */
+  @media (max-width: 900px) {
+    .rank-badge {
+      font-size: 12px;
+      padding: 3px 6px;
+      min-width: 25px;
+      margin-bottom: 6px;
+      background: #000 !important;
+      color: #fff !important;
+      border: 1px solid #333 !important;
+    }
   }
 
   .polaroid {
@@ -965,25 +1027,83 @@
     color: #ff6b35;
   }
 
-  .first-place .place-name {
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
+  .lb-row.first-place .place-name {
+    background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
     color: #8b4513;
     border: 2px solid #ffd700;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
   }
 
-  .first-place .rank-number {
-    color: #8b4513;
-  }
-
-  .first-place .rating-info {
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
-    color: #8b4513;
+  .lb-row.first-place .rating-info {
+    background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
     border: 2px solid #ffd700;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
   }
 
-  .first-place .polaroid {
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
+  .lb-row.first-place .polaroid {
+    background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+    border: 3px solid #ffd700 !important;
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.5),
+      0 0 0 1px rgba(255, 215, 0, 0.3) !important;
+  }
+
+  .lb-row.first-place .polaroid img {
     border: 2px solid #ffd700;
+    box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.3);
+    background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+  }
+
+  .lb-row.first-place .polaroid::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    bottom: 10px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+    z-index: -1;
+    border-radius: 4px;
+  }
+
+  .lb-row.first-place .polaroid .idx {
+    font-weight: 800;
+    text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.5);
+  }
+
+  .lb-row.first-place .paper-strip {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  /* Override mobile transparent background for first place */
+  @media (max-width: 480px) {
+    .lb-row.first-place .paper-strip {
+      background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+      border: 2px solid #ffd700 !important;
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4) !important;
+    }
+  }
+
+  /* Override ultra-small screen transparent background for first place */
+  @media (max-width: 380px) {
+    .lb-row.first-place .paper-strip {
+      background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
+      border: 2px solid #ffd700 !important;
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4) !important;
+    }
+  }
+
+  /* Mobile rank badge styling */
+  @media (max-width: 900px) {
+    .rank-badge {
+      font-size: 12px;
+      padding: 3px 6px;
+      min-width: 25px;
+      margin-bottom: 6px;
+      background: #000 !important;
+      color: #fff !important;
+      border: 1px solid #333 !important;
+    }
   }
 }
 

@@ -72,53 +72,55 @@
             }
             } @else {
             @for (p of places; track p.id) {
-            <div class="lb-row" [class.alt]="($index % 2)===1" (click)="openPlaceDetail(p.id)">
+            <div class="lb-row alig-items-center" [class.alt]="($index % 2)===1" [class.first-place]="$index === 0"
+                (click)="openPlaceDetail(p.id)">
                 <div class="polaroid">
                     <img [src]="p.image" alt="" loading="lazy" decoding="async">
-                    <div class="idx">#{{ $index+1 }}</div>
+                    <div class="idx" dir="rtl">#{{ $index+1 }} {{ p.title }}</div>
                 </div>
 
-                <div class="paper-strip" [class.first-place]="$index === 0">
-                    <div class="place-name">
-                        <span class="rank-number" *ngIf="$index < 3">#{{ $index + 1 }}</span>
-                        {{ p.title }}
-                    </div>
-                    <div class="rating-info">
-                        <span class="stars" [style.--score]="((p.roundedAvg / 5) * 100) + '%'"></span>
-                        <small class="five-count" [title]="'تعداد 5 ستاره ها'"
-                            style="margin-inline-start:8px;opacity:.85;cursor:help;">
-                            ({{ p.fiveStarCount }})
-                        </small>
-                    </div>
-                </div>
-            </div>
-            }
-            }
-        </div>
-
-        <!-- مودال ثبت نظر -->
-        @if (modalOpen) {
-        <div class="review-backdrop" (click)="closeModal()"></div>
-        <div class="review-modal" role="dialog" aria-modal="true">
-            <h3 class="rm-title">ثبت نظر برای {{ modalPlace?.title }}</h3>
-
-            <div class="rm-stars">
-                @for (s of starRange; track $index) {
-                <img [src]="(tempRating> $index)? 'images/fStar.png':'images/eStar.png'" width="22" alt="">
+                <div class="paper-strip">
+                    @if($index < 3) { <div [style.color]="$index==0?'#ffe226':'#fff'" class=" p-2 rounded-2 "
+                        style="background-color: rgba(0, 0, 0, 0.471);">#{{
+                        $index + 1 }}</div>
                 }
-            </div>
-
-            <textarea class="rm-text" [(ngModel)]="reviewText" placeholder="متن نظر شما..." rows="5"></textarea>
-
-            <div class="rm-actions">
-                <button type="button" class="btn-primary" (click)="submitReview()">ثبت</button>
-                <button type="button" class="btn-ghost" (click)="closeModal()">انصراف</button>
+                <div [style.width]="$index < 3 ? 'auto' : '100%'"
+                    class="rating-info rounded-2 p-2 bg-light d-flex align-items-center ">
+                    <span class="stars" [style.--score]="((p.roundedAvg / 5) * 100) + '%'"></span>
+                    <small class="five-count" [title]="'تعداد 5 ستاره ها'"
+                        style="margin-inline-start:8px;opacity:.85;cursor:help;">
+                        ({{ p.fiveStarCount }})
+                    </small>
+                </div>
             </div>
         </div>
         }
-    </aside>
+        }
+</div>
 
-    }
+<!-- مودال ثبت نظر -->
+@if (modalOpen) {
+<div class="review-backdrop" (click)="closeModal()"></div>
+<div class="review-modal" role="dialog" aria-modal="true">
+    <h3 class="rm-title">ثبت نظر برای {{ modalPlace?.title }}</h3>
+
+    <div class="rm-stars">
+        @for (s of starRange; track $index) {
+        <img [src]="(tempRating> $index)? 'images/fStar.png':'images/eStar.png'" width="22" alt="">
+        }
+    </div>
+
+    <textarea class="rm-text" [(ngModel)]="reviewText" placeholder="متن نظر شما..." rows="5"></textarea>
+
+    <div class="rm-actions">
+        <button type="button" class="btn-primary" (click)="submitReview()">ثبت</button>
+        <button type="button" class="btn-ghost" (click)="closeModal()">انصراف</button>
+    </div>
+</div>
+}
+</aside>
+
+}
 </div>
 <div class="home-bottom-row container-fluid">
     <app-user-panel></app-user-panel>
