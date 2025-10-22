@@ -1,4 +1,5 @@
 import { Component, ViewChild, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MapComponent } from '../map/map';
 import { UserPanelComponent } from '../userpanel/userpanel';
@@ -27,7 +28,7 @@ type PlaceRow = {
 
 @Component({
   selector: 'app-home',
-  imports: [MapComponent, UserPanelComponent, CountdownComponent, FormsModule, FontAwesomeModule, Footer, Charity],
+  imports: [CommonModule, MapComponent, UserPanelComponent, CountdownComponent, FormsModule, FontAwesomeModule, Footer, Charity],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
@@ -55,7 +56,9 @@ export class Home {
   modalPlace?: PlaceRow;
   reviewText = '';
 
-  constructor() { this.loadCategories(); }
+  constructor() {
+    this.loadCategories();
+  }
 
   isAuthed() { true; }
 
@@ -70,15 +73,14 @@ export class Home {
   selected?: Cat;
   select(c: Cat) {
     this.selected = c;
-    this.mapRef?.filterByCategory(c.slug);
-    this.mapRef?.fitToCategory(c.slug);
+    this.mapRef?.filterByCategorySlug(c.slug);
     setTimeout(() => this.mapRef?.invalidateSize(), 650);
     this.refreshPlaces();
   }
 
   clearSelection() {
     this.selected = undefined;
-    this.mapRef?.filterByCategory(undefined);
+    this.mapRef?.filterByCategorySlug(undefined);
     setTimeout(() => this.mapRef?.invalidateSize(), 350);
     // اگر کاربر در حال جست‌وجوست و >=3 حرف دارد، نتایج سراسری را نشان بده
     if (this.searchText.trim().length >= 3) this.refreshPlaces();
@@ -135,22 +137,47 @@ export class Home {
     this.closeModal();
   }
 
+  // Image handlers for debugging
+  onImageError(event: any, category: Cat) {
+    console.error('Image failed to load:', category.image, event);
+    // Fallback to default image
+    event.target.src = 'images/location.png';
+  }
+
+  onImageLoad(event: any, category: Cat) {
+    console.log('Image loaded successfully:', category.image);
+  }
+
   // --- Categories load ---
   private loadCategories() {
     this.catsApi.getActive().subscribe({
       next: (list) => {
+        console.log('Categories received:', list); // Debug log
         this.categories = list
           .sort((a, b) => (a.displayOrder - b.displayOrder) || (a.id - b.id))
           .map(this.toCat);
+        console.log('Processed categories:', this.categories); // Debug log
         this.loading = false;
       },
-      error: () => { this.categories = []; this.loading = false; }
+      error: (err) => {
+        console.error('Error loading categories:', err); // Debug log
+        this.categories = [];
+        this.loading = false;
+      }
     });
   }
 
   private toCat = (x: CategoryDto & Record<string, any>): Cat => {
-    const img = x.thumbUrl ?? x.thumbUrl ?? x.imageUrl ?? x.imageUrl ?? 'images/location.png';
-    return { id: x.id, name: x.name, slug: x.slug, image: 'http://localhost:5057/' + img, color: this.pickColor(x.slug) };
+    const img = x.thumbUrl ?? x.imageUrl ?? 'images/location.png';
+    const fullImageUrl = img.startsWith('http') ? img : 'http://localhost:5057/' + img;
+    console.log('Category image URL:', fullImageUrl); // Debug log
+    return {
+      id: x.id,
+      name: x.name,
+      slug: x.slug,
+      image: fullImageUrl,
+      color: this.pickColor(x.slug)
+    };
   };
   private pickColor(slug: string): string {
     const map: Record<string, string> = { cafe: '#b24bff', restaurant: '#ff7a3d', park: '#4caf50' };

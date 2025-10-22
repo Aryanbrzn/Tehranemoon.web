@@ -1,0 +1,46 @@
+<div class="picker-wrap container-fluid">
+    <div class="picker-card">
+        <div class="picker-head">
+            <button class="btn-ghost picker-close" type="button" (click)="close()">بستن</button>
+            <div class="picker-titlebar centered">
+                <div class="picker-title-text">انتخاب علاقه‌مندی</div>
+                <div class="picker-chip" *ngIf="categoryName()">{{ categoryName() }}</div>
+            </div>
+            <div class="picker-search-wrap">
+                <input class="picker-search" [value]="q()" (input)="onInput($any($event.target).value)"
+                    placeholder="جستجو در همین دسته..." dir="rtl" />
+            </div>
+        </div>
+
+        <div *ngIf="!busy() && q().trim().length>0 && q().trim().length<2" class="muted picker-hint">
+            برای جستجو حداقل ۲ حرف وارد کنید.
+        </div>
+
+        <div *ngIf="busy()" class="picker-list">
+            <!-- Skeleton: Favorite picker loading -->
+            @for (x of [1,2,3,4,5,6]; track x) {
+            <div class="picker-item">
+                <div class="sk sk-rect sk-h-72 sk-w-72 sk-br-10"></div>
+                <div class="picker-meta">
+                    <div class="sk sk-text sk-w-120 sk-h-16"></div>
+                    <div class="sk sk-text sk-w-80 sk-h-12"></div>
+                </div>
+            </div>
+            }
+        </div>
+        <div *ngIf="!busy()" class="picker-list">
+            @for (it of results(); track it.id) {
+            <button class="picker-item" type="button" (click)="pick(it)">
+                <img class="picker-thumb" [src]="it.coverImageUrl || 'images/location.png'" alt="">
+                <div class="picker-meta">
+                    <div class="picker-title">{{ it.title }}</div>
+                    <div class="muted" *ngIf="it.avgRating">امتیاز: {{ it.avgRating | number:'1.1-1' }}</div>
+                </div>
+            </button>
+            }
+        </div>
+
+        <div *ngIf="!busy() && results().length===0 && q().trim().length>=2" class="muted picker-empty">نتیجه‌ای یافت
+            نشد.</div>
+    </div>
+</div>

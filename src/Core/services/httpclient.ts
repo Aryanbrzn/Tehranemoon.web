@@ -18,7 +18,6 @@ export class Httpclient {
     const url = this.url(path);
     const httpParams = this.buildHttpParams(params);
     return this.http.get<T>(url, { params: httpParams })
-    // .pipe(this.deepEscapeOperator<T>());
   }
 
   delete<T>(path: string, params?: QueryParams) {

@@ -1,17 +1,13 @@
-/* ردیف دو ستونه کنار هم */
 .up-row {
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  width: 500px;
-}
-
-/* ستون پنل (فقط جهت کنترل فاصله) */
+  width: 100%;
+  max-width: 500px;
+} /* ستون پنل (فقط جهت کنترل فاصله) */
 .up-col {
   min-width: 0;
-}
-
-/* نوار کاغذی */
+} /* نوار کاغذی */
 .ticket-strip {
   position: relative;
   min-height: 220px;
@@ -21,9 +17,7 @@
     inset 0 0 0 8px rgba(0, 0, 0, 0.04);
   padding: 24px 22px 38px;
   width: 100%;
-}
-
-/* لبه‌های ناصاف/موج‌دار بالا و پایین */
+} /* لبه‌های ناصاف/موج‌دار بالا و پایین */
 .ticket-strip::before,
 .ticket-strip::after {
   content: "";
@@ -64,9 +58,7 @@
 }
 .ticket-strip::after {
   bottom: -14px;
-}
-
-/* نوار چسب‌های گوشه */
+} /* نوار چسب‌های گوشه */
 .tape {
   position: absolute;
   width: 100px;
@@ -86,9 +78,7 @@
   top: 0px;
   left: -30px;
   transform: rotate(-35deg);
-}
-
-/* خطوط موجی کم‌رنگ */
+} /* خطوط موجی کم‌رنگ */
 .waves {
   position: absolute;
   left: 0;
@@ -119,9 +109,7 @@
 .w3 {
   transform: translateY(6px);
   opacity: 0.6;
-}
-
-/* نوار آبی وسط */
+} /* نوار آبی وسط */
 .blue-band {
   position: absolute;
   left: 6%;
@@ -149,9 +137,7 @@
 .blue-band .cut.right {
   right: -10px;
   border-radius: 0 12px 12px 0;
-}
-
-/* قیمت‌ها گوشه‌ها */
+} /* قیمت‌ها گوشه‌ها */
 .prices {
   position: absolute;
   inset-inline: 16px;
@@ -168,14 +154,16 @@
   text-shadow: 0 1px 0 #fff, 0 2px 4px rgba(0, 0, 0, 0.12);
   opacity: 0.95;
 }
-
-/* پولاروید و متن اشاره */
+.ticket-strip {
+  filter: drop-shadow(-6px 9px 7px black);
+} /* پولاروید و متن اشاره */
 .polaroid-callout {
   position: absolute;
   top: 26px;
-  inset-inline-end: 66%;
+  inset-inline-start: 9%;
   display: flex;
   align-items: center;
+  width: 100%;
   gap: 10px;
 }
 .arrow-text {
@@ -192,13 +180,120 @@
   box-shadow: inset 0 0 0 4px #fff, 0 2px 6px rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(0, 0, 0, 0.2);
 }
-
-/* ریسپانسیو */
+.donate-row {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end; /* یا center اگر می‌خوای وسط باشه */
+}
+.donate-btn {
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 800;
+  padding: 10px 16px;
+  display: inline-block;
+}
+.donate-btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+} /* ریسپانسیو */
+/* Enhanced Mobile Charity Component */
 @media (max-width: 900px) {
   .up-row {
     grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 12px;
   }
+
   .ticket-strip {
     min-height: 200px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px;
+  }
+
+  .donate-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .donate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  }
+
+  .polaroid-callout {
+    padding: 12px;
+  }
+
+  .arrow-text {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 480px) {
+  .up-row {
+    padding: 8px;
+    gap: 12px;
+  }
+
+  .ticket-strip {
+    min-height: 180px;
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .polaroid-callout {
+    padding: 8px;
+  }
+
+  .arrow-text {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .donate-btn {
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .up-row {
+    padding: 6px;
+    gap: 10px;
+  }
+
+  .ticket-strip {
+    min-height: 160px;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .polaroid-callout {
+    padding: 6px;
+  }
+
+  .arrow-text {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  .donate-btn {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
   }
 }

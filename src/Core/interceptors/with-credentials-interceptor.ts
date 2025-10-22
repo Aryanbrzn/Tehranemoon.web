@@ -1,6 +1,27 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const withCredentialsInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem('tm_access');
-  return next(token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req);
+  // Only add credentials for same-origin requests or specific API endpoints
+  if (shouldIncludeCredentials(req)) {
+    const modifiedReq = req.clone({
+      setHeaders: {
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true
+    });
+    return next(modifiedReq);
+  }
+
+  return next(req);
+};
+
+function shouldIncludeCredentials(req: any): boolean {
+  // Include credentials for auth endpoints and API calls
+  const authEndpoints = ['/api/auth/login', '/api/auth/register', '/api/auth/refresh', '/api/auth/revoke'];
+  const isAuthEndpoint = authEndpoints.some(endpoint => req.url.includes(endpoint));
+
+  // Include credentials for API calls to our backend
+  const isApiCall = req.url.includes('/api/');
+
+  return isAuthEndpoint || isApiCall;
 }
