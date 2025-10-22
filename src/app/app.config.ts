@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withPreloading(SelectivePreloadingStrategy)),
-    { provide: API_BASE_URL, useValue: environment.apiBaseUrl },
+    { provide: API_BASE_URL, useValue: environment.apiUrl },
     provideHttpClient(
       withFetch(),
       withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'X-CSRF-TOKEN' }),

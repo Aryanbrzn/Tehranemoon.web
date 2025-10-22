@@ -13,6 +13,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { Footer } from "../../Shared/footer/footer";
 import { Charity } from "../charity/charity";
+import { ImageService } from '../../Core/services/image.service';
 type Cat = { id: number; name: string; slug: string; color: string; image: string };
 type PlaceRow = {
   id: number,
@@ -38,6 +39,7 @@ export class Home {
   private auth = inject(AuthService);
   private modal = inject(ModalService);
   private lbApi = inject(LeaderboardService);
+  private imageService = inject(ImageService);
   faMagnify = faMagnifyingGlass;
   categories: Cat[] = [];
   loading = true;
@@ -169,13 +171,11 @@ export class Home {
 
   private toCat = (x: CategoryDto & Record<string, any>): Cat => {
     const img = x.thumbUrl ?? x.imageUrl ?? 'images/location.png';
-    const fullImageUrl = img.startsWith('http') ? img : 'http://localhost:5057/' + img;
-    console.log('Category image URL:', fullImageUrl); // Debug log
     return {
       id: x.id,
       name: x.name,
       slug: x.slug,
-      image: fullImageUrl,
+      image: this.imageService.getImageUrl(img),
       color: this.pickColor(x.slug)
     };
   };

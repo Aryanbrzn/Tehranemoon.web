@@ -1,361 +1,441 @@
 <section class="place-page" dir="rtl">
+  <!-- Close Button -->
+  <button
+    class="close-modal-btn"
+    type="button"
+    (click)="closeModal()"
+    aria-label="بستن"
+  >
+    <fa-icon [icon]="faTimes"></fa-icon>
+  </button>
 
-    <!-- Close Button -->
-    <button class="close-modal-btn" type="button" (click)="closeModal()" aria-label="بستن">
-        <fa-icon [icon]="faTimes"></fa-icon>
-    </button>
+  @if (!place()) {
+  <!-- Skeleton: Loading state -->
+  <header class="hero">
+    <div class="cover">
+      <div class="sk sk-rect sk-h-220"></div>
+      <div class="paper-frame"></div>
+    </div>
 
-    @if (!place()) {
-    <!-- Skeleton: Loading state -->
-    <header class="hero">
-        <div class="cover">
-            <div class="sk sk-rect sk-h-220"></div>
-            <div class="paper-frame"></div>
+    <div class="hero-meta">
+      <div class="d-flex justify-content-between">
+        <div class="sk sk-text sk-w-60 sk-h-20"></div>
+        <button class="fav-heart" type="button" disabled>
+          <div class="sk sk-rect sk-h-20 sk-w-20"></div>
+        </button>
+      </div>
+      <div class="sub">
+        <div class="sk sk-text sk-w-24 sk-h-16"></div>
+        <span class="sep">•</span>
+        <div class="rate-rtl">
+          @for (v of [1,2,3,4,5]; track v) {
+          <span class="star"><span class="star-shape"></span></span>
+          }
         </div>
+        <div class="sk sk-text sk-w-20 sk-h-14"></div>
+      </div>
 
-        <div class="hero-meta">
-            <div class="d-flex justify-content-between">
-                <div class="sk sk-text sk-w-60 sk-h-20"></div>
-                <button class="fav-heart" type="button" disabled>
-                    <div class="sk sk-rect sk-h-20 sk-w-20"></div>
-                </button>
-            </div>
-            <div class="sub">
-                <div class="sk sk-text sk-w-24 sk-h-16"></div>
-                <span class="sep">•</span>
-                <div class="rate-rtl">
-                    @for (v of [1,2,3,4,5]; track v) {
-                    <span class="star"><span class="star-shape"></span></span>
-                    }
-                </div>
-                <div class="sk sk-text sk-w-20 sk-h-14"></div>
-            </div>
+      <div class="actions">
+        <div class="sk sk-rect sk-h-32 sk-w-64"></div>
+        <div class="sk sk-rect sk-h-32 sk-w-96"></div>
+        <div class="sk sk-rect sk-h-32 sk-w-80"></div>
+        <div class="sk sk-rect sk-h-32 sk-w-72"></div>
+      </div>
+    </div>
 
-            <div class="actions">
-                <div class="sk sk-rect sk-h-32 sk-w-64"></div>
-                <div class="sk sk-rect sk-h-32 sk-w-96"></div>
-                <div class="sk sk-rect sk-h-32 sk-w-80"></div>
-                <div class="sk sk-rect sk-h-32 sk-w-72"></div>
-            </div>
+    <div class="hero-map">
+      <div class="sk sk-rect sk-h-240 sk-br-12"></div>
+      <div class="nav-actions">
+        <div class="sk sk-rect sk-h-32 sk-w-64"></div>
+        <div class="sk sk-rect sk-h-32 sk-w-96"></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <h4 class="sec-title">گالری</h4>
+    <div class="filmstrip">
+      @for (x of [1,2,3,4,5,6]; track x) {
+      <div class="polaroid" [class.alt]="x % 2 === 1">
+        <div class="sk sk-rect sk-h-120"></div>
+        <div class="caption">
+          <div class="sk sk-text sk-w-80 sk-h-12"></div>
         </div>
+        <div class="idx">#{{ x }}</div>
+      </div>
+      }
+    </div>
+  </section>
 
-        <div class="hero-map">
-            <div class="sk sk-rect sk-h-240 sk-br-12"></div>
-            <div class="nav-actions">
-                <div class="sk sk-rect sk-h-32 sk-w-64"></div>
-                <div class="sk sk-rect sk-h-32 sk-w-96"></div>
-            </div>
-        </div>
-    </header>
+  <section class="section">
+    <h4 class="sec-title">دربارهٔ مکان</h4>
+    <div class="desc">
+      <div class="sk sk-text sk-w-100 sk-h-12"></div>
+      <div class="sk sk-text sk-w-90 sk-h-12"></div>
+      <div class="sk sk-text sk-w-95 sk-h-12"></div>
+      <div class="sk sk-text sk-w-60 sk-h-12"></div>
+    </div>
+  </section>
 
-    <section class="section">
-        <h4 class="sec-title">گالری</h4>
-        <div class="filmstrip">
-            @for (x of [1,2,3,4,5,6]; track x) {
-            <div class="polaroid" [class.alt]="(x % 2)===1">
-                <div class="sk sk-rect sk-h-120"></div>
-                <div class="caption">
-                    <div class="sk sk-text sk-w-80 sk-h-12"></div>
-                </div>
-                <div class="idx">#{{ x }}</div>
-            </div>
+  <section class="section">
+    <div class="sec-head">
+      <h4 class="sec-title">نظرات</h4>
+    </div>
+    <div class="reviews">
+      @for (x of [1,2,3]; track x) {
+      <article class="rev">
+        <header>
+          <div class="sk sk-text sk-w-40 sk-h-14"></div>
+          <div class="rate-rtl readonly">
+            @for (v of [1,2,3,4,5]; track v) {
+            <span class="star"><span class="star-shape"></span></span>
             }
-        </div>
-    </section>
+          </div>
+        </header>
+        <p class="text">
+          <span class="sk sk-text sk-w-100 sk-h-12"></span>
+          <span class="sk sk-text sk-w-80 sk-h-12"></span>
+          <span class="sk sk-text sk-w-60 sk-h-12"></span>
+        </p>
+      </article>
+      }
+    </div>
+  </section>
+  } @else {
 
-    <section class="section">
-        <h4 class="sec-title">دربارهٔ مکان</h4>
-        <div class="desc">
-            <div class="sk sk-text sk-w-100 sk-h-12"></div>
-            <div class="sk sk-text sk-w-90 sk-h-12"></div>
-            <div class="sk sk-text sk-w-95 sk-h-12"></div>
-            <div class="sk sk-text sk-w-60 sk-h-12"></div>
-        </div>
-    </section>
+  <header class="hero">
+    <div class="cover">
+      <img [src]="place()?.coverImageUrl || 'images/location.png'" alt="" />
+      <div class="paper-frame"></div>
+    </div>
 
-    <section class="section">
-        <div class="sec-head">
-            <h4 class="sec-title">نظرات</h4>
+    <div class="hero-meta">
+      <div class="d-flex justify-content-between">
+        <h2 class="title">{{ place()?.title }}</h2>
+        <!-- علاقه‌مندی -->
+        <button
+          class="fav-heart"
+          type="button"
+          [class.on]="favOn"
+          [title]="favTitle"
+          (click)="toggleFavorite()"
+          [disabled]="favBusy"
+        >
+          <fa-icon class="ico" [icon]="faheart"></fa-icon>
+          <span class="sr-only">{{
+            favOn ? "در علاقه‌مندی‌هاست" : "افزودن به علاقه‌مندی"
+          }}</span>
+        </button>
+      </div>
+      <div class="sub">
+        <span class="cat">{{ place()?.categoryName }}</span>
+        @if (place()?.reviewCount) {
+        <span class="sep">•</span>
+        <div class="rate-rtl">
+          @for (v of [1,2,3,4,5]; track v) {
+          <button
+            type="button"
+            class="star"
+            [class.filled]="place()?.avgRating ?? 0 <= v"
+            aria-label="{{ v }} از ۵"
+          >
+            <span class="star-shape"></span>
+          </button>
+          }
         </div>
-        <div class="reviews">
-            @for (x of [1,2,3]; track x) {
-            <article class="rev">
-                <header>
-                    <div class="sk sk-text sk-w-40 sk-h-14"></div>
-                    <div class="rate-rtl readonly">
-                        @for (v of [1,2,3,4,5]; track v) {
-                        <span class="star"><span class="star-shape"></span></span>
-                        }
-                    </div>
-                </header>
-                <p class="text">
-                    <span class="sk sk-text sk-w-100 sk-h-12"></span>
-                    <span class="sk sk-text sk-w-80 sk-h-12"></span>
-                    <span class="sk sk-text sk-w-60 sk-h-12"></span>
-                </p>
-            </article>
-            }
-        </div>
-    </section>
-    } @else {
-
-    <header class="hero">
-        <div class="cover">
-            <img [src]="place()?.coverImageUrl || 'images/location.png'" alt="">
-            <div class="paper-frame"></div>
-        </div>
-
-        <div class="hero-meta">
-            <div class="d-flex justify-content-between">
-                <h2 class="title">{{ place()?.title }}</h2>
-                <!-- علاقه‌مندی -->
-                <button class="fav-heart" type="button" [class.on]="favOn" [title]="favTitle" (click)="toggleFavorite()"
-                    [disabled]="favBusy">
-                    <fa-icon class="ico" [icon]="faheart"></fa-icon>
-                    <span class="sr-only">{{ favOn ? 'در علاقه‌مندی‌هاست' : 'افزودن به علاقه‌مندی' }}</span>
-                </button>
-            </div>
-            <div class="sub">
-                <span class="cat">{{ place()?.categoryName }}</span>
-                @if (place()?.reviewCount) {
-                <span class="sep">•</span>
-                <div class="rate-rtl">
-                    @for (v of [1,2,3,4,5]; track v) {
-                    <button type="button" class="star" [class.filled]="place()?.avgRating??0<=v"
-                        aria-label="{{v}} از ۵">
-                        <span class="star-shape"></span>
-                    </button>
-                    }
-                </div>
-                <span class="cnt">({{ place()?.reviewCount }})</span>
-                }
-            </div>
-
-            <div class="actions">
-                @if (place()?.phoneNumber) {
-                <a class="btn" [href]="'tel:'+place()?.phoneNumber">تماس</a>
-                }
-                @if (place()?.instagramUrl) {
-                <a class="btn" [href]="place()?.instagramUrl" target="_blank">
-                    <fa-icon [icon]="facamera"></fa-icon>
-                    اینستاگرام
-                </a>
-                }
-                @if (place()?.youtubeVideoUrl) {
-                <a class="btn" [href]="place()?.youtubeVideoUrl" target="_blank">
-                    <fa-icon [icon]="tv"></fa-icon>
-                    ویدیو امیرعلی
-                </a>
-                }
-                <button class="btn" (click)="share()">اشتراک‌گذاری</button>
-            </div>
-        </div>
-
-        @if (hasCoord()) {
-        @let ll = parseLatLng(place()?.coordinates!);
-        <div class="hero-map">
-            <mini-map style="display:block;height:240px" [lat]="ll!.lat" [lng]="ll!.lng"
-                [title]="place()?.title || 'Location'"></mini-map>
-            <div class="nav-actions">
-                <a class="btn nav neshan" [href]="neshanDirectionUrl()" target="_blank">نشان</a>
-                <a class="btn nav gmaps" [href]="gmapsDirectionUrl()" target="_blank">Google Maps</a>
-            </div>
-        </div>
+        <span class="cnt">({{ place()?.reviewCount }})</span>
         }
-    </header>
+      </div>
 
-    <section class="section">
-        <h4 class="sec-title">گالری</h4>
-        <div class="filmstrip">
-            @for (img of place()?.images ?? []; track img.id) {
-            <div class="polaroid" [class.alt]="($index % 2)===1" (click)="openLightbox(placeImageUrls(), $index)">
-                <img [src]="img.url" alt="">
-                <div class="caption">{{ place()?.title }}</div>
-                <div class="idx">#{{ $index+1 }}</div>
-            </div>
-            }
-        </div>
-    </section>
-
-    @if (place()?.description) {
-    <section class="section">
-        <h4 class="sec-title">دربارهٔ مکان</h4>
-        <div class="desc" [innerText]="place()?.description"></div>
-    </section>
-    }
-
-    <section class="section">
-        <div class="sec-head">
-            <h4 class="sec-title">نظرات</h4>
-        </div>
-
-        <div class="reviews">
-            <!-- ⭐ امیرعلی همیشه اول -->
-            @if (amirReview()) {
-            @let r = amirReview()!;
-            <article class="rev amirali">
-                <header>
-                    <div class="author"><span class="tag-amir">AmirAli</span> {{ r.author }}</div>
-                    <div class="rate-rtl readonly">
-                        @for (v of [1,2,3,4,5]; track v) {
-                        <span class="star" [class.filled]="v <= r.rating"><span class="star-shape"></span></span>
-                        }
-                    </div>
-                </header>
-
-                <p class="text" [innerText]="r.text"></p>
-
-                @if (r.images?.length) {
-                <div class="filmstrip">
-                    @for (im of r.images; track im.id) {
-                    <div class="polaroid mini" (click)="openLightbox(reviewImageUrls(r), $index)">
-                        <img [src]="im.url" alt="">
-                        <div class="caption">{{ r.author }}</div>
-                    </div>
-                    }
-                </div>
-                }
-            </article>
-            }
-
-            <!-- بقیه کاربران -->
-            @for (r of userReviews(); track r.id) {
-            <article class="rev">
-                <header>
-                    <div class="author">{{ r.author }}</div>
-                    <div class="rate-rtl readonly">
-                        @for (v of [1,2,3,4,5]; track v) {
-                        <span class="star" [class.filled]="v <= r.rating"><span class="star-shape"></span></span>
-                        }
-                    </div>
-                </header>
-
-                <p class="text" [innerText]="r.text"></p>
-
-                @if (r.images?.length) {
-                <div class="filmstrip">
-                    @for (im of r.images; track im.id) {
-                    <div class="polaroid mini" (click)="openLightbox(reviewImageUrls(r), $index)">
-                        <img [src]="im.url" alt="">
-                        <div class="caption">{{ r.author }}</div>
-                    </div>
-                    }
-                </div>
-                }
-
-                <div class="rev-reactions">
-                    <button class="btn-like" (click)="like(r.id)" [disabled]="likeBusyId===r.id">👍 {{ r.likes
-                        }}</button>
-                    <button class="btn-dislike" (click)="dislike(r.id)" [disabled]="likeBusyId===r.id">👎 {{ r.dislikes
-                        }}</button>
-                    <span class="spacer"></span>
-                </div>
-
-                @if (replyingFor===r.id) {
-                <div class="reply-form">
-                    <textarea rows="2" dir="rtl" [(ngModel)]="replyText" placeholder="پاسخ شما..."></textarea>
-                    <div class="row-actions">
-                        <button class="btn" [disabled]="replyBusy" (click)="submitReply(r.id)">ارسال پاسخ</button>
-                        <button class="btn ghost" (click)="cancelReply()">انصراف</button>
-                    </div>
-                </div>
-                }
-
-                @if (r.replies?.length) {
-                <div class="replies">
-                    @for (rp of r.replies; track rp.id) {
-                    <article class="reply">
-                        <header>
-                            <div class="author">{{ rp.author }}</div>
-                            <span class="when">{{ rp.createdAtJalali }}</span>
-                        </header>
-                        <p class="text" [innerText]="rp.text"></p>
-                        <div class="rev-actions">
-                            <button class="btn-link danger" (click)="report(rp.id)">گزارش</button>
-                        </div>
-                    </article>
-                    }
-                </div>
-                }
-            </article>
-            }
-        </div>
-    </section>
-
-    <section class="section">
-        @if(isAuthed()){
-        <h4 class="sec-title">ثبت نظر شما</h4>
+      <div class="actions">
+        @if (place()?.phoneNumber) {
+        <a class="btn" [href]="'tel:' + place()?.phoneNumber">تماس</a>
+        } @if (place()?.instagramUrl) {
+        <a class="btn" [href]="place()?.instagramUrl" target="_blank">
+          <fa-icon [icon]="facamera"></fa-icon>
+          اینستاگرام
+        </a>
+        } @if (place()?.youtubeVideoUrl) {
+        <a class="btn" [href]="place()?.youtubeVideoUrl" target="_blank">
+          <fa-icon [icon]="tv"></fa-icon>
+          ویدیو امیرعلی
+        </a>
         }
+        <button class="btn" (click)="share()">اشتراک‌گذاری</button>
+      </div>
+    </div>
 
-        <div class="add-review" data-no-capture>
-
-            @if(!isAuthed()){
-            <div class="auth-inline">
-                <div style="margin-bottom:8px">برای ثبت نظر ابتدا وارد حساب خود شوید.</div>
-                <button class="btn" type="button" (click)="openLogin()">ورود / ثبت‌نام</button>
-            </div>
-            }
-
-            @if(isAuthed()){
-
-            <!-- امتیازدهی -->
-            <div class="form-row">
-                <label>امتیاز</label>
-                <div class="stars-input ">
-                    @for (v of starRange; track v) {
-                    <button type="button" class="star" [class.on]="(hoverRating || selectedRating) >= v"
-                        (mouseenter)="setHover(v)" (mouseleave)="setHover(selectedRating)" (click)="setRating(v)"
-                        [disabled]="ratingBusy || !isAuthed()" aria-label="{{ v }} از ۵">
-                    </button>
-                    }
-                </div>
-            </div>
-
-            <!-- متن نظر -->
-            <div class="form-row">
-                <label>نظر</label>
-                <textarea style="color: #fff !important;" rows="4" dir="rtl" [(ngModel)]="rvForm.text"
-                    placeholder="تجربه‌ات از این مکان..." [disabled]="!isAuthed()"></textarea>
-            </div>
-
-            <!-- کپچا -->
-            <div class="form-row captcha">
-                <label>کپچا</label>
-                <div class="cap-box">
-                    <img [src]="cap?.imageUrl" alt="captcha">
-                    <input type="text" [(ngModel)]="rvForm.captchaAnswer" placeholder="کد امنیتی"
-                        [disabled]="!isAuthed()">
-                    <button class="btn ghost" type="button" (click)="refreshCaptcha()" [disabled]="rvBusy()">
-                        <fa-icon [icon]="faRefresh"></fa-icon>
-                    </button>
-                </div>
-            </div>
-            <div class="form-actions">
-                <button class="btn" type="button" (click)="submitReview()" [disabled]="rvBusy() || !isAuthed()">
-                    {{ rvBusy() ? 'در حال ارسال…' : 'ثبت نظر' }}
-                </button>
-                @if(rvError){
-                <div class="err">{{ rvError }}</div>
-
-                }
-            </div>
-            }
-
-            <!-- اکشن‌ها -->
-
-        </div>
-    </section>
-
-    @if (lbxOpen) {
-    <div class="lbx-backdrop" (click)="closeLightbox()"></div>
-    <div class="lbx" role="dialog" aria-modal="true">
-        <button class="lbx-nav prev" (click)="prevLbx($event)"></button>
-        <img [src]="lbxItems[lbxIndex]" alt="">
-        <button class="lbx-nav next" (click)="nextLbx($event)"></button>
-        <button class="lbx-close" (click)="closeLightbox()">×</button>
+    @if (hasCoord()) { @let ll = parseLatLng(place()?.coordinates!);
+    <div class="hero-map">
+      <mini-map
+        style="display: block; height: 240px"
+        [lat]="ll!.lat"
+        [lng]="ll!.lng"
+        [title]="place()?.title || 'Location'"
+      ></mini-map>
+      <div class="nav-actions">
+        <a class="btn nav neshan" [href]="neshanDirectionUrl()" target="_blank"
+          >نشان</a
+        >
+        <a class="btn nav gmaps" [href]="gmapsDirectionUrl()" target="_blank"
+          >Google Maps</a
+        >
+      </div>
     </div>
     }
+  </header>
 
+  <section class="section">
+    <h4 class="sec-title">گالری</h4>
+    <div class="filmstrip">
+      @for (img of place()?.images ?? []; track img.id) {
+      <div
+        class="polaroid"
+        [class.alt]="$index % 2 === 1"
+        (click)="openLightbox(placeImageUrls(), $index)"
+      >
+        <img [src]="img.url" alt="" />
+        <div class="caption">{{ place()?.title }}</div>
+        <div class="idx">#{{ $index + 1 }}</div>
+      </div>
+      }
+    </div>
+  </section>
+
+  @if (place()?.description) {
+  <section class="section">
+    <h4 class="sec-title">دربارهٔ مکان</h4>
+    <div class="desc" [innerText]="place()?.description"></div>
+  </section>
+  }
+
+  <section class="section">
+    <div class="sec-head">
+      <h4 class="sec-title">نظرات</h4>
+    </div>
+
+    <div class="reviews">
+      <!-- ⭐ امیرعلی همیشه اول -->
+      @if (amirReview()) { @let r = amirReview()!;
+      <article class="rev amirali">
+        <header>
+          <div class="author">
+            <span class="tag-amir">AmirAli</span> {{ r.author }}
+          </div>
+          <div class="rate-rtl readonly">
+            @for (v of [1,2,3,4,5]; track v) {
+            <span class="star" [class.filled]="v <= r.rating"
+              ><span class="star-shape"></span
+            ></span>
+            }
+          </div>
+        </header>
+
+        <p class="text" [innerText]="r.text"></p>
+
+        @if (r.images?.length) {
+        <div class="filmstrip">
+          @for (im of r.images; track im.id) {
+          <div
+            class="polaroid mini"
+            (click)="openLightbox(reviewImageUrls(r), $index)"
+          >
+            <img [src]="im.url" alt="" />
+            <div class="caption">{{ r.author }}</div>
+          </div>
+          }
+        </div>
+        }
+      </article>
+      }
+
+      <!-- بقیه کاربران -->
+      @for (r of userReviews(); track r.id) {
+      <article class="rev">
+        <header>
+          <div class="author">{{ r.author }}</div>
+          <div class="rate-rtl readonly">
+            @for (v of [1,2,3,4,5]; track v) {
+            <span class="star" [class.filled]="v <= r.rating"
+              ><span class="star-shape"></span
+            ></span>
+            }
+          </div>
+        </header>
+
+        <p class="text" [innerText]="r.text"></p>
+
+        @if (r.images?.length) {
+        <div class="filmstrip">
+          @for (im of r.images; track im.id) {
+          <div
+            class="polaroid mini"
+            (click)="openLightbox(reviewImageUrls(r), $index)"
+          >
+            <img [src]="im.url" alt="" />
+            <div class="caption">{{ r.author }}</div>
+          </div>
+          }
+        </div>
+        }
+
+        <div class="rev-reactions">
+          <button
+            class="btn-like"
+            (click)="like(r.id)"
+            [disabled]="likeBusyId === r.id"
+          >
+            👍 {{ r.likes }}
+          </button>
+          <button
+            class="btn-dislike"
+            (click)="dislike(r.id)"
+            [disabled]="likeBusyId === r.id"
+          >
+            👎 {{ r.dislikes }}
+          </button>
+          <span class="spacer"></span>
+        </div>
+
+        @if (replyingFor===r.id) {
+        <div class="reply-form">
+          <textarea
+            rows="2"
+            dir="rtl"
+            [(ngModel)]="replyText"
+            placeholder="پاسخ شما..."
+          ></textarea>
+          <div class="row-actions">
+            <button
+              class="btn"
+              [disabled]="replyBusy"
+              (click)="submitReply(r.id)"
+            >
+              ارسال پاسخ
+            </button>
+            <button class="btn ghost" (click)="cancelReply()">انصراف</button>
+          </div>
+        </div>
+        } @if (r.replies?.length) {
+        <div class="replies">
+          @for (rp of r.replies; track rp.id) {
+          <article class="reply">
+            <header>
+              <div class="author">{{ rp.author }}</div>
+              <span class="when">{{ rp.createdAtJalali }}</span>
+            </header>
+            <p class="text" [innerText]="rp.text"></p>
+            <div class="rev-actions">
+              <button class="btn-link danger" (click)="report(rp.id)">
+                گزارش
+              </button>
+            </div>
+          </article>
+          }
+        </div>
+        }
+      </article>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    @if(isAuthed()){
+    <h4 class="sec-title">ثبت نظر شما</h4>
     }
 
+    <div class="add-review" data-no-capture>
+      @if(!isAuthed()){
+      <div class="auth-inline">
+        <div style="margin-bottom: 8px">
+          برای ثبت نظر ابتدا وارد حساب خود شوید.
+        </div>
+        <button class="btn" type="button" (click)="openLogin()">
+          ورود / ثبت‌نام
+        </button>
+      </div>
+      } @if(isAuthed()){
+
+      <!-- امتیازدهی -->
+      <div class="form-row">
+        <label>امتیاز</label>
+        <div class="stars-input">
+          @for (v of starRange; track v) {
+          <button
+            type="button"
+            class="star"
+            [class.on]="(hoverRating || selectedRating) >= v"
+            (mouseenter)="setHover(v)"
+            (mouseleave)="setHover(selectedRating)"
+            (click)="setRating(v)"
+            [disabled]="ratingBusy || !isAuthed()"
+            aria-label="{{ v }} از ۵"
+          ></button>
+          }
+        </div>
+      </div>
+
+      <!-- متن نظر -->
+      <div class="form-row">
+        <label>نظر</label>
+        <textarea
+          style="color: #fff !important"
+          rows="4"
+          dir="rtl"
+          [(ngModel)]="rvForm.text"
+          placeholder="تجربه‌ات از این مکان..."
+          [disabled]="!isAuthed()"
+        ></textarea>
+      </div>
+
+      <!-- کپچا -->
+      <div class="form-row captcha">
+        <label>کپچا</label>
+        <div class="cap-box">
+          <img [src]="cap?.imageUrl" alt="captcha" />
+          <input
+            type="text"
+            [(ngModel)]="rvForm.captchaAnswer"
+            placeholder="کد امنیتی"
+            [disabled]="!isAuthed()"
+          />
+          <button
+            class="btn ghost"
+            type="button"
+            (click)="refreshCaptcha()"
+            [disabled]="rvBusy()"
+          >
+            <fa-icon [icon]="faRefresh"></fa-icon>
+          </button>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button
+          class="btn"
+          type="button"
+          (click)="submitReview()"
+          [disabled]="rvBusy() || !isAuthed()"
+        >
+          {{ rvBusy() ? "در حال ارسال…" : "ثبت نظر" }}
+        </button>
+        @if(rvError){
+        <div class="err">{{ rvError }}</div>
+
+        }
+      </div>
+      }
+
+      <!-- اکشن‌ها -->
+    </div>
+  </section>
+
+  @if (lbxOpen) {
+  <div class="lbx-backdrop" (click)="closeLightbox()"></div>
+  <div class="lbx" role="dialog" aria-modal="true">
+    <button class="lbx-nav prev" (click)="prevLbx($event)"></button>
+    <img [src]="lbxItems[lbxIndex]" alt="" />
+    <button class="lbx-nav next" (click)="nextLbx($event)"></button>
+    <button class="lbx-close" (click)="closeLightbox()">×</button>
+  </div>
+  } }
 </section>

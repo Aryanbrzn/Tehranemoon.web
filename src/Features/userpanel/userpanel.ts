@@ -12,6 +12,7 @@ import { CategoriesService } from '../services/categories.service';
 import { ModalService } from '../../Shared/modal/modal.service';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog';
 import { FavoritePickerDialogComponent, FavoritePickResult } from './favorite-picker/favorite-picker';
+import { ImageService } from '../../Core/services/image.service';
 
 type Favorite = { id: number; title: string; poster: string; rating: number };
 
@@ -31,6 +32,7 @@ export class UserPanelComponent implements OnInit {
   private favApi = inject(FavoritesService);
   private modal = inject(ModalService);
   private fb = inject(FormBuilder);
+  private imageService = inject(ImageService);
 
   @ViewChild('captureEl') captureRef!: ElementRef<HTMLElement>;
   catsLoading = signal(true);
@@ -97,7 +99,7 @@ export class UserPanelComponent implements OnInit {
           cats.map(c => ({
             catId: c.id,
             title: c.name,
-            poster: 'http://localhost:5057' + c.imageUrl
+            poster: this.imageService.getImageUrl(c.imageUrl)
           }))
         );
         // اینجا لازم نیست refreshFavorites صدا بزنی؛ effect بالایی خودش بعد از set تریگر می‌شود.
@@ -118,7 +120,7 @@ export class UserPanelComponent implements OnInit {
           arr.push({
             id: it.placeId,
             title: it.title,
-            poster: it.coverImageUrl ? ('http://localhost:5057' + it.coverImageUrl) : 'images/location.png',
+            poster: this.imageService.getImageUrl(it.coverImageUrl || 'images/location.png'),
             rating: it.avgRating ?? 0
           });
         }
