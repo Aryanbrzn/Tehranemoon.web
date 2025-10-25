@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, inject, signal, computed,
   ViewChild, ElementRef,
-  effect
+  effect, ChangeDetectorRef
 } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -13,6 +13,7 @@ import { ModalService } from '../../Shared/modal/modal.service';
 import { AuthDialogComponent } from '../auth-dialog/auth-dialog';
 import { FavoritePickerDialogComponent, FavoritePickResult } from './favorite-picker/favorite-picker';
 import { ImageService } from '../../Core/services/image.service';
+import { FavoriteChangeService } from '../../Core/services/favorite-change.service';
 
 type Favorite = { id: number; title: string; poster: string; rating: number };
 
@@ -33,6 +34,8 @@ export class UserPanelComponent implements OnInit {
   private modal = inject(ModalService);
   private fb = inject(FormBuilder);
   private imageService = inject(ImageService);
+  private favoriteChangeService = inject(FavoriteChangeService);
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('captureEl') captureRef!: ElementRef<HTMLElement>;
   catsLoading = signal(true);
@@ -42,12 +45,20 @@ export class UserPanelComponent implements OnInit {
   categories = signal<{ catId: number; title: string; poster: string }[]>([]);
   favByCat = signal<Map<number, Favorite[]>>(new Map());
 
-  // فرمول رندر: برای هر کتگوری آرایه‌ای از 3 خانه (یا favor یا null)
-  rowSlots = (catId: number): (Favorite | null)[] => {
-    const items = (this.favByCat().get(catId) ?? []).slice(0, 3);
-    while (items.length < 3) items.push(null as any);
-    return items as (Favorite | null)[];
-  };
+  // فرمول رندر: برای هر کتگوری آرایه‌ای از 3 خانه (یا favor یا null) - Reactive version
+  slotsByCategory = computed(() => {
+    const favMap = this.favByCat();
+    const slotsMap = new Map<number, (Favorite | null)[]>();
+
+    for (const cat of this.categories()) {
+      const items = (favMap.get(cat.catId) ?? []).slice(0, 3);
+      while (items.length < 3) items.push(null as any);
+      slotsMap.set(cat.catId, items as (Favorite | null)[]);
+    }
+
+    return slotsMap;
+  });
+
 
   // ---- معمول‌های قبلی (دانلود/اشتراک/کپچر)
   private async captureBlob(): Promise<Blob> {
@@ -117,19 +128,27 @@ export class UserPanelComponent implements OnInit {
         for (const it of items) {
           const arr = map.get(it.categoryId); if (!arr) continue;
           if (arr.length >= 3) continue;
+
+          // Find the category to get its image as default
+          const category = this.categories().find(c => c.catId === it.categoryId);
+
           arr.push({
             id: it.placeId,
             title: it.title,
-            poster: this.imageService.getImageUrl(it.coverImageUrl || 'images/location.png'),
+            poster: it.coverImageUrl
+              ? this.imageService.getImageUrl(it.coverImageUrl)
+              : (category ? category.poster : this.imageService.getImageUrl('images/location.png')),
             rating: it.avgRating ?? 0
           });
         }
         this.favByCat.set(map); // ✅ سیگنال set -> OnPush تریگر می‌شود
+        this.cdr.markForCheck(); // Force change detection
       },
       error: _ => {
         const map = new Map<number, Favorite[]>();
         for (const c of this.categories()) map.set(c.catId, []);
         this.favByCat.set(map);
+        this.cdr.markForCheck(); // Force change detection
       }
     });
   }
@@ -156,16 +175,37 @@ export class UserPanelComponent implements OnInit {
       backdropClass: 'app-modal-backdrop'
     }) as unknown as import('../../Shared/modal/modal-ref').ModalRef<FavoritePickResult>;
 
-    ref.afterClosed$.subscribe((res: FavoritePickResult | undefined) => {
-      if (!res?.placeId) return;
-      this.favApi.add(res.placeId).subscribe({
-        next: () => this.refreshFavorites(),
-        error: () => this.refreshFavorites()
-      });
+    ref.afterClosed$.subscribe({
+      next: (res: FavoritePickResult | undefined) => {
+        this.refreshFavorites();
+        if (!res?.placeId) {
+          return;
+        }
+        this.favApi.add(res.placeId).subscribe({
+          next: () => {
+            this.refreshFavorites();
+            // Notify other components that a favorite was added
+            this.favoriteChangeService.notifyFavoriteAdded(res.placeId);
+          },
+          error: (err) => {
+            this.refreshFavorites();
+          }
+        });
+      },
+      error: (err) => {
+      },
+      complete: () => {
+        window.location.reload();
+      }
     });
   }
 
-  openTile(title?: string) { if (!title) return; console.log('open', title); }
+  openTile(title?: string) { if (!title) return; }
+
+  // Test method to manually refresh favorites
+  testRefresh() {
+    this.refreshFavorites();
+  }
 
   // (فرم‌های قبلی اگر جایی استفاده می‌شدند، می‌تونی نگه داری)
   loginForm = this.fb.group({ userNameOrEmail: ['', [Validators.required]], password: ['', [Validators.required, Validators.minLength(6)]] });

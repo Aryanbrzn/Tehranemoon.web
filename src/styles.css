@@ -158,15 +158,13 @@ body {
     scroll-behavior: smooth;
   }
 }
-
+.cursor-pointer {
+  cursor: pointer;
+}
 /* Samsung Galaxy specific optimizations */
 @media screen and (max-width: 480px) and (max-height: 800px) {
   .map-panel {
     min-height: 45vh;
-  }
-
-  .leaderboard-flyin {
-    max-height: 40vh;
   }
 }
 
@@ -174,10 +172,6 @@ body {
 @media screen and (max-width: 480px) and (max-height: 900px) {
   .map-panel {
     min-height: 50vh;
-  }
-
-  .leaderboard-flyin {
-    max-height: 35vh;
   }
 }
 

@@ -1,0 +1,84 @@
+<div class="place-request-wrap container-fluid">
+    <div class="place-request-card">
+        <div class="place-request-head">
+            <button class="btn-ghost place-request-close" type="button" (click)="close()">بستن</button>
+            <div class="place-request-titlebar centered">
+                <div class="place-request-title-text">درخواست اضافه کردن مکان جدید</div>
+                <div class="place-request-subtitle">مکان مورد نظر خود را برای اضافه شدن به سایت پیشنهاد دهید</div>
+            </div>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="place-request-form">
+            <!-- Success Message -->
+            <div *ngIf="successMessage()" class="alert alert-success">
+                <i class="icon-check"></i>
+                {{ successMessage() }}
+            </div>
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage()" class="alert alert-error">
+                <i class="icon-error"></i>
+                {{ errorMessage() }}
+            </div>
+
+            <!-- Place Name -->
+            <div class="form-group">
+                <label for="name" class="form-label">نام مکان *</label>
+                <input id="name" type="text" formControlName="name" class="form-input"
+                    placeholder="نام مکان را وارد کنید" dir="rtl" [class.error]="getFieldError('name')" />
+                <div *ngIf="getFieldError('name')" class="form-error">
+                    {{ getFieldError('name') }}
+                </div>
+            </div>
+
+            <!-- Category -->
+            <div class="form-group">
+                <label for="categoryId" class="form-label">دسته‌بندی *</label>
+                <select id="categoryId" formControlName="categoryId" class="form-select"
+                    [class.error]="getFieldError('categoryId')">
+                    <option value="">انتخاب دسته‌بندی</option>
+                    @for (category of categories(); track category.id) {
+                    <option [value]="category.id">{{ category.name }}</option>
+                    }
+                </select>
+                <div *ngIf="getFieldError('categoryId')" class="form-error">
+                    {{ getFieldError('categoryId') }}
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description" class="form-label">توضیحات</label>
+                <textarea id="description" formControlName="description" class="form-textarea"
+                    placeholder="توضیحات بیشتری درباره مکان بنویسید (اختیاری)" dir="rtl" rows="4"
+                    [class.error]="getFieldError('description')"></textarea>
+                <div *ngIf="getFieldError('description')" class="form-error">
+                    {{ getFieldError('description') }}
+                </div>
+            </div>
+
+            <!-- Instagram URL -->
+            <div class="form-group">
+                <label for="instagramUrl" class="form-label">آدرس اینستاگرام</label>
+                <input id="instagramUrl" type="url" formControlName="instagramUrl" class="form-input"
+                    placeholder="https://www.instagram.com/..." dir="ltr"
+                    [class.error]="getFieldError('instagramUrl')" />
+                <div *ngIf="getFieldError('instagramUrl')" class="form-error">
+                    {{ getFieldError('instagramUrl') }}
+                </div>
+                <div class="form-hint">آدرس صفحه اینستاگرام مکان (اختیاری)</div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-submit" [disabled]="form.invalid || busy()">
+                    <span *ngIf="busy()" class="spinner"></span>
+                    {{ busy() ? 'در حال ارسال...' : 'ارسال درخواست' }}
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="close()" [disabled]="busy()">
+                    انصراف
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

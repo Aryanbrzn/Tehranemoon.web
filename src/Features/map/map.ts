@@ -34,8 +34,8 @@ export class MapComponent implements OnInit, OnDestroy {
   getResponsiveDotRadius(): number {
     if (typeof window !== 'undefined') {
       const width = window.innerWidth;
-      if (width <= 380) return 5;      // Small mobile
-      if (width <= 480) return 6;      // Medium mobile
+      if (width <= 380) return 3;      // Small mobile
+      if (width <= 480) return 5;      // Medium mobile
       if (width <= 768) return 7;      // Tablet
       return 8;                        // Desktop
     }

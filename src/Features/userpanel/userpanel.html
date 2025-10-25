@@ -21,7 +21,7 @@
 
                 <div class="slot-strip">
                     <!-- سه خانه برای هر کتگوری -->
-                    @for (slot of rowSlots(cat.catId); track $index) {
+                    @for (slot of slotsByCategory().get(cat.catId) ?? []; track $index) {
                     <!-- اگر خانه پر است -->
                     @if (slot) {
                     <button class="slot filled" (click)="openTile(slot.title)">

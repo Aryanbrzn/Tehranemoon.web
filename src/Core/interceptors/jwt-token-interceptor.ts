@@ -37,8 +37,9 @@ function isExternalUrl(req: HttpRequest<any>): boolean {
         return false; // Relative URLs are internal
     }
 
-    // Check if it's pointing to our API server
-    return !url.includes('localhost:5129') && !url.includes('127.0.0.1:5129');
+    // Check if it's pointing to our API server (both dev and prod)
+    const apiUrl = environment.apiUrl;
+    return !url.includes(apiUrl);
 }
 
 function isTokenValid(token: string): boolean {

@@ -31,7 +31,7 @@
         <div *ngIf="!busy()" class="picker-list">
             @for (it of results(); track it.id) {
             <button class="picker-item" type="button" (click)="pick(it)">
-                <img class="picker-thumb" [src]="it.coverImageUrl || 'images/location.png'" alt="">
+                <img class="picker-thumb" [src]="getImageUrl(it.coverImageUrl)" alt="">
                 <div class="picker-meta">
                     <div class="picker-title">{{ it.title }}</div>
                     <div class="muted" *ngIf="it.avgRating">امتیاز: {{ it.avgRating | number:'1.1-1' }}</div>
@@ -42,5 +42,13 @@
 
         <div *ngIf="!busy() && results().length===0 && q().trim().length>=2" class="muted picker-empty">نتیجه‌ای یافت
             نشد.</div>
+
+        <!-- Place Request Button -->
+        <div class="picker-actions">
+            <button type="button" class="btn btn-place-request" (click)="openPlaceRequestModal()">
+                <i class="icon-plus"></i>
+                پیشنهاد مکان جدید
+            </button>
+        </div>
     </div>
 </div>

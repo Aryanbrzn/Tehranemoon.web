@@ -11,20 +11,15 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError(err => {
-      console.error('HTTP Error:', err);
-      console.error('Request URL:', req.url);
-      console.error('Request Headers:', req.headers);
 
       // Handle different types of errors
       if (err.status === 401) {
         // Unauthorized - token might be expired
-        console.log('401 Unauthorized - attempting token refresh...');
 
         // Attempt to refresh token and retry the request
         return from(authService.refreshTokenIfNeeded()).pipe(
           switchMap(refreshed => {
             if (refreshed) {
-              console.log('Token refreshed successfully, retrying request...');
               // Retry the original request with the new token
               return next(req);
             } else {

@@ -573,8 +573,7 @@
     order: 3;
     position: static !important;
     width: 100%;
-    height: auto;
-    max-height: 40vh;
+    height: 100%;
     overflow: hidden;
     transform: none !important;
     right: auto !important;
@@ -679,6 +678,23 @@
     padding: 4px 8px;
     border-radius: 6px;
     margin-bottom: 8px;
+  }
+
+  /* Mobile place name styling */
+  .place-name-mobile {
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: #fff;
+    line-height: 1.2;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: block;
+  }
+
+  /* Hide desktop place name in mobile */
+  .place-name-desktop {
+    display: none;
   }
 
   .rating-info {
@@ -832,14 +848,13 @@
   }
 
   .cat img {
-    width: 50px;
-    height: 50px;
+    width: 80px;
+    height: 80px;
   }
 
   .leaderboard-flyin {
     padding: 8px;
     border-radius: 8px;
-    max-height: 60vh;
   }
 
   .lb-paper-title {
@@ -936,8 +951,8 @@
   }
 
   .cat img {
-    width: 40px;
-    height: 40px;
+    width: 70px;
+    height: 70px;
   }
 
   .leaderboard-flyin {
@@ -1020,6 +1035,16 @@
 
 /* Desktop Ranking Styles */
 @media (min-width: 901px) {
+  /* Hide mobile place name in desktop */
+  .place-name-mobile {
+    display: none;
+  }
+
+  /* Show desktop place name in desktop */
+  .place-name-desktop {
+    display: inline;
+  }
+
   .rank-number {
     font-weight: 800;
     font-size: 16px;
@@ -1107,6 +1132,39 @@
   }
 }
 
+/* ---------- Place Request Button ---------- */
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn-place-request {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: 2px solid transparent;
+}
+
+.btn-place-request:hover {
+  background: linear-gradient(135deg, #20c997, #28a745);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.icon-plus::before {
+  content: "+";
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
 /* ---------- Skeleton Loading ---------- */
 .sk {
   position: relative;
@@ -1162,4 +1220,24 @@
   100% {
     background-position: -200% 0;
   }
+}
+
+/* No results message styling */
+.no-results-message {
+  min-height: 100px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.no-results-message h5 {
+  font-weight: 600;
+  color: #fff !important;
+}
+
+.no-results-message p {
+  color: #fff !important;
+  font-size: 0.9rem;
 }

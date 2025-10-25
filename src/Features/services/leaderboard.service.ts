@@ -11,6 +11,7 @@ export type LeaderboardItem = {
     avgRating?: number | null;
     reviewCount: number;
     fiveStarCount: number;     // 👈 جدید
+    rank: number;              // 👈 rank indicator (1-100, where 1 is best)
 };
 
 @Injectable({ providedIn: 'root' })

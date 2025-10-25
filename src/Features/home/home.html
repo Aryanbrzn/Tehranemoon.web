@@ -66,61 +66,92 @@
                     <div class="caption">
                         <div class="sk sk-text sk-w-80 sk-h-12"></div>
                     </div>
-                    <div class="idx">#{{ x }}</div>
+                    <div class="idx">
+                        <div class="sk sk-text sk-w-20 sk-h-12"></div>
+                    </div>
                 </div>
             </div>
             }
             } @else {
-            @for (p of places; track p.id) {
-            <div class="lb-row alig-items-center" [class.alt]="($index % 2)===1" [class.first-place]="$index === 0"
-                (click)="openPlaceDetail(p.id)">
+            @if (isSearching && !hasSearchResults) {
+            <!-- No search results message -->
+            <div class="no-results-message d-flex align-items-center justify-content-center p-4">
+                <div class="text-center">
+                    <h5 class="text-muted mb-2">نتیجه‌ای یافت نشد</h5>
+                    <p class="text-muted small mb-3">لطفاً عبارت جست‌وجوی خود را تغییر دهید</p>
+                    <button type="button" class="btn btn-place-request" (click)="openPlaceRequestModal()">
+                        <i class="icon-plus"></i>
+                        پیشنهاد مکان جدید
+                    </button>
+                </div>
+            </div>
+            } @else {
+            @for (p of places; track $index) {
+            <div class="lb-row alig-items-center cursor-pointer" [class.alt]="($index % 2)===1"
+                [class.first-place]="isActualTopThree(p) && getActualRank(p) === 1" (click)="openPlaceDetail(p.id)">
                 <div class="polaroid">
                     <img [src]="p.image" alt="" loading="lazy" decoding="async">
-                    <div class="idx" dir="rtl">#{{ $index+1 }} {{ p.title }}</div>
+                    <div class="idx" dir="rtl">#{{ p.rank }} <span class="place-name-desktop">
+                            {{ p.title }}
+                        </span>
+                    </div>
                 </div>
 
                 <div class="paper-strip">
-                    @if($index < 3) { <div [style.color]="$index==0?'#ffe226':'#fff'" class=" p-2 rounded-2 "
+                    @if(isActualTopThree(p)) { <div [style.color]="p.rank===1?'#ffe226':'#fff'"
+                        class=" p-2 rounded-2 d-flex align-items-center justify-content-around flex-row-reverse"
                         style="background-color: rgba(0, 0, 0, 0.471);">#{{
-                        $index + 1 }}</div>
-                }
-                <div [style.width]="$index < 3 ? 'auto' : '100%'"
-                    class="rating-info rounded-2 p-2 bg-light d-flex align-items-center ">
-                    <span class="stars" [style.--score]="((p.roundedAvg / 5) * 100) + '%'"></span>
-                    <small class="five-count" [title]="'تعداد 5 ستاره ها'"
-                        style="margin-inline-start:8px;opacity:.85;cursor:help;">
-                        ({{ p.fiveStarCount }})
-                    </small>
+                        p.rank }}
+                        <div class="place-name-mobile">{{ p.title }}</div>
+
+                    </div>
+                    }
+                    @else {
+                    <div [style.color]="p.rank===1?'#ffe226':'#fff'"
+                        class="d-md-none p-2 rounded-2 d-flex align-items-center justify-content-around flex-row-reverse "
+                        style="background-color: rgba(0, 0, 0, 0.471);">
+                        <div class="place-name-mobile">{{ p.title }}</div>
+                    </div>
+
+                    }
+                    <div [style.width]="isActualTopThree(p) ? 'auto' : '100%'"
+                        class="rating-info rounded-2 p-2 bg-light d-flex align-items-center ">
+                        <span class="stars" [style.--score]="((p.roundedAvg / 5) * 100) + '%'"></span>
+                        <small class="five-count" [title]="'تعداد 5 ستاره ها'"
+                            style="margin-inline-start:8px;opacity:.85;cursor:help;">
+                            ({{ p.fiveStarCount }})
+                        </small>
+                    </div>
                 </div>
+            </div>
+            }
+            }
+            }
+        </div>
+
+        <!-- مودال ثبت نظر -->
+        @if (modalOpen) {
+        <div class="review-backdrop" (click)="closeModal()"></div>
+        <div class="review-modal" role="dialog" aria-modal="true">
+            <h3 class="rm-title">ثبت نظر برای {{ modalPlace?.title }}</h3>
+
+            <div class="rm-stars">
+                @for (s of starRange; track $index) {
+                <img [src]="(tempRating> $index)? 'images/fStar.png':'images/eStar.png'" width="22" alt="">
+                }
+            </div>
+
+            <textarea class="rm-text" [(ngModel)]="reviewText" placeholder="متن نظر شما..." rows="5"></textarea>
+
+            <div class="rm-actions">
+                <button type="button" class="btn-primary" (click)="submitReview()">ثبت</button>
+                <button type="button" class="btn-ghost" (click)="closeModal()">انصراف</button>
             </div>
         </div>
         }
-        }
-</div>
+    </aside>
 
-<!-- مودال ثبت نظر -->
-@if (modalOpen) {
-<div class="review-backdrop" (click)="closeModal()"></div>
-<div class="review-modal" role="dialog" aria-modal="true">
-    <h3 class="rm-title">ثبت نظر برای {{ modalPlace?.title }}</h3>
-
-    <div class="rm-stars">
-        @for (s of starRange; track $index) {
-        <img [src]="(tempRating> $index)? 'images/fStar.png':'images/eStar.png'" width="22" alt="">
-        }
-    </div>
-
-    <textarea class="rm-text" [(ngModel)]="reviewText" placeholder="متن نظر شما..." rows="5"></textarea>
-
-    <div class="rm-actions">
-        <button type="button" class="btn-primary" (click)="submitReview()">ثبت</button>
-        <button type="button" class="btn-ghost" (click)="closeModal()">انصراف</button>
-    </div>
-</div>
-}
-</aside>
-
-}
+    }
 </div>
 <div class="home-bottom-row container-fluid">
     <app-user-panel></app-user-panel>

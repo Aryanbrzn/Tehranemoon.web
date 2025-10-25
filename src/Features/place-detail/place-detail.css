@@ -51,36 +51,6 @@
   flex-direction: column;
   gap: 8px;
 }
-.fav-heart {
-  position: relative;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  width: 38px;
-  height: 36px;
-  border-radius: 10px;
-  padding: 0;
-}
-.fav-heart:hover .ico {
-  transform: scale(1.06);
-}
-.ico {
-  color: #fff;
-}
-.fav-heart.on .ico {
-  color: #ff7b89;
-}
-.fav-heart:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-}
 
 .hero-map mini-map {
   display: block;
@@ -719,10 +689,6 @@
   /* عنوان و هارت */
   .title {
     font-size: clamp(16px, 4.8vw, 20px);
-  }
-  .fav-heart {
-    width: 34px;
-    height: 32px;
   }
 
   /* زیرعنوان‌ها در دو خط بشکنند */

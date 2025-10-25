@@ -504,7 +504,7 @@
   place-items: center;
   font-size: 38px;
   font-weight: 900;
-  color: #183049;
+  color: #fff;
   text-shadow: none;
   z-index: 2; /* ensure plus icon stays above any inner elements */
   line-height: 1;

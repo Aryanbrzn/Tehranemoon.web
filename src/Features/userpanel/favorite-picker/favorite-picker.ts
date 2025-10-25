@@ -6,6 +6,9 @@ import { MODAL_DATA } from '../../../Shared/modal/modal.tokens';
 import { PlaceLookupService, PlaceLite } from './place-lookup.service';
 import { finalize } from 'rxjs/operators';
 import { CategoriesService, CategoryDto } from '../../services/categories.service';
+import { ModalService } from '../../../Shared/modal/modal.service';
+import { PlaceRequestSubmitComponent, PlaceRequestSubmitResult } from '../place-request-submit/place-request-submit';
+import { ImageService } from '../../../Core/services/image.service';
 
 
 export type FavoritePickResult = { placeId: number };
@@ -23,12 +26,15 @@ export class FavoritePickerDialogComponent implements OnDestroy {
   private data = inject(MODAL_DATA) as { categoryId: number };
   private lookup = inject(PlaceLookupService);
   private categories = inject(CategoriesService);
+  private modal = inject(ModalService);
+  private imageService = inject(ImageService);
 
   q = signal<string>('');
   busy = signal<boolean>(false);
   results = signal<PlaceLite[]>([]);
   catId = this.data?.categoryId ?? null;
   categoryName = signal<string | null>(null);
+  categoryImage = signal<string | null>(null);
 
   private debounced: any;
 
@@ -52,7 +58,37 @@ export class FavoritePickerDialogComponent implements OnDestroy {
     // parent will add the favorite and refresh
     this.modalRef.close({ placeId: item.id });
   }
-  close() { this.modalRef.close(); }
+  close() {
+    this.modalRef.close();
+  }
+
+  getImageUrl(imageUrl?: string): string {
+    if (imageUrl) {
+      return this.imageService.getImageUrl(imageUrl);
+    }
+
+    // If no imageUrl, use category image as default
+    const catImage = this.categoryImage();
+    if (catImage) {
+      return catImage;
+    }
+
+    return this.imageService.getImageUrl('images/location.png');
+  }
+
+  openPlaceRequestModal() {
+    const ref = this.modal.open(PlaceRequestSubmitComponent, {
+      data: { categoryId: this.catId },
+      panelClass: ['app-modal-panel', 'app-place-request-panel'],
+      backdropClass: 'app-modal-backdrop'
+    }) as unknown as import('../../../Shared/modal/modal-ref').ModalRef<PlaceRequestSubmitResult>;
+
+    ref.afterClosed$.subscribe((result: PlaceRequestSubmitResult | undefined) => {
+      if (result?.success) {
+        // Optionally show a success message or refresh the search
+      }
+    });
+  }
 
   private debouncedSearch(v: string) {
     clearTimeout(this.debounced);
@@ -71,7 +107,6 @@ export class FavoritePickerDialogComponent implements OnDestroy {
           this.results.set(items ?? []);
         },
         error: (err) => {
-          console.error('[favorite-picker] search failed:', err);
           this.results.set([]);
         }
       });
@@ -82,8 +117,12 @@ export class FavoritePickerDialogComponent implements OnDestroy {
       next: (cats: CategoryDto[]) => {
         const found = (cats ?? []).find(c => c.id === categoryId);
         this.categoryName.set(found?.name ?? null);
+        this.categoryImage.set(found?.imageUrl ? this.imageService.getImageUrl(found.imageUrl) : null);
       },
-      error: () => this.categoryName.set(null)
+      error: () => {
+        this.categoryName.set(null);
+        this.categoryImage.set(null);
+      }
     });
   }
 }

@@ -27,27 +27,20 @@ export class AuthService {
         try {
             // Check if token is valid before making request
             if (!this.isTokenValid()) {
-                console.log('Token is invalid or expired, attempting refresh...');
                 const refreshed = await this.refreshTokenIfNeeded();
                 if (!refreshed) {
-                    console.log('Token refresh failed, clearing tokens...');
                     this.clearInvalidTokens();
                     return;
                 }
             }
 
-            console.log('Loading user profile with token:', this._token ? 'present' : 'missing');
             const me = await this.http.get<UserProfileDto>('/api/auth/me').toPromise();
             this._user.set(me ?? null);
-            console.log('User profile loaded:', me);
         } catch (error: any) {
-            console.error('Failed to load user profile:', error);
             // If we get 401, the token might be invalid
             if (error?.code === 401 || error?.httpError?.status === 401) {
-                console.log('Received 401, attempting token refresh...');
                 const refreshed = await this.refreshTokenIfNeeded();
                 if (!refreshed) {
-                    console.log('Token refresh failed, clearing tokens...');
                     this.clearInvalidTokens();
                 }
             } else {
@@ -142,7 +135,6 @@ export class AuthService {
 
     private async performTokenRefresh(): Promise<boolean> {
         try {
-            console.log('Attempting token refresh...');
             // Send refresh token via cookie (withCredentials: true) or header
             const res = await this.http.postJson<RefreshRes>('/api/auth/refresh',
                 {}, // Empty body since refresh token is sent via cookie
@@ -155,10 +147,8 @@ export class AuthService {
             if (this._token) sessionStorage.setItem(environment.accessTokenKey, this._token);
             if (this._refreshToken) sessionStorage.setItem(environment.refreshTokenKey, this._refreshToken);
 
-            console.log('Token refresh successful');
             return true;
         } catch (error) {
-            console.error('Token refresh failed:', error);
             this.clearInvalidTokens();
             return false;
         }

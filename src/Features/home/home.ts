@@ -14,6 +14,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { Footer } from "../../Shared/footer/footer";
 import { Charity } from "../charity/charity";
 import { ImageService } from '../../Core/services/image.service';
+import { PlaceRequestSubmitComponent, PlaceRequestSubmitResult } from '../userpanel/place-request-submit/place-request-submit';
 type Cat = { id: number; name: string; slug: string; color: string; image: string };
 type PlaceRow = {
   id: number,
@@ -25,6 +26,8 @@ type PlaceRow = {
   category: string
   roundedAvg: number;
   fiveStarCount: number;
+  rank: number;              // 👈 rank indicator (1-100, where 1 is best)
+  originalIndex?: number; // Store original position in leaderboard
 };
 
 @Component({
@@ -45,7 +48,10 @@ export class Home {
   loading = true;
 
   places: PlaceRow[] = [];
+  originalPlaces: PlaceRow[] = []; // Store original unsorted data
   loadingPlaces = false;
+  isSearching = false; // Track if we're currently searching
+  hasSearchResults = true; // Track if search has results
 
   searchText = '';
 
@@ -95,37 +101,86 @@ export class Home {
   private refreshPlaces() {
     const q = this.searchText.trim();
 
-    // اگر کمتر از ۳ حرف است: هیچ درخواستی نفرست و لیست را خالی کن
-    if (q && q.length < 3) { this.places = []; return; }
+    // If less than 3 characters, don't make API call and don't empty the list
+    if (q && q.length < 3) {
+      this.isSearching = false;
+      this.hasSearchResults = true;
+      return;
+    }
 
-    // اگر عبارت جست‌وجو داریم، بین همهٔ دسته‌ها بگردیم (categoryId را نفرستیم)
-    // اگر جست‌وجو نداریم، فقط دستهٔ انتخاب‌شده را بفرستیم
-    const categoryId = q ? undefined : this.selected?.id;
+    // Always send categoryId if a category is selected, even during search
+    // If no category is selected and no search query, don't make API call
+    const categoryId = this.selected?.id;
     if (!categoryId && !q) { this.places = []; return; }
 
+    // Set search state
+    this.isSearching = !!q;
     this.loadingPlaces = true;
+
     this.lbApi.get(categoryId, q).subscribe({
       next: list => {
-        this.places = list.map(x => {
+        // API already returns sorted data with rank indicators
+        const processedList = list.map((x, index) => {
           const avg = x.avgRating ?? 0;
           const rounded = Math.round(avg); // 2.6→3 ، 2.4→2
+
+          // If we have original data and this is a search, find the original index
+          let originalIndex = index;
+          if (q && this.originalPlaces.length > 0) {
+            const originalPlace = this.originalPlaces.find(op => op.id === x.id);
+            originalIndex = originalPlace ? originalPlace.originalIndex || 0 : index;
+          }
+
+          // Use category image as fallback if place has no image
+          let imageUrl = x.coverImageUrl;
+          if (!imageUrl && this.selected) {
+            imageUrl = this.selected.image;
+          }
+          if (!imageUrl) {
+            imageUrl = 'images/restaurant.png'; // Final fallback
+          }
+
           return {
             id: x.id,
             title: x.title,
             category: x.categorySlug,
-            image: x.coverImageUrl
-              ? x.coverImageUrl
-              : 'images/restaurant.png',
+            image: imageUrl,
             reviewCount: x.reviewCount,
             avgRating: avg,
             roundedAvg: rounded,
-            fiveStarCount: x.fiveStarCount
-          } as PlaceRow;
+            fiveStarCount: x.fiveStarCount,
+            rank: x.rank,
+            originalIndex: originalIndex // Store original position
+          } as PlaceRow & { originalIndex: number };
         });
+
+        // If this is not a search (category selection), store as original data
+        if (!q) {
+          this.originalPlaces = processedList;
+        }
+
+        this.places = processedList;
+        this.hasSearchResults = processedList.length > 0;
         this.loadingPlaces = false;
       },
-      error: _ => { this.places = []; this.loadingPlaces = false; }
+      error: _ => {
+        this.places = [];
+        this.hasSearchResults = false;
+        this.loadingPlaces = false;
+      }
     });
+  }
+
+  // Check if a place is in the actual top 3 (not filtered results)
+  isActualTopThree(place: PlaceRow): boolean {
+    if (!place.originalIndex && place.originalIndex !== 0) return false;
+    return place.originalIndex < 3;
+  }
+
+  // Get the actual rank of a place (1-based)
+  getActualRank(place: PlaceRow): number {
+    if (!place.originalIndex && place.originalIndex !== 0) return 0;
+    return place.originalIndex + 1;
   }
 
   pickRating(idx: number, val: number, row: PlaceRow) {
@@ -135,34 +190,28 @@ export class Home {
   closeModal() { this.modalOpen = false; this.reviewText = ''; this.reviewingIndex = null; this.hoverRating = 0; this.tempRating = 0; }
 
   async submitReview() {
-    console.log('submit review', { place: this.modalPlace?.title, rating: this.tempRating, text: this.reviewText });
     this.closeModal();
   }
 
   // Image handlers for debugging
   onImageError(event: any, category: Cat) {
-    console.error('Image failed to load:', category.image, event);
     // Fallback to default image
     event.target.src = 'images/location.png';
   }
 
   onImageLoad(event: any, category: Cat) {
-    console.log('Image loaded successfully:', category.image);
   }
 
   // --- Categories load ---
   private loadCategories() {
     this.catsApi.getActive().subscribe({
       next: (list) => {
-        console.log('Categories received:', list); // Debug log
         this.categories = list
           .sort((a, b) => (a.displayOrder - b.displayOrder) || (a.id - b.id))
           .map(this.toCat);
-        console.log('Processed categories:', this.categories); // Debug log
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error loading categories:', err); // Debug log
         this.categories = [];
         this.loading = false;
       }
@@ -182,5 +231,19 @@ export class Home {
   private pickColor(slug: string): string {
     const map: Record<string, string> = { cafe: '#b24bff', restaurant: '#ff7a3d', park: '#4caf50' };
     return map[slug] ?? '#ffd166';
+  }
+
+  openPlaceRequestModal() {
+    const ref = this.modal.open(PlaceRequestSubmitComponent, {
+      data: { categoryId: this.selected?.id },
+      panelClass: ['app-modal-panel', 'app-place-request-panel'],
+      backdropClass: 'app-modal-backdrop'
+    }) as unknown as import('../../Shared/modal/modal-ref').ModalRef<PlaceRequestSubmitResult>;
+
+    ref.afterClosed$.subscribe((result: PlaceRequestSubmitResult | undefined) => {
+      if (result?.success) {
+        // Optionally show a success message or refresh the search
+      }
+    });
   }
 }

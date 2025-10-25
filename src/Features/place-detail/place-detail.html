@@ -15,9 +15,6 @@
     <div class="hero-meta">
       <div class="d-flex justify-content-between">
         <div class="sk sk-text sk-w-60 sk-h-20"></div>
-        <button class="fav-heart" type="button" disabled>
-          <div class="sk sk-rect sk-h-20 sk-w-20"></div>
-        </button>
       </div>
       <div class="sub">
         <div class="sk sk-text sk-w-24 sk-h-16"></div>
@@ -100,21 +97,13 @@
 
   <header class="hero">
     <div class="cover">
-      <img [src]="place()?.coverImageUrl || 'images/location.png'" alt="" />
+      <img [src]="placeImageUrl()" alt="" />
       <div class="paper-frame"></div>
     </div>
 
     <div class="hero-meta">
       <div class="d-flex justify-content-between">
         <h2 class="title">{{ place()?.title }}</h2>
-        <!-- علاقه‌مندی -->
-        <button class="fav-heart" type="button" [class.on]="favOn" [title]="favTitle" (click)="toggleFavorite()"
-          [disabled]="favBusy">
-          <fa-icon class="ico" [icon]="faheart"></fa-icon>
-          <span class="sr-only">{{
-            favOn ? "در علاقه‌مندی‌هاست" : "افزودن به علاقه‌مندی"
-            }}</span>
-        </button>
       </div>
       <div class="sub">
         <span class="cat">{{ place()?.categoryName }}</span>
@@ -122,9 +111,9 @@
         <span class="sep">•</span>
         <div class="rate-rtl">
           @for (v of [1,2,3,4,5]; track v) {
-          <button type="button" class="star" [class.filled]="place()?.avgRating ?? 0 <= v" aria-label="{{ v }} از ۵">
+          <span class="star" [class.filled]="v <= (place()?.avgRating ?? 0)">
             <span class="star-shape"></span>
-          </button>
+          </span>
           }
         </div>
         <span class="cnt">({{ place()?.reviewCount }})</span>
@@ -146,17 +135,26 @@
         </a>
         }
         <button class="btn" (click)="share()">اشتراک‌گذاری</button>
+
+        <!-- ⬇️ هر دو دکمهٔ ریفرش به reload() وصل شدند -->
+
       </div>
     </div>
 
-    @if (hasCoord()) { @let ll = parseLatLng(place()?.coordinates!);
+    @if (hasCoordinates()) { @let ll = parseLatLng(place()?.coordinates!);
     <div class="hero-map">
       <mini-map style="display: block; height: 240px" [lat]="ll!.lat" [lng]="ll!.lng"
         [title]="place()?.title || 'Location'"></mini-map>
+      @if (hasMapUrls()) {
       <div class="nav-actions">
+        @if (place()?.neshanUrl) {
         <a class="btn nav neshan" [href]="neshanDirectionUrl()" target="_blank">نشان</a>
+        }
+        @if (place()?.googleMapsUrl) {
         <a class="btn nav gmaps" [href]="gmapsDirectionUrl()" target="_blank">Google Maps</a>
+        }
       </div>
+      }
     </div>
     }
   </header>
@@ -261,7 +259,7 @@
             <button class="btn ghost" (click)="cancelReply()">انصراف</button>
           </div>
         </div>
-        } @if (r.replies?.length) {
+        } @if (r.replies && r.replies.length) {
         <div class="replies">
           @for (rp of r.replies; track rp.id) {
           <article class="reply">
