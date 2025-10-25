@@ -109,7 +109,7 @@
 .w3 {
   transform: translateY(6px);
   opacity: 0.6;
-} /* نوار آبی وسط */
+} /* نوار آبی وسط - Progress Bar */
 .blue-band {
   position: absolute;
   left: 6%;
@@ -117,10 +117,11 @@
   top: 50%;
   transform: translateY(-50%);
   height: 64px;
-  background: linear-gradient(180deg, #87a1b9 0%, #6f8aa3 100%);
+  background: white;
   border-radius: 12px;
   box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.15),
     0 6px 14px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
 }
 .blue-band .cut {
   position: absolute;
@@ -179,6 +180,56 @@
   background: linear-gradient(180deg, #e9eef5, #cfd9e3);
   box-shadow: inset 0 0 0 4px #fff, 0 2px 6px rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* Progress Fill Styles for Blue Band */
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(180deg, #87a1b9 0%, #6f8aa3 100%);
+  border-radius: 12px;
+  transition: width 0.6s ease-in-out;
+  box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.15);
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.progress-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 700;
+  font-size: 18px;
+  color: #1e293b;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  z-index: 10;
+  pointer-events: none;
 }
 .donate-row {
   margin-top: 12px;
@@ -240,6 +291,10 @@
     font-size: 15px;
     line-height: 1.5;
   }
+
+  .progress-percentage {
+    font-size: 16px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -261,6 +316,10 @@
   .arrow-text {
     font-size: 14px;
     line-height: 1.4;
+  }
+
+  .progress-percentage {
+    font-size: 15px;
   }
 
   .donate-btn {
@@ -289,6 +348,10 @@
   .arrow-text {
     font-size: 13px;
     line-height: 1.3;
+  }
+
+  .progress-percentage {
+    font-size: 14px;
   }
 
   .donate-btn {

@@ -15,10 +15,15 @@ export class FavoritesService {
     private http = inject(Httpclient);
 
     getAll(): Observable<FavoriteItem[]> {
-        return this.http.get<FavoriteItem[]>('/api/user/favorites');
+        return this.http.get<FavoriteItem[]>('/api/user/favorites', {
+            _t: Date.now() // Cache-buster
+        });
     }
     has(placeId: number): Observable<boolean> {
-        return this.http.get<boolean>('/api/user/favorites/has', { placeId });
+        return this.http.get<boolean>('/api/user/favorites/has', {
+            placeId,
+            _t: Date.now() // Cache-buster
+        });
     }
     add(placeId: number) {
         return this.http.postJson('/api/user/favorites/' + placeId, {});

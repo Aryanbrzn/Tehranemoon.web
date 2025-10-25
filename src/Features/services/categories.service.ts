@@ -18,6 +18,8 @@ export class CategoriesService {
 
     /** GET /api/categories  -> active public categories */
     getActive(): Observable<CategoryDto[]> {
-        return this.http.get<CategoryDto[]>('api/categories');
+        return this.http.get<CategoryDto[]>('api/categories', {
+            _t: Date.now() // Cache-buster
+        });
     }
 }

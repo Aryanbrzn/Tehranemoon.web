@@ -1,31 +1,42 @@
 <div class="up-row d-flex flex-column align-items-center m-auto">
-    <section class="ticket-strip " dir="rtl" aria-label="نوار کاغذی">
-        <span class="tape tl" aria-hidden="true"></span>
-        <span class="tape tr" aria-hidden="true"></span>
+  <section class="ticket-strip" dir="rtl" aria-label="نوار کاغذی">
+    <span class="tape tl" aria-hidden="true"></span>
+    <span class="tape tr" aria-hidden="true"></span>
 
-        <div class="waves">
-            <i class="wave w1"></i><i class="wave w2"></i><i class="wave w3"></i>
-        </div>
+    <div class="waves">
+      <i class="wave w1"></i><i class="wave w2"></i><i class="wave w3"></i>
+    </div>
 
-        <div class="blue-band">
-            <span class="cut left"></span>
-            <span class="cut right"></span>
-        </div>
+    <div class="blue-band">
+      <div
+        class="progress-fill"
+        [style.width.%]="getProgressPercentage()"
+      ></div>
+      <div class="progress-percentage">
+        {{ getProgressPercentage().toFixed(1) }}%
+      </div>
+      <span class="cut left"></span>
+      <span class="cut right"></span>
+    </div>
 
-        <div class="prices">
-            <span class="price left">{{fmt(5000)}} تومان</span>
-            <span class="price right">{{fmt(progress()?.totalAmountToman)}} تومان</span>
-        </div>
+    <div class="prices">
+      <span class="price left">{{ fmt(getCurrentAmount()) }} تومان</span>
+      <span class="price right">{{ fmt(MAX_AMOUNT) }} تومان</span>
+    </div>
 
-        <div class="polaroid-callout">
-            <span class="arrow-text">
-                برای هر پولاروید که بسازید ۵ هزار تومن به خیریه اهدا خواهد شد
-            </span>
-        </div>
-    </section>
+    <div class="polaroid-callout">
+      <span class="arrow-text">
+        برای هر پولاروید که بسازید ۵ هزار تومن به خیریه اهدا خواهد شد
+      </span>
+    </div>
+  </section>
 
-    <a class="btn-primary donate-btn btn btn-primary mt-4" href="https://reymit.ir/amiralimrt" target="_blank"
-        rel="noopener noreferrer">
-        حمایت مالی از تهرانمون و امیرعلی
-    </a>
+  <a
+    class="btn-primary donate-btn btn btn-primary mt-4"
+    href="https://reymit.ir/amiralimrt"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    حمایت مالی از تهرانمون و امیرعلی
+  </a>
 </div>

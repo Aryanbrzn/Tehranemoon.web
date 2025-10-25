@@ -1,6 +1,6 @@
 /* ---------------- Map + Categories + Leaderboard (Desktop) ---------------- */
 
-/* Prevent body scrolling when leaderboard is open */
+/* Prevent body scrolling when leaderboard is open (Desktop only) */
 body.leaderboard-open {
   overflow: hidden !important;
   position: fixed !important;
@@ -8,11 +8,27 @@ body.leaderboard-open {
   height: 100% !important;
 }
 
-/* Ensure leaderboard stays fixed when body scroll is locked */
+/* Ensure leaderboard stays fixed when body scroll is locked (Desktop only) */
 body.leaderboard-open .leaderboard-flyin {
   position: fixed !important;
   top: 0 !important;
   transform: translateX(0) !important;
+}
+
+/* Mobile overrides - ensure leaderboard-open class doesn't affect mobile behavior */
+@media (max-width: 768px) {
+  body.leaderboard-open {
+    overflow: auto !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+  }
+
+  body.leaderboard-open .leaderboard-flyin {
+    position: static !important;
+    top: auto !important;
+    transform: none !important;
+  }
 }
 
 .map-page {
@@ -159,6 +175,7 @@ body.leaderboard-open .leaderboard-flyin {
   flex-direction: column;
   gap: 18px;
   padding: 6px 2px 20px;
+  max-height: 100%;
   overflow: auto;
   overflow-x: hidden;
 }
@@ -538,21 +555,8 @@ body.leaderboard-open .leaderboard-flyin {
     flex-direction: row;
     justify-content: center;
     gap: 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden;
     padding: 8px 0;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .cats-list::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  .cats-list::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
   }
 
   .cat {
@@ -647,6 +651,7 @@ body.leaderboard-open .leaderboard-flyin {
     overflow-x: auto;
     overflow-y: hidden;
     padding: 8px 4px;
+    height: 100%;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
     -webkit-overflow-scrolling: touch;
@@ -911,7 +916,7 @@ body.leaderboard-open .leaderboard-flyin {
   }
 
   .lb-list {
-    max-height: calc(3 * 100px);
+    max-height: 100%;
     padding: 6px 2px;
   }
 
@@ -967,14 +972,13 @@ body.leaderboard-open .leaderboard-flyin {
   }
 
   .cat img {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
   }
 
   .leaderboard-flyin {
     padding: 6px;
     border-radius: 6px;
-    max-height: 30vh;
   }
 
   .lb-paper-title {
@@ -1012,7 +1016,7 @@ body.leaderboard-open .leaderboard-flyin {
   }
 
   .lb-list {
-    max-height: calc(3 * 90px);
+    max-height: 100%;
     padding: 4px 1px;
   }
 

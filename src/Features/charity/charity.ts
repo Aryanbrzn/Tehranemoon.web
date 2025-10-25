@@ -16,6 +16,10 @@ export class Charity implements OnInit, OnDestroy {
   progress = signal<CharityProgressDto | null>(null);
   private subscriptions = new Subscription();
 
+  // Constants for progress calculation
+  readonly MAX_AMOUNT = 20000000; // 20 million toman
+  readonly AMOUNT_PER_POLAROID = 5000; // 5000 toman per polaroid
+
   ngOnInit() {
     this.loadProgress();
 
@@ -47,5 +51,17 @@ export class Charity implements OnInit, OnDestroy {
   // نمایش عدد با جداکننده
   fmt(n?: number | null) {
     return (n ?? 0).toLocaleString('fa-IR');
+  }
+
+  // Calculate current amount based on polaroid count
+  getCurrentAmount(): number {
+    const polaroidCount = this.progress()?.totalFavorites ?? 0;
+    return polaroidCount * this.AMOUNT_PER_POLAROID;
+  }
+
+  // Calculate progress percentage
+  getProgressPercentage(): number {
+    const currentAmount = this.getCurrentAmount();
+    return Math.min((currentAmount / this.MAX_AMOUNT) * 100, 100);
   }
 }

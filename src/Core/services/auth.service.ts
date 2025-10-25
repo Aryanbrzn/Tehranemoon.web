@@ -34,7 +34,9 @@ export class AuthService {
                 }
             }
 
-            const me = await this.http.get<UserProfileDto>('/api/auth/me').toPromise();
+            const me = await this.http.get<UserProfileDto>('/api/auth/me', {
+                _t: Date.now() // Cache-buster
+            }).toPromise();
             this._user.set(me ?? null);
         } catch (error: any) {
             // If we get 401, the token might be invalid

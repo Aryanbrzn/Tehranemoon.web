@@ -167,7 +167,7 @@
 /* Enhanced Mobile Map Layout */
 @media (max-width: 900px) {
   .map-wrap {
-    height: 50vh;
+    height: 100%;
     min-height: 300px;
     border-radius: 12px;
     overflow: hidden;
@@ -215,8 +215,7 @@
 
 @media (max-width: 480px) {
   .map-wrap {
-    height: 45vh;
-    min-height: 250px;
+    height: 100%;
     border-radius: 8px;
   }
 
@@ -261,8 +260,7 @@
 
 @media (max-width: 380px) {
   .map-wrap {
-    height: 40vh;
-    min-height: 200px;
+    height: 100%;
     border-radius: 6px;
   }
 

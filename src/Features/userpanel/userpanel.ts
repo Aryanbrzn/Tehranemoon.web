@@ -195,7 +195,6 @@ export class UserPanelComponent implements OnInit {
       error: (err) => {
       },
       complete: () => {
-        window.location.reload();
       }
     });
   }

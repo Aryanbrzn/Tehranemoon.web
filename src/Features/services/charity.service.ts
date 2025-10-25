@@ -11,6 +11,8 @@ export type CharityProgressDto = {
 export class CharityService {
     private http = inject(Httpclient);
     getProgress() {
-        return this.http.get<CharityProgressDto>('/api/charity/progress');
+        return this.http.get<CharityProgressDto>('/api/charity/progress', {
+            _t: Date.now() // Cache-buster
+        });
     }
 }

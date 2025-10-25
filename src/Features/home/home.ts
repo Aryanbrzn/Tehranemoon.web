@@ -77,6 +77,14 @@ export class Home implements OnDestroy {
   isAuthed() { true; }
 
   private toggleBodyScroll(disable: boolean) {
+    // Check if we're on mobile view (screen width <= 768px)
+    const isMobile = window.innerWidth <= 768;
+
+    // Skip scroll prevention on mobile devices
+    if (isMobile) {
+      return;
+    }
+
     if (disable) {
       // Store current scroll position
       this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
@@ -209,8 +217,8 @@ export class Home implements OnDestroy {
 
   // Check if a place is in the actual top 3 (not filtered results)
   isActualTopThree(place: PlaceRow): boolean {
-    if (!place.originalIndex && place.originalIndex !== 0) return false;
-    return place.originalIndex < 3;
+    if (!place.rank && place.rank !== 0) return false;
+    return place.rank < 4;
   }
 
   // Get the actual rank of a place (1-based)
