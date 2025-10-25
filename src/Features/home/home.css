@@ -1,4 +1,20 @@
 /* ---------------- Map + Categories + Leaderboard (Desktop) ---------------- */
+
+/* Prevent body scrolling when leaderboard is open */
+body.leaderboard-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Ensure leaderboard stays fixed when body scroll is locked */
+body.leaderboard-open .leaderboard-flyin {
+  position: fixed !important;
+  top: 0 !important;
+  transform: translateX(0) !important;
+}
+
 .map-page {
   display: flex;
   align-items: stretch;
@@ -40,7 +56,7 @@
 
 /* Drawer-like leader board (desktop default) */
 .leaderboard-flyin {
-  position: fixed;
+  position: fixed !important;
   top: 0;
   right: calc(-50vw + 15px);
   bottom: 0;

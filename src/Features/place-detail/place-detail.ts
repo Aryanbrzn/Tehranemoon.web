@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, DestroyRef, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, DestroyRef, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -48,6 +48,7 @@ export class PlaceDetailComponent implements OnInit {
   private fingerprintService = inject(FingerprintService);
   private categoriesService = inject(CategoriesService);
   private imageService = inject(ImageUrlService);
+  private cdr = inject(ChangeDetectorRef);
 
   // Modal
   private modalData = inject(MODAL_DATA, { optional: true }) as { id?: number } | null;
@@ -60,7 +61,6 @@ export class PlaceDetailComponent implements OnInit {
   cap: CaptchaChallenge | null = null;
 
   likeBusyId: number | null = null;
-  replyBusy = false;
   ratingBusy = false;
   rvBusy = signal(false);
   rvError: string | null = null;
@@ -74,12 +74,12 @@ export class PlaceDetailComponent implements OnInit {
   hasUserRated = false;
   hasUserDescription = false;
 
-  // Reply
-  replyingFor: number | null = null;
-  replyText = '';
 
   // Categories for fallback images
   readonly categories = toSignal(this.categoriesService.getActive(), { initialValue: [] });
+
+  // ⬇️ Hard re-mount flag for the reviews section
+  reviewsVisible = signal(true);
 
   // ======= Computeds =======
   avgInt = computed(() => Math.max(0, Math.min(5, Math.floor(this.place()?.avgRating ?? 0))));
@@ -172,9 +172,14 @@ export class PlaceDetailComponent implements OnInit {
           this.place.set(p);
           this.lastPlaceId = p.id;
 
+          // Force change detection after setting place data
+          this.cdr.markForCheck();
+
           const afterUserRating = () => {
             // 👇 کپچا را آخر کار بگیر تا همیشه بعدِ دیتا باشد
             this.refreshCaptcha();
+            // Force change detection after all data is loaded
+            this.cdr.markForCheck();
           };
 
           if (this.isAuthed()) {
@@ -279,10 +284,27 @@ export class PlaceDetailComponent implements OnInit {
       ?.subscribe({ next: () => this.afterActionRefresh(p.id), error: () => this.afterActionRefresh(p.id) });
   }
 
+  // ⬇️ Hard re-mount helper (for reviews)
+  private remountReviews() {
+    this.reviewsVisible.set(false);
+    // Use setTimeout instead of queueMicrotask for more reliable timing
+    setTimeout(() => {
+      this.reviewsVisible.set(true);
+      this.cdr.markForCheck();
+    }, 10);
+  }
+
   private afterActionRefresh(placeId?: number) {
     // همیشه آی‌دی را پاس بده تا حتی اگر place=null شد، شناسه را داشته باشیم
     const id = placeId ?? this.place()?.id ?? this.lastPlaceId ?? this.modalData?.id ?? this.parseIdFromUrl();
-    if (id) this.reload(id); else this.reload();
+
+    // Force the reviews section to fully re-mount first
+    this.remountReviews();
+
+    // Use setTimeout to ensure DOM updates complete before reloading data
+    setTimeout(() => {
+      if (id) this.reload(id); else this.reload();
+    }, 0);
   }
 
   // ------- Like / Dislike -------
@@ -338,9 +360,8 @@ export class PlaceDetailComponent implements OnInit {
       .subscribe({
         next: _ => {
           this.toastService.success('نظر شما با موفقیت ثبت شد!');
-          this.rvForm = { rating: 0, text: '', captchaAnswer: '' };
-          this.selectedRating = 0;
-          this.afterActionRefresh(p.id); // ⬅️ آی‌دی پاس می‌دهیم
+          // Close and reopen modal for clean refresh
+          this.closeAndReopenModal(p.id);
         },
         error: err => {
           this.rvError = err?.message ?? 'خطا در ثبت نظر';
@@ -352,27 +373,6 @@ export class PlaceDetailComponent implements OnInit {
       });
   }
 
-  // ------- Reply -------
-  startReply(reviewId: number) { this.replyingFor = reviewId; this.replyText = ''; }
-  cancelReply() { this.replyingFor = null; this.replyText = ''; }
-
-  submitReply(reviewId: number) {
-    const txt = (this.replyText || '').trim(); if (!txt) return;
-    const p = this.place(); if (!p) return;
-
-    this.replyBusy = true;
-    this.reviewsApi.addReply(reviewId, { text: txt })
-      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.replyBusy = false))
-      .subscribe({ next: _ => { this.cancelReply(); this.afterActionRefresh(p.id); }, error: _ => { } });
-  }
-
-  // ------- Report -------
-  report(id: number) {
-    const reason = prompt('دلیل گزارش را بنویسید (اختیاری):') ?? '';
-    this.reviewsApi.report(id, reason)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: _ => alert('گزارش ثبت شد ✅'), error: _ => alert('ثبت گزارش ناموفق بود') });
-  }
 
   // ------- Lightbox -------
   lbxOpen = false;
@@ -391,6 +391,23 @@ export class PlaceDetailComponent implements OnInit {
   closeLightbox() { this.lbxOpen = false; this.lbxItems = []; this.lbxIndex = 0; }
   prevLbx(e: Event) { e.stopPropagation(); this.lbxIndex = (this.lbxIndex + this.lbxItems.length - 1) % this.lbxItems.length; }
   nextLbx(e: Event) { e.stopPropagation(); this.lbxIndex = (this.lbxIndex + 1) % this.lbxItems.length; }
+
+  // ------- Modal close and reopen -------
+  private closeAndReopenModal(placeId: number) {
+    if (!this.modalRef) return;
+
+    // Close current modal
+    this.modalRef.close();
+
+    // Reopen modal with fresh data after a short delay
+    setTimeout(() => {
+      this.modal.open(PlaceDetailComponent, {
+        data: { id: placeId },
+        panelClass: ['app-modal-panel'],
+        backdropClass: 'app-modal-backdrop'
+      });
+    }, 100);
+  }
 
   // ------- Modal close -------
   closeModal() { if (this.modalRef) this.modalRef.close(); }

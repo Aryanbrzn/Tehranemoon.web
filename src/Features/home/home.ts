@@ -1,4 +1,4 @@
-import { Component, ViewChild, inject } from '@angular/core';
+import { Component, ViewChild, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MapComponent } from '../map/map';
@@ -36,7 +36,7 @@ type PlaceRow = {
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home {
+export class Home implements OnDestroy {
   @ViewChild(MapComponent) mapRef?: MapComponent;
   private catsApi = inject(CategoriesService);
   private auth = inject(AuthService);
@@ -63,12 +63,46 @@ export class Home {
   modalOpen = false;
   modalPlace?: PlaceRow;
   reviewText = '';
+  private scrollPosition = 0;
 
   constructor() {
     this.loadCategories();
   }
 
+  ngOnDestroy() {
+    // Ensure body scroll is restored when component is destroyed
+    this.toggleBodyScroll(false);
+  }
+
   isAuthed() { true; }
+
+  private toggleBodyScroll(disable: boolean) {
+    if (disable) {
+      // Store current scroll position
+      this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+      // Apply styles to prevent scrolling
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${this.scrollPosition}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+
+      // Add class for additional styling if needed
+      document.body.classList.add('leaderboard-open');
+    } else {
+      // Remove the fixed positioning
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+
+      // Remove class
+      document.body.classList.remove('leaderboard-open');
+
+      // Restore scroll position
+      window.scrollTo(0, this.scrollPosition);
+    }
+  }
 
   openPlaceDetail(placeId: number) {
     this.modal.open(PlaceDetailComponent, {
@@ -81,6 +115,7 @@ export class Home {
   selected?: Cat;
   select(c: Cat) {
     this.selected = c;
+    this.toggleBodyScroll(true); // Disable body scroll when leaderboard opens
     this.mapRef?.filterByCategorySlug(c.slug);
     setTimeout(() => this.mapRef?.invalidateSize(), 650);
     this.refreshPlaces();
@@ -88,6 +123,7 @@ export class Home {
 
   clearSelection() {
     this.selected = undefined;
+    this.toggleBodyScroll(false); // Re-enable body scroll when leaderboard closes
     this.mapRef?.filterByCategorySlug(undefined);
     setTimeout(() => this.mapRef?.invalidateSize(), 350);
     // اگر کاربر در حال جست‌وجوست و >=3 حرف دارد، نتایج سراسری را نشان بده

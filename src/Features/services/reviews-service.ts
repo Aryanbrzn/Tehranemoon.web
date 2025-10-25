@@ -48,7 +48,9 @@ export class ReviewsService {
 
   /** دریافت امتیاز کاربر برای یک مکان */
   getUserRating(placeId: number) {
-    return this.http.get<UserRatingResponse>(`api/places/${placeId}/user-rating`);
+    return this.http.get<UserRatingResponse>(`api/places/${placeId}/user-rating`, {
+      _t: Date.now() // Cache-buster
+    });
   }
   list(placeId: number, page = 1, pageSize = 10) {
     return this.http.get<Paged<any>>('/api/reviews', { placeId, page, pageSize });

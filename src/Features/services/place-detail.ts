@@ -58,8 +58,10 @@ export class PlaceDetailService {
   private http = inject(Httpclient);
 
   get(placeId: number) {
-    // اگر APIِ Place، خودِ Reviews را هم برمی‌گرداند، همین کافی است
-    return this.http.get<PlaceDetailDto>(`api/places/${placeId}`);
+    // Add cache-busting parameter to ensure fresh data
+    return this.http.get<PlaceDetailDto>(`api/places/${placeId}`, {
+      _t: Date.now() // Cache-buster
+    });
   }
 
   getReviews(placeId: number) {

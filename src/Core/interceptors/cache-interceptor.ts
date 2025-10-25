@@ -16,6 +16,16 @@ export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
         return next(req);
     }
 
+    // Don't cache place detail endpoints (they should always be fresh)
+    if (req.url.includes('/api/places/') && !req.url.includes('/api/places/leaderboard')) {
+        return next(req);
+    }
+
+    // Don't cache user rating endpoints (they should always be fresh)
+    if (req.url.includes('/user-rating')) {
+        return next(req);
+    }
+
     const cacheKey = req.urlWithParams;
     const cachedResponse = cache.get(cacheKey);
 
