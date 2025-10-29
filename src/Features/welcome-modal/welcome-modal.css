@@ -1,0 +1,57 @@
+.welcome-modal-wrap {
+  min-width: 320px;
+  max-width: 500px;
+  padding: 24px;
+  background: aliceblue;
+  border-radius: 14px;
+}
+
+.welcome-content {
+  text-align: center;
+}
+
+.welcome-content h2 {
+  margin: 0 0 20px 0;
+  color: #183049;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.welcome-message {
+  margin-bottom: 24px;
+  text-align: right;
+  line-height: 1.8;
+  color: #183049;
+}
+
+.welcome-message p {
+  margin: 12px 0;
+}
+
+.contact-link {
+  color: #183049;
+  text-decoration: underline;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.contact-link:hover {
+  color: #ff7a3d;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 480px) {
+  .welcome-modal-wrap {
+    min-width: 280px;
+    max-width: 95vw;
+    padding: 20px;
+  }
+
+  .welcome-content h2 {
+    font-size: 20px;
+  }
+
+  .welcome-message {
+    font-size: 14px;
+  }
+}
