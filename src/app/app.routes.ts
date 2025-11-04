@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
 import { Home } from '../Features/home/home';
+import { placeModalGuard } from './place-modal.guard';
 
 export const routes: Routes = [
     { path: '', component: Home },
     {
         path: 'place/:id',
+        canActivate: [placeModalGuard],
         loadComponent: () => import('../Features/place-detail/place-detail').then(m => m.PlaceDetailComponent)
     },
     {
@@ -18,6 +20,10 @@ export const routes: Routes = [
     {
         path: 'contact',
         loadComponent: () => import('../Features/contact-us/contact-us').then(m => m.ContactUsComponent)
+    },
+    {
+        path: 'report-bugs',
+        loadComponent: () => import('../Features/report-bugs/report-bugs').then(m => m.ReportBugsComponent)
     },
     {
         path: 'toast-demo',

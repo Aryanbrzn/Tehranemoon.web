@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Static pages sitemap -->
+  <sitemap>
+    <loc>https://tehranemoon.app/sitemap-static.xml</loc>
+    <lastmod>2024-01-15</lastmod>
+  </sitemap>
+  
+  <!-- Dynamic places sitemap (from backend API) -->
+  <sitemap>
+    <loc>https://tehranemoon.app/api/sitemap/places</loc>
+    <lastmod>2024-01-15</lastmod>
+  </sitemap>
+</sitemapindex>
+

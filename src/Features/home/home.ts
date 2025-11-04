@@ -1,4 +1,4 @@
-import { Component, ViewChild, inject, OnDestroy } from '@angular/core';
+import { Component, ViewChild, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MapComponent } from '../map/map';
@@ -15,6 +15,8 @@ import { Footer } from "../../Shared/footer/footer";
 import { Charity } from "../charity/charity";
 import { ImageService } from '../../Core/services/image.service';
 import { PlaceRequestSubmitComponent, PlaceRequestSubmitResult } from '../userpanel/place-request-submit/place-request-submit';
+import { SEOService } from '../../Core/services/seo.service';
+import { environment } from '../../environments/environment';
 type Cat = { id: number; name: string; slug: string; color: string; image: string };
 type PlaceRow = {
   id: number,
@@ -36,13 +38,14 @@ type PlaceRow = {
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home implements OnDestroy {
+export class Home implements OnDestroy, OnInit {
   @ViewChild(MapComponent) mapRef?: MapComponent;
   private catsApi = inject(CategoriesService);
   private auth = inject(AuthService);
   private modal = inject(ModalService);
   private lbApi = inject(LeaderboardService);
   private imageService = inject(ImageService);
+  private seoService = inject(SEOService);
   faMagnify = faMagnifyingGlass;
   categories: Cat[] = [];
   loading = true;
@@ -67,6 +70,11 @@ export class Home implements OnDestroy {
 
   constructor() {
     this.loadCategories();
+  }
+
+  ngOnInit() {
+    // Set default SEO tags for home page
+    this.seoService.setDefaultTags();
   }
 
   ngOnDestroy() {

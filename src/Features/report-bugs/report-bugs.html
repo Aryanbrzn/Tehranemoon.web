@@ -1,0 +1,152 @@
+<app-countdown [targetUtc]="'2027-04-10T00:00:00Z'" label="تا اهدای تندیس طلایی هر کتگوری"></app-countdown>
+<div class="report-bugs-page" dir="rtl">
+    <div class="container">
+        <div class="glass-card">
+            <div class="header">
+                <h1>گزارش مشکلات</h1>
+                <p class="subtitle">اگر مشکلی در سایت مشاهده کردید، لطفاً آن را گزارش دهید</p>
+            </div>
+
+            <div class="content">
+                @if (submitted()) {
+                <div class="success-message">
+                    <div class="success-icon">✓</div>
+                    <h2>گزارش شما با موفقیت ثبت شد</h2>
+                    @if (successMessage()) {
+                        <p>{{ successMessage() }}</p>
+                    } @else {
+                        <p>با تشکر از شما برای کمک به بهبود سایت تهرانمون</p>
+                    }
+                    @if (bugReportId()) {
+                        <p class="bug-report-id">شماره گزارش: #{{ bugReportId() }}</p>
+                    }
+                </div>
+                } @else {
+                <form (ngSubmit)="onSubmit()" class="report-form">
+                    <!-- Error Message -->
+                    @if (errorMessage()) {
+                    <div class="error-message">
+                        <div class="error-icon">⚠</div>
+                        <p>{{ errorMessage() }}</p>
+                    </div>
+                    }
+
+                    <!-- Validation Errors -->
+                    @if (validationErrors().length > 0) {
+                    <div class="validation-errors">
+                        <ul>
+                            @for (error of validationErrors(); track $index) {
+                            <li>{{ error }}</li>
+                            }
+                        </ul>
+                    </div>
+                    }
+
+                    <div class="form-group">
+                        <label for="title" class="form-label">عنوان مشکل *</label>
+                        <input 
+                            id="title" 
+                            type="text" 
+                            [(ngModel)]="bugReport.title" 
+                            name="title"
+                            class="form-control" 
+                            placeholder="مثال: مشکل در نمایش عکس‌ها"
+                            required
+                            maxlength="200"
+                            dir="rtl" />
+                        <div class="char-count">{{ bugReport.title.length }}/200</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">توضیحات مشکل *</label>
+                        <textarea 
+                            id="description" 
+                            [(ngModel)]="bugReport.description" 
+                            name="description"
+                            class="form-control" 
+                            rows="5"
+                            placeholder="مشکل را به طور کامل توضیح دهید"
+                            required
+                            maxlength="4000"
+                            dir="rtl"></textarea>
+                        <div class="char-count">{{ bugReport.description.length }}/4000</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="page" class="form-label">صفحه‌ای که مشکل در آن رخ داده</label>
+                        <input 
+                            id="page" 
+                            type="text" 
+                            [(ngModel)]="bugReport.page" 
+                            name="page"
+                            class="form-control" 
+                            placeholder="مثال: صفحه اصلی، صفحه جزئیات مکان"
+                            maxlength="200"
+                            dir="rtl" />
+                        <div class="char-count">{{ bugReport.page.length }}/200</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="steps" class="form-label">مراحل بازتولید مشکل</label>
+                        <textarea 
+                            id="steps" 
+                            [(ngModel)]="bugReport.steps" 
+                            name="steps"
+                            class="form-control" 
+                            rows="3"
+                            placeholder="مراحل را به ترتیب توضیح دهید (اختیاری)"
+                            maxlength="2000"
+                            dir="rtl"></textarea>
+                        <div class="char-count">{{ bugReport.steps.length }}/2000</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="browser" class="form-label">مرورگر و نسخه</label>
+                        <input 
+                            id="browser" 
+                            type="text" 
+                            [(ngModel)]="bugReport.browser" 
+                            name="browser"
+                            class="form-control" 
+                            placeholder="مثال: Chrome 120، Firefox 121"
+                            maxlength="100"
+                            dir="rtl" />
+                        <div class="char-count">{{ bugReport.browser.length }}/100</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">ایمیل (اختیاری)</label>
+                        <input 
+                            id="email" 
+                            type="email" 
+                            [(ngModel)]="bugReport.email" 
+                            name="email"
+                            class="form-control" 
+                            placeholder="برای پیگیری مشکل (اختیاری)"
+                            maxlength="255"
+                            dir="ltr" />
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="btn btn-primary" 
+                        [disabled]="isSubmitting() || !bugReport.title || !bugReport.description">
+                        @if (isSubmitting()) {
+                            در حال ارسال...
+                        } @else {
+                            ارسال گزارش
+                        }
+                    </button>
+                </form>
+                }
+
+                <!-- back to home button -->
+                <div class="back-home">
+                    <a routerLink="/" class="btn btn-secondary">بازگشت به خانه</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>
+

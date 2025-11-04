@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Sitemap location (master sitemap index)
+Sitemap: https://tehranemoon.app/sitemap.xml
+

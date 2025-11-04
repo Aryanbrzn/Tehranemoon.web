@@ -17,6 +17,8 @@ import { ModalService } from '../../Shared/modal/modal.service';
 import { ToastService } from '../../Core/services/toast.service';
 import { CategoriesService } from '../services/categories.service';
 import { ImageUrlService } from '../../Core/services/image-url.service';
+import { SEOService } from '../../Core/services/seo.service';
+import { environment } from '../../environments/environment';
 import { finalize } from 'rxjs/operators';
 
 type ReviewVM = ReviewDto & { replies?: ReviewDto[] };
@@ -49,6 +51,7 @@ export class PlaceDetailComponent implements OnInit {
   private categoriesService = inject(CategoriesService);
   private imageService = inject(ImageUrlService);
   private cdr = inject(ChangeDetectorRef);
+  private seoService = inject(SEOService);
 
   // Modal
   private modalData = inject(MODAL_DATA, { optional: true }) as { id?: number } | null;
@@ -171,6 +174,9 @@ export class PlaceDetailComponent implements OnInit {
         next: (p) => {
           this.place.set(p);
           this.lastPlaceId = p.id;
+
+          // Update SEO tags for this place
+          this.updatePlaceSEO(p);
 
           // Force change detection after setting place data
           this.cdr.markForCheck();
@@ -407,6 +413,69 @@ export class PlaceDetailComponent implements OnInit {
         backdropClass: 'app-modal-backdrop'
       });
     }, 100);
+  }
+
+  // ------- SEO Update -------
+  private updatePlaceSEO(place: PlaceDetailDto) {
+    const placeTitle = `${place.title} - تهرانمون`;
+    const placeDescription = place.description
+      ? `${place.description.substring(0, 150)}...`
+      : `اطلاعات و نظرات کاربران درباره ${place.title} در تهران. امتیاز: ${place.avgRating?.toFixed(1) || '0'} از 5.`;
+
+    const placeImage = place.coverImageUrl || this.placeImageUrl();
+    const placeUrl = `${environment.webUrl}/place/${place.id}`;
+
+    const keywords = `${place.title}, ${place.categoryName}, تهران, مکان‌های تهران, نظرات, امتیاز`;
+
+    // Parse coordinates for structured data
+    let geoCoordinates: any = null;
+    if (place.coordinates) {
+      const coords = this.parseLatLng(place.coordinates);
+      if (coords) {
+        geoCoordinates = {
+          "@type": "GeoCoordinates",
+          "latitude": coords.lat,
+          "longitude": coords.lng
+        };
+      }
+    }
+
+    // Build structured data
+    const structuredData: any = {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": place.title,
+      "description": place.description || `اطلاعات ${place.title} در تهران`,
+      "url": placeUrl,
+      "image": placeImage,
+      "aggregateRating": (place.reviewCount && place.reviewCount > 0) ? {
+        "@type": "AggregateRating",
+        "ratingValue": place.avgRating?.toFixed(1) || "0",
+        "reviewCount": place.reviewCount,
+        "bestRating": "5",
+        "worstRating": "1"
+      } : undefined,
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Tehran",
+        "addressRegion": "Tehran",
+        "addressCountry": "IR"
+      }
+    };
+
+    if (geoCoordinates) {
+      structuredData.geo = geoCoordinates;
+    }
+
+    this.seoService.updateTags({
+      title: placeTitle,
+      description: placeDescription,
+      keywords: keywords,
+      image: placeImage,
+      url: placeUrl,
+      type: 'article',
+      structuredData: structuredData
+    });
   }
 
   // ------- Modal close -------
