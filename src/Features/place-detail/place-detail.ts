@@ -78,7 +78,7 @@ export class PlaceDetailComponent implements OnInit {
   hasUserDescription = false;
 
 
-  // Categories for fallback images
+  // Categories for display
   readonly categories = toSignal(this.categoriesService.getActive(), { initialValue: [] });
 
   // ⬇️ Hard re-mount flag for the reviews section
@@ -92,10 +92,9 @@ export class PlaceDetailComponent implements OnInit {
 
   placeImageUrl = computed(() => {
     const p = this.place();
-    if (!p) return 'images/location.png';
+    if (!p) return 'images/no-image.png';
     if (p.coverImageUrl) return p.coverImageUrl;
-    const cat = this.categories().find(c => c.name === p.categoryName);
-    return cat?.imageUrl ? this.imageService.getImageUrl(cat.imageUrl) : 'images/location.png';
+    return 'images/no-image.png';
   });
 
   hasCoordinates = computed(() => {
@@ -397,6 +396,14 @@ export class PlaceDetailComponent implements OnInit {
   closeLightbox() { this.lbxOpen = false; this.lbxItems = []; this.lbxIndex = 0; }
   prevLbx(e: Event) { e.stopPropagation(); this.lbxIndex = (this.lbxIndex + this.lbxItems.length - 1) % this.lbxItems.length; }
   nextLbx(e: Event) { e.stopPropagation(); this.lbxIndex = (this.lbxIndex + 1) % this.lbxItems.length; }
+
+  // Image error handler - fallback to no-image.png
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img.src && !img.src.includes('no-image.png')) {
+      img.src = 'images/no-image.png';
+    }
+  }
 
   // ------- Modal close and reopen -------
   private closeAndReopenModal(placeId: number) {

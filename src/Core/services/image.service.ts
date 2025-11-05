@@ -32,7 +32,7 @@ export class ImageService {
      * @returns Default image URL
      */
     getDefaultImageUrl(): string {
-        return `${environment.webUrl}/images/location.png`;
+        return `${environment.webUrl}/images/no-image.png`;
     }
 
     /**

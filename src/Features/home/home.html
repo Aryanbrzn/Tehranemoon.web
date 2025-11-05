@@ -37,7 +37,7 @@
         <div class="lb-paper-title">
             <button class="btn-back ps-3 pe-3" (click)="clearSelection()">x</button>
             <div class="art">
-                <img [src]="selected.image" alt="">
+                <img [src]="selected.image" alt="" (error)="onImageError($event, selected)">
                 <div class="txt">
                     <!-- <div class="title">{{ selected.name }}</div> -->
                 </div>
@@ -90,7 +90,7 @@
             <div class="lb-row alig-items-center cursor-pointer" [class.alt]="($index % 2)===1"
                 [class.first-place]="isActualTopThree(p) && getActualRank(p) === 1" (click)="openPlaceDetail(p.id)">
                 <div class="polaroid">
-                    <img [src]="p.image" alt="" loading="lazy" decoding="async">
+                    <img [src]="p.image" alt="" loading="lazy" decoding="async" (error)="onImageError($event)">
                     <div class="idx" dir="rtl">#{{ p.rank }} <span class="place-name-desktop">
                             {{ p.title }}
                         </span>

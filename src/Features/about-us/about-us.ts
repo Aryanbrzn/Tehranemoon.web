@@ -37,4 +37,12 @@ export class AboutUsComponent implements OnInit {
             }
         });
     }
+
+    // Image error handler - fallback to no-image.png
+    onImageError(event: Event): void {
+        const img = event.target as HTMLImageElement;
+        if (img.src && !img.src.includes('no-image.png')) {
+            img.src = 'images/no-image.png';
+        }
+    }
 }

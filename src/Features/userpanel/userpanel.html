@@ -17,7 +17,7 @@
 
             @if(catsLoading()==false){
             @for (cat of categories(); track cat.catId) { <div class="board-row mt-2">
-                <img class="img-fluid" [src]="cat.poster" [alt]="cat.title">
+                <img class="img-fluid" [src]="cat.poster" [alt]="cat.title" (error)="onImageError($event)">
 
                 <div class="slot-strip">
                     <!-- سه خانه برای هر کتگوری -->
@@ -25,7 +25,7 @@
                     <!-- اگر خانه پر است -->
                     @if (slot) {
                     <button class="slot filled" (click)="openTile(slot.title)">
-                        <img class="thumb" [src]="slot.poster" [alt]="slot.title">
+                        <img class="thumb" [src]="slot.poster" [alt]="slot.title" (error)="onImageError($event)">
                         <span class="caption">{{ slot.title }}</span>
                     </button>
                     } @else {
@@ -55,7 +55,7 @@
         </div>
 
         <div class="paper-footer justify-content-center">
-            <img class="sticker" src="images/tehran.png" alt="تهران">
+            <img class="sticker" src="images/tehran.png" alt="تهران" (error)="onImageError($event)">
             <div class="nameplate">
                 <i class="user-ico"></i>
                 <span class="uname">{{ userName() || 'کاربر' }}</span>

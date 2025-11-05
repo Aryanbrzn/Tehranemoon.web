@@ -31,7 +31,7 @@
         <div *ngIf="!busy()" class="picker-list">
             @for (it of results(); track it.id) {
             <button class="picker-item" type="button" (click)="pick(it)">
-                <img class="picker-thumb" [src]="getImageUrl(it.coverImageUrl)" alt="">
+                <img class="picker-thumb" [src]="getImageUrl(it.coverImageUrl)" alt="" (error)="onImageError($event)">
                 <div class="picker-meta">
                     <div class="picker-title">{{ it.title }}</div>
                     <div class="muted" *ngIf="it.avgRating">امتیاز: {{ it.avgRating | number:'1.1-1' }}</div>

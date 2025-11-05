@@ -44,6 +44,10 @@
   letter-spacing: 0.3px;
 }
 .logo {
+  width: 150px;
+  height: 150px;
+  max-width: 150px;
+  max-height: 150px;
   object-fit: contain;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
 }

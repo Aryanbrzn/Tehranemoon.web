@@ -39,7 +39,7 @@ export class ImageUrlService {
      * @returns Default image URL
      */
     getDefaultImageUrl(): string {
-        return '/images/placeholder.png'; // You can update this to your actual placeholder image
+        return '/images/no-image.png';
     }
 
     /**
@@ -49,10 +49,10 @@ export class ImageUrlService {
      */
     getAvatarUrl(avatarPath: string | null | undefined): string {
         if (!avatarPath) {
-            return '/images/avatar.png'; // Default avatar from your public folder
+            return '/images/no-image.png';
         }
 
-        return this.getImageUrl(avatarPath, '/images/avatar.png');
+        return this.getImageUrl(avatarPath, '/images/no-image.png');
     }
 
     /**
@@ -62,10 +62,10 @@ export class ImageUrlService {
      */
     getCoverImageUrl(coverPath: string | null | undefined): string {
         if (!coverPath) {
-            return '/images/placeholder.png'; // Default cover image
+            return '/images/no-image.png';
         }
 
-        return this.getImageUrl(coverPath, '/images/placeholder.png');
+        return this.getImageUrl(coverPath, '/images/no-image.png');
     }
 
     /**

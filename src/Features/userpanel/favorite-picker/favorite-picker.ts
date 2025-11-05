@@ -73,7 +73,7 @@ export class FavoritePickerDialogComponent implements OnDestroy {
       return catImage;
     }
 
-    return this.imageService.getImageUrl('images/location.png');
+    return this.imageService.getImageUrl('images/no-image.png');
   }
 
   openPlaceRequestModal() {
@@ -124,5 +124,13 @@ export class FavoritePickerDialogComponent implements OnDestroy {
         this.categoryImage.set(null);
       }
     });
+  }
+
+  // Image error handler - fallback to no-image.png
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img.src && !img.src.includes('no-image.png')) {
+      img.src = 'images/no-image.png';
+    }
   }
 }

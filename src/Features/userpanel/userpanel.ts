@@ -137,7 +137,7 @@ export class UserPanelComponent implements OnInit {
             title: it.title,
             poster: it.coverImageUrl
               ? this.imageService.getImageUrl(it.coverImageUrl)
-              : (category ? category.poster : this.imageService.getImageUrl('images/location.png')),
+              : (category ? category.poster : this.imageService.getImageUrl('images/no-image.png')),
             rating: it.avgRating ?? 0
           });
         }
@@ -214,4 +214,12 @@ export class UserPanelComponent implements OnInit {
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', [Validators.required]]
   });
+
+  // Image error handler - fallback to no-image.png
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img.src && !img.src.includes('no-image.png')) {
+      img.src = 'images/no-image.png';
+    }
+  }
 }

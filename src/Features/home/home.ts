@@ -183,13 +183,10 @@ export class Home implements OnDestroy, OnInit {
             originalIndex = originalPlace ? originalPlace.originalIndex || 0 : index;
           }
 
-          // Use category image as fallback if place has no image
+          // Use no-image.png if place has no image
           let imageUrl = x.coverImageUrl;
-          if (!imageUrl && this.selected) {
-            imageUrl = this.selected.image;
-          }
           if (!imageUrl) {
-            imageUrl = 'images/restaurant.png'; // Final fallback
+            imageUrl = 'images/no-image.png';
           }
 
           return {
@@ -246,12 +243,12 @@ export class Home implements OnDestroy, OnInit {
   }
 
   // Image handlers for debugging
-  onImageError(event: any, category: Cat) {
+  onImageError(event: any, category?: Cat) {
     // Fallback to default image
-    event.target.src = 'images/location.png';
+    event.target.src = 'images/no-image.png';
   }
 
-  onImageLoad(event: any, category: Cat) {
+  onImageLoad(event: any, category?: Cat) {
   }
 
   // --- Categories load ---
@@ -271,7 +268,7 @@ export class Home implements OnDestroy, OnInit {
   }
 
   private toCat = (x: CategoryDto & Record<string, any>): Cat => {
-    const img = x.thumbUrl ?? x.imageUrl ?? 'images/location.png';
+    const img = x.thumbUrl ?? x.imageUrl ?? 'images/no-image.png';
     return {
       id: x.id,
       name: x.name,

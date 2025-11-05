@@ -103,7 +103,7 @@
 
   <header class="hero">
     <div class="cover">
-      <img [src]="placeImageUrl()" alt="" />
+      <img [src]="placeImageUrl()" alt="" (error)="onImageError($event)" />
       <div class="paper-frame"></div>
     </div>
 
@@ -178,7 +178,7 @@
         [class.alt]="$index % 2 === 1"
         (click)="openLightbox(placeImageUrls(), $index)"
       >
-        <img [src]="img.url" alt="" />
+        <img [src]="img.url" alt="" (error)="onImageError($event)" />
         <div class="caption">{{ place()?.title }}</div>
         <div class="idx">#{{ $index + 1 }}</div>
       </div>
@@ -226,7 +226,7 @@
             class="polaroid mini"
             (click)="openLightbox(reviewImageUrls(r), $index)"
           >
-            <img [src]="im.url" alt="" />
+            <img [src]="im.url" alt="" (error)="onImageError($event)" />
             <div class="caption">{{ r.author }}</div>
           </div>
           }
@@ -258,7 +258,7 @@
             class="polaroid mini"
             (click)="openLightbox(reviewImageUrls(r), $index)"
           >
-            <img [src]="im.url" alt="" />
+            <img [src]="im.url" alt="" (error)="onImageError($event)" />
             <div class="caption">{{ r.author }}</div>
           </div>
           }
@@ -356,7 +356,11 @@
       <div class="form-row captcha">
         <label>کپچا</label>
         <div class="cap-box">
-          <img [src]="cap?.imageUrl" alt="captcha" />
+          <img
+            [src]="cap?.imageUrl"
+            alt="captcha"
+            (error)="onImageError($event)"
+          />
           <input
             type="text"
             [(ngModel)]="rvForm.captchaAnswer"
@@ -408,7 +412,7 @@
   <div class="lbx-backdrop" (click)="closeLightbox()"></div>
   <div class="lbx" role="dialog" aria-modal="true">
     <button class="lbx-nav prev" (click)="prevLbx($event)"></button>
-    <img [src]="lbxItems[lbxIndex]" alt="" />
+    <img [src]="lbxItems[lbxIndex]" alt="" (error)="onImageError($event)" />
     <button class="lbx-nav next" (click)="nextLbx($event)"></button>
     <button class="lbx-close" (click)="closeLightbox()">×</button>
   </div>
